@@ -7,16 +7,17 @@ import {
     TouchableHighlight,
     Image
 } from 'react-native'
-
 import { API_KEY } from 'react-native-dotenv'
+
 const axios = require("axios");
 
-function Item({ id, poster_path, title }) {
+function Item({ id, poster_path, type, navigation }) {
     return (
         <TouchableHighlight
-            activeOpacity={0.6}
             underlayColor="#DDDDDD"
-            onPress={() => alert(title)}>
+            onPress={() => {
+                navigation.navigate('Details', { detailsId: id, type })
+            }}>
             <Image
                 style={{ width: 120, height: 180 }}
                 source={{ uri: "https://image.tmdb.org/t/p/w154" + poster_path }}
@@ -24,39 +25,6 @@ function Item({ id, poster_path, title }) {
         </TouchableHighlight>
     )
 }
-
-const show_first = [
-    {
-        key: "1",
-        name: "King Lion",
-        image: "https://image.tmdb.org/t/p/w154/pBhcbMndqz9aVComPtfDib2mBfW.jpg"
-    },
-    {
-        key: "2",
-        name: "King Lion",
-        image: "https://image.tmdb.org/t/p/w154/pBhcbMndqz9aVComPtfDib2mBfW.jpg"
-    },
-    {
-        key: "3",
-        name: "King Lion",
-        image: "https://image.tmdb.org/t/p/w154/pBhcbMndqz9aVComPtfDib2mBfW.jpg"
-    },
-    {
-        key: "4",
-        name: "King Lion",
-        image: "https://image.tmdb.org/t/p/w154/pBhcbMndqz9aVComPtfDib2mBfW.jpg"
-    },
-    {
-        key: "5",
-        name: "King Lion",
-        image: "https://image.tmdb.org/t/p/w154/pBhcbMndqz9aVComPtfDib2mBfW.jpg"
-    },
-    {
-        key: "6",
-        name: "King Lion",
-        image: "https://image.tmdb.org/t/p/w154/pBhcbMndqz9aVComPtfDib2mBfW.jpg"
-    },
-]
 
 class List extends Component {
     constructor(props) {
@@ -69,7 +37,8 @@ class List extends Component {
             sort_by: "popularity.desc",
             adult: false,
             video: false,
-            page: 1
+            page: 1,
+            search: ""
         }
     }
 
@@ -108,6 +77,10 @@ class List extends Component {
         return;
     }
 
+    updateSearch(search) {
+        this.setState({ search })
+    }
+
     render() {
         return (
             <View style={styles.container}>
@@ -121,14 +94,16 @@ class List extends Component {
                                 poster_path={item.poster_path}
                                 id={item.id}
                                 title={item.title}
+                                navigation={this.props.navigation}
+                                type="movie"
                             />
                         )}
                         data={this.state.films}
                         keyExtractor={item => item.id.toString()}
                     />
-                    <Text style={styles.title}>Top 20 TMDB Series</Text>
                 </View>
                 <View style={styles.list}>
+                    <Text style={styles.title}>Top 20 TMDB Series</Text>
                     <FlatList
                         horizontal
                         ItemSeparatorComponent={() => <View style={{ width: 5 }} />}
@@ -137,6 +112,8 @@ class List extends Component {
                                 poster_path={item.poster_path}
                                 id={item.id}
                                 title={item.name}
+                                navigation={this.props.navigation}
+                                type="tv"
                             />
                         )}
                         data={this.state.series}
@@ -151,15 +128,16 @@ class List extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        top: 50,
-        padding: 15,
-        maxHeight: 528
-    }, list: {
-        maxHeight: 234
+        backgroundColor: '#333',
+    },
+    list: {
+        height: 207,
+
     },
     title: {
         color: "white",
-        fontSize: 20
+        fontSize: 20,
+        marginLeft: 15
     }
 })
 
