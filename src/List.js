@@ -1,11 +1,13 @@
 import React, { Component } from 'react'
 import {
     Text,
+    TextInput,
     View,
     StyleSheet,
     FlatList,
     TouchableHighlight,
-    Image
+    Image,
+    Alert
 } from 'react-native'
 import { API_KEY } from 'react-native-dotenv'
 
@@ -82,8 +84,16 @@ class List extends Component {
     }
 
     render() {
+        const navigation = this.props.navigation
         return (
             <View style={styles.container}>
+                <TextInput
+                    style={styles.search}
+                    placeholder="Search for ..."
+                    onChangeText={text => this.updateSearch(text)}
+                    value={this.state.search}
+                    onSubmitEditing={() => navigation.navigate('Search Result', { search: this.state.search })}
+                />
                 <View style={styles.list}>
                     <Text style={styles.title}>Top 20 TMDB Films</Text>
                     <FlatList
@@ -138,6 +148,18 @@ const styles = StyleSheet.create({
         color: "white",
         fontSize: 20,
         marginLeft: 15
+    },
+    search: {
+        height: 40,
+        width: "80%",
+        alignSelf: "center",
+        borderColor: 'gray',
+        borderRadius: 10,
+        borderWidth: 1,
+        padding: 5,
+        color: "white",
+        margin: 5,
+        backgroundColor: "#555"
     }
 })
 

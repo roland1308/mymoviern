@@ -6,21 +6,28 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import List from './src/List'
 import Details from './src/Details'
+import FindList from './src/FindList';
 
 const Stack = createStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <StatusBar barstyle="dark-content" backgroundColor="white" />
+      <Stack.Navigator
+        screenOptions={{
+          headerStyle: { backgroundColor: "#000" },
+          headerTintColor: "white",
+          headerTitleStyle: { fontWeight: "bold" }
+        }}>
         <Stack.Screen
           name="Home"
           component={List}
           options={{ title: 'My Movies' }}
         />
         <Stack.Screen name="Details" component={Details} />
+        <Stack.Screen name="Search Result" component={FindList} />
       </Stack.Navigator>
-      <StatusBar style="auto" />
     </NavigationContainer>
   );
 }

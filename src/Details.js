@@ -7,6 +7,7 @@ import {
 } from 'react-native'
 
 import { API_KEY } from 'react-native-dotenv'
+import { ScrollView } from 'react-native-gesture-handler';
 
 const axios = require("axios");
 
@@ -40,7 +41,9 @@ class Details extends Component {
                 <Image
                     style={{ width: "100%", height: 210 }}
                     source={{ uri: "https://image.tmdb.org/t/p/w500" + backdrop_path }} />
-                <Text style={styles.overview}>{overview}</Text>
+                <ScrollView>
+                    <Text style={styles.overview}>{overview}</Text>
+                </ScrollView>
             </View>
         )
     }
