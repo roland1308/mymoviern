@@ -7,9 +7,12 @@ import {
     FlatList,
     TouchableHighlight,
     Image,
-    Alert
+    Alert,
+    Button,
+    Keyboard
 } from 'react-native'
 import { API_KEY } from 'react-native-dotenv'
+import Separator from './components/Separator';
 
 const axios = require("axios");
 
@@ -92,8 +95,20 @@ class List extends Component {
                     placeholder="Search for ..."
                     onChangeText={text => this.updateSearch(text)}
                     value={this.state.search}
-                    onSubmitEditing={() => navigation.navigate('Search Result', { search: this.state.search })}
+                    // onSubmitEditing={() => navigation.navigate('Search Result', { search: this.state.search })}
+                    onSubmitEditing={() => Keyboard.dismiss()}
                 />
+                <View style={styles.buttons}>
+                    <Button
+                        title="Movies"
+                        onPress={() => navigation.navigate('Search Result', { search: this.state.search, type: "movie" })}
+                    />
+                    <Button
+                        title="Series"
+                        onPress={() => navigation.navigate('Search Result', { search: this.state.search, type: "tv" })}
+                    />
+                </View>
+                <Separator />
                 <View style={styles.list}>
                     <Text style={styles.title}>Top 20 TMDB Films</Text>
                     <FlatList
@@ -103,7 +118,6 @@ class List extends Component {
                             <Item
                                 poster_path={item.poster_path}
                                 id={item.id}
-                                title={item.title}
                                 navigation={this.props.navigation}
                                 type="movie"
                             />
@@ -112,6 +126,7 @@ class List extends Component {
                         keyExtractor={item => item.id.toString()}
                     />
                 </View>
+                <Separator />
                 <View style={styles.list}>
                     <Text style={styles.title}>Top 20 TMDB Series</Text>
                     <FlatList
@@ -160,6 +175,10 @@ const styles = StyleSheet.create({
         color: "white",
         margin: 5,
         backgroundColor: "#555"
+    },
+    buttons: {
+        flexDirection: "row",
+        justifyContent: "space-evenly"
     }
 })
 

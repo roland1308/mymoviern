@@ -1,13 +1,8 @@
 import React, { Component } from 'react'
 import {
-    Text,
-    TextInput,
     View,
     StyleSheet,
     FlatList,
-    TouchableHighlight,
-    Image,
-    Alert
 } from 'react-native'
 import { API_KEY } from 'react-native-dotenv'
 import SearchResult from './components/SearchResult'
@@ -32,10 +27,11 @@ class FindList extends Component {
     }
 
     async getList() {
-        const { search } = this.props.route.params
+        const { search, type } = this.props.route.params
         try {
             let url =
-                "https://api.themoviedb.org/3/search/movie?api_key=" + API_KEY +
+                "https://api.themoviedb.org/3/search/" + type +
+                "?api_key=" + API_KEY +
                 "&query=" + search +
                 "&page=" + this.state.page +
                 "&include_adult=false"
@@ -56,6 +52,7 @@ class FindList extends Component {
     }
 
     render() {
+        const { type } = this.props.route.params
         return (
             <View style={styles.container}>
                 <View>
@@ -65,9 +62,9 @@ class FindList extends Component {
                                 poster_path={item.poster_path}
                                 title={item.title}
                                 id={item.id}
-                                title={item.title}
+                                title={type === "movie" ? item.title : item.name}
                                 navigation={this.props.navigation}
-                                type="movie"
+                                type={type}
                             />
                         )}
                         data={this.state.results}
