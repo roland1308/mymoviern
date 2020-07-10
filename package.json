@@ -17,6 +17,7 @@
     "axios": "^0.19.2",
     "expo": "~38.0.8",
     "expo-status-bar": "^1.0.2",
+    "logkitty": "^0.7.1",
     "material-design-icons": "^3.0.1",
     "react": "~16.11.0",
     "react-dom": "~16.11.0",
