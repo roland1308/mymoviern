@@ -7,7 +7,6 @@ import {
     FlatList,
     TouchableHighlight,
     Image,
-    Alert,
     Button,
     Keyboard
 } from 'react-native'
@@ -88,6 +87,7 @@ class List extends Component {
 
     render() {
         const navigation = this.props.navigation
+        const { search } = this.state
         return (
             <View style={styles.container}>
                 <TextInput
@@ -95,55 +95,56 @@ class List extends Component {
                     placeholder="Search for ..."
                     onChangeText={text => this.updateSearch(text)}
                     value={this.state.search}
-                    // onSubmitEditing={() => navigation.navigate('Search Result', { search: this.state.search })}
                     onSubmitEditing={() => Keyboard.dismiss()}
                 />
                 <View style={styles.buttons}>
                     <Button
                         title="Movies"
-                        onPress={() => navigation.navigate('Search Result', { search: this.state.search, type: "movie" })}
+                        onPress={() => (search !== "") && navigation.navigate('Search Result', { search, type: "movie" })}
                     />
                     <Button
                         title="Series"
-                        onPress={() => navigation.navigate('Search Result', { search: this.state.search, type: "tv" })}
+                        onPress={() => (search !== "") && navigation.navigate('Search Result', { search, type: "tv" })}
                     />
                 </View>
-                <Separator />
                 <View style={styles.list}>
-                    <Text style={styles.title}>Top 20 TMDB Films</Text>
-                    <FlatList
-                        horizontal
-                        ItemSeparatorComponent={() => <View style={{ width: 5 }} />}
-                        renderItem={({ item }) => (
-                            <Item
-                                poster_path={item.poster_path}
-                                id={item.id}
-                                navigation={this.props.navigation}
-                                type="movie"
-                            />
-                        )}
-                        data={this.state.films}
-                        keyExtractor={item => item.id.toString()}
-                    />
-                </View>
-                <Separator />
-                <View style={styles.list}>
-                    <Text style={styles.title}>Top 20 TMDB Series</Text>
-                    <FlatList
-                        horizontal
-                        ItemSeparatorComponent={() => <View style={{ width: 5 }} />}
-                        renderItem={({ item }) => (
-                            <Item
-                                poster_path={item.poster_path}
-                                id={item.id}
-                                title={item.name}
-                                navigation={this.props.navigation}
-                                type="tv"
-                            />
-                        )}
-                        data={this.state.series}
-                        keyExtractor={item => item.id.toString()}
-                    />
+                    <Separator />
+                    <View>
+                        <Text style={styles.title}>Top 20 TMDB Films</Text>
+                        <FlatList
+                            horizontal
+                            ItemSeparatorComponent={() => <View style={{ width: 5 }} />}
+                            renderItem={({ item }) => (
+                                <Item
+                                    poster_path={item.poster_path}
+                                    id={item.id}
+                                    navigation={this.props.navigation}
+                                    type="movie"
+                                />
+                            )}
+                            data={this.state.films}
+                            keyExtractor={item => item.id.toString()}
+                        />
+                    </View>
+                    <Separator />
+                    <View>
+                        <Text style={styles.title}>Top 20 TMDB Series</Text>
+                        <FlatList
+                            horizontal
+                            ItemSeparatorComponent={() => <View style={{ width: 5 }} />}
+                            renderItem={({ item }) => (
+                                <Item
+                                    poster_path={item.poster_path}
+                                    id={item.id}
+                                    title={item.name}
+                                    navigation={this.props.navigation}
+                                    type="tv"
+                                />
+                            )}
+                            data={this.state.series}
+                            keyExtractor={item => item.id.toString()}
+                        />
+                    </View>
                 </View>
             </View>
         )
@@ -156,8 +157,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#333',
     },
     list: {
-        height: 207,
-
+        flex: 15,
     },
     title: {
         color: "white",
@@ -165,6 +165,7 @@ const styles = StyleSheet.create({
         marginLeft: 15
     },
     search: {
+        flex: 1,
         height: 40,
         width: "80%",
         alignSelf: "center",
@@ -177,6 +178,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#555"
     },
     buttons: {
+        flex: 1,
         flexDirection: "row",
         justifyContent: "space-evenly"
     }
