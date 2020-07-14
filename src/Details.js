@@ -8,6 +8,7 @@ import {
 
 import { API_KEY } from 'react-native-dotenv'
 import { ScrollView } from 'react-native-gesture-handler';
+import { connect } from 'react-redux';
 
 const axios = require("axios");
 
@@ -22,7 +23,7 @@ class Details extends Component {
 
     componentDidMount() {
         const { detailsId, type } = this.props.route.params
-        let uri = "https://api.themoviedb.org/3/" + type + "/" + detailsId + "?api_key=" + API_KEY + "&language=en-US"
+        let uri = "https://api.themoviedb.org/3/" + type + "/" + detailsId + "?api_key=" + API_KEY + "&language=" + this.props.general.language
         this.getDetails(uri).done()
     }
 
@@ -72,4 +73,7 @@ const styles = StyleSheet.create({
     }
 })
 
-export default Details
+const mapStateToProps = state => ({
+    general: state.general,
+});
+export default connect(mapStateToProps)(Details)

@@ -7,6 +7,8 @@ import {
 import { API_KEY } from 'react-native-dotenv'
 import SearchResult from './components/SearchResult'
 
+import { connect } from 'react-redux';
+
 const axios = require("axios");
 
 class FindList extends Component {
@@ -17,7 +19,6 @@ class FindList extends Component {
             results: {
                 page: 1
             },
-            language: "en-US",
             page: 1,
         }
     }
@@ -32,6 +33,7 @@ class FindList extends Component {
             let url =
                 "https://api.themoviedb.org/3/search/" + type +
                 "?api_key=" + API_KEY +
+                "&language=" + this.props.general.language +
                 "&query=" + search +
                 "&page=" + this.state.page +
                 "&include_adult=false"
@@ -118,5 +120,7 @@ const styles = StyleSheet.create({
         padding: 5
     }
 })
-
-export default FindList
+const mapStateToProps = state => ({
+    general: state.general,
+});
+export default connect(mapStateToProps)(FindList)
