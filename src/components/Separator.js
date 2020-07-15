@@ -12,7 +12,7 @@ function Separator() {
 
 const styles = StyleSheet.create({
     separator: {
-        marginVertical: 8,
+        margin: 0,
         borderBottomColor: '#737373',
         borderBottomWidth: StyleSheet.hairlineWidth,
     },

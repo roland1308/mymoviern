@@ -13,6 +13,7 @@ import Separator from './components/Separator';
 import { Button, Layout, MenuItem, OverflowMenu, Card, Modal, Text } from '@ui-kitten/components';
 import { connect } from 'react-redux';
 import { setLanguage } from '../store/actions/generalActions';
+import { TopNavigationAccessoriesShowcase } from './TopBar';
 
 const axios = require("axios");
 
@@ -151,9 +152,9 @@ class List extends Component {
                         onPress={() => (search !== "") && navigation.navigate('Search Result', { search, type: "tv" })}
                     >Series</Button>
                 </View>
-                <View style={styles.list}>
-                    <Separator />
-                    <View>
+                <Separator />
+                <View>
+                    <View style={styles.list}>
                         <Text style={styles.title}>Top 20 TMDB Films</Text>
                         <FlatList
                             horizontal
@@ -171,7 +172,7 @@ class List extends Component {
                         />
                     </View>
                     <Separator />
-                    <View>
+                    <View style={styles.list}>
                         <Text style={styles.title}>Top 20 TMDB Series</Text>
                         <FlatList
                             horizontal
@@ -190,30 +191,6 @@ class List extends Component {
                         />
                     </View>
                     <Separator />
-                    <Layout style={styles.bottom} level='1'>
-                        <OverflowMenu
-                            anchor={this.renderToggleButton}
-                            visible={visible}
-                            selectedIndex={null}
-                            onSelect={this.onSelect}
-                            onBackdropPress={() => this.setVisible(false)}>
-                            <MenuItem title='Login' />
-                            <MenuItem title='Register' />
-                            <MenuItem title='Language' />
-                        </OverflowMenu>
-                        <Modal
-                            visible={modalVisible}
-                            backdropStyle={styles.backdrop}
-                            onBackdropPress={() => this.setModalVisible(false)}>
-                            <Card disabled={true}>
-                                <Button size='small' appearance='outline' onPress={() => this.setLang('en-US')} disabled={language === "en-US"}>English</Button>
-                                <Separator />
-                                <Button size='small' appearance='outline' onPress={() => this.setLang('es')} disabled={language === "es"}>Español</Button>
-                                <Separator />
-                                <Button size='small' appearance='outline' onPress={() => this.setLang('it')} disabled={language === "it"}>Italiano</Button>
-                            </Card>
-                        </Modal>
-                    </Layout>
                 </View>
             </View>
         )
@@ -222,19 +199,18 @@ class List extends Component {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: '#333',
+        height: "100%",
+        backgroundColor: "#222"
     },
     list: {
-        flex: 15,
+        marginBottom: 5,
+        color: "white"
     },
     title: {
-        color: "white",
         fontSize: 20,
         marginLeft: 15
     },
     search: {
-        flex: 1,
         height: 40,
         width: "80%",
         alignSelf: "center",
@@ -242,25 +218,15 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         borderWidth: 1,
         padding: 5,
-        color: "white",
         margin: 5,
-        backgroundColor: "#555"
+        backgroundColor: "#555",
+        color: "white"
     },
     buttons: {
-        flex: 1,
+        height: 40,
         flexDirection: "row",
-        justifyContent: "space-evenly"
-    },
-    bottom: {
-        minHeight: 144,
-        justifyContent: 'center',
-        alignItems: 'center',
-        flex: 1,
-        backgroundColor: "#333"
-
-    },
-    backdrop: {
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: "space-evenly",
+        marginBottom: 5
     },
 })
 const mapStateToProps = state => ({

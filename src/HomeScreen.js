@@ -11,20 +11,18 @@ const Stack = createStackNavigator();
 
 export default function App() {
     return (
-        <NavigationContainer>
-            <StatusBar barstyle="dark-content" backgroundColor="white" hidden={true} />
+        <NavigationContainer
+            documentTitle={{
+                enabled: 'false'
+            }}>
+            <StatusBar hidden={true} />
             <Stack.Navigator
                 screenOptions={{
-                    headerStyle: { backgroundColor: "#000" },
-                    headerTintColor: "white",
-                    headerTitleStyle: { fontWeight: "bold" },
+                    headerShown: false
                 }}>
                 <Stack.Screen
                     name="Home"
                     component={List}
-                    options={{
-                        title: 'My Movies',
-                    }}
                 />
                 <Stack.Screen name="Details" component={Details} />
                 <Stack.Screen name="Search Result" component={FindList} />

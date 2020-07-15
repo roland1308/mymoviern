@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "mymoviern",
+    "name": "My Movies DB",
     "slug": "mymoviern",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -17,7 +17,11 @@
       "**/*"
     ],
     "ios": {
+      "bundleIdentifier": "com.example.myMovies",
       "supportsTablet": true
+    },
+    "android": {
+      "package": "com.example.my_movies",
     },
     "web": {
       "favicon": "./assets/favicon.png"

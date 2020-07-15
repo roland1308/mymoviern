@@ -53,7 +53,7 @@ class Details extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#333"
+        backgroundColor: "#222"
     },
     list: {
         height: 207,
