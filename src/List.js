@@ -1,7 +1,5 @@
 import React, { Component } from 'react'
 import {
-    TextInput,
-    View,
     StyleSheet,
     FlatList,
     TouchableHighlight,
@@ -10,10 +8,9 @@ import {
 } from 'react-native'
 import { API_KEY } from 'react-native-dotenv'
 import Separator from './components/Separator';
-import { Button, Layout, MenuItem, OverflowMenu, Card, Modal, Text } from '@ui-kitten/components';
+import { Button, Layout, Text, Input } from '@ui-kitten/components';
 import { connect } from 'react-redux';
-import { setLanguage } from '../store/actions/generalActions';
-import { TopNavigationAccessoriesShowcase } from './TopBar';
+import { setLanguage, isBackVisible } from '../store/actions/generalActions';
 
 const axios = require("axios");
 
@@ -44,12 +41,11 @@ class List extends Component {
             video: false,
             page: 1,
             search: "",
-            visible: false,
-            modalVisible: false
         }
     }
 
     componentDidMount() {
+        this.props.dispatch(isBackVisible("off"))
         this.getList()
     }
 
@@ -94,71 +90,38 @@ class List extends Component {
         this.setState({ search })
     }
 
-    setVisible(status) {
-        this.setState({
-            visible: status
-        })
-    }
-
-    setModalVisible(status) {
-        this.setState({
-            modalVisible: status
-        })
-    }
-
-    onSelect = (index) => {
-        this.setVisible(false);
-        switch (index.row) {
-            case 2:
-                this.setState({
-                    modalVisible: true
-                })
-                break;
-
-            default:
-                break;
-        }
-    };
-
-    renderToggleButton = () => (
-        <Button onPress={() => this.setVisible(true)}>
-            MENU
-        </Button>
-    );
-
     setLang(lang) {
         this.props.dispatch(setLanguage(lang));
-        this.setModalVisible(false)
     }
 
     render() {
         const navigation = this.props.navigation
-        const { search, modalVisible, visible } = this.state
-        const { language } = this.props.general
+        const { search } = this.state
+        const { language, backIs } = this.props.general
         return (
-            <View style={styles.container}>
-                <TextInput
+            <Layout style={styles.container}>
+                <Input
                     style={styles.search}
                     placeholder="Search for ..."
                     onChangeText={text => this.updateSearch(text)}
                     value={this.state.search}
                     onSubmitEditing={() => Keyboard.dismiss()}
                 />
-                <View style={styles.buttons}>
+                <Layout style={styles.buttons}>
                     <Button
                         onPress={() => (search !== "") && navigation.navigate('Search Result', { search, type: "movie" })}
                     >Movies</Button>
                     <Button
                         onPress={() => (search !== "") && navigation.navigate('Search Result', { search, type: "tv" })}
                     >Series</Button>
-                </View>
+                </Layout>
                 <Separator />
-                <View>
-                    <View style={styles.list}>
+                <Layout>
+                    <Layout style={styles.list}>
                         <Text style={styles.title}>Top 20 TMDB Films</Text>
                         <FlatList
                             horizontal
-                            ItemSeparatorComponent={() => <View style={{ width: 5 }} />}
+                            ItemSeparatorComponent={() => <Layout style={{ width: 5 }} />}
                             renderItem={({ item }) => (
                                 <Item
                                     poster_path={item.poster_path}
@@ -170,13 +133,13 @@ class List extends Component {
                             data={this.state.films}
                             keyExtractor={item => item.id.toString()}
                         />
-                    </View>
+                    </Layout>
                     <Separator />
-                    <View style={styles.list}>
+                    <Layout style={styles.list}>
                         <Text style={styles.title}>Top 20 TMDB Series</Text>
                         <FlatList
                             horizontal
-                            ItemSeparatorComponent={() => <View style={{ width: 5 }} />}
+                            ItemSeparatorComponent={() => <Layout style={{ width: 5 }} />}
                             renderItem={({ item }) => (
                                 <Item
                                     poster_path={item.poster_path}
@@ -189,10 +152,10 @@ class List extends Component {
                             data={this.state.series}
                             keyExtractor={item => item.id.toString()}
                         />
-                    </View>
+                    </Layout>
                     <Separator />
-                </View>
-            </View>
+                </Layout>
+            </Layout>
         )
     }
 }
@@ -200,7 +163,6 @@ class List extends Component {
 const styles = StyleSheet.create({
     container: {
         height: "100%",
-        backgroundColor: "#222"
     },
     list: {
         marginBottom: 5,
@@ -214,13 +176,8 @@ const styles = StyleSheet.create({
         height: 40,
         width: "80%",
         alignSelf: "center",
-        borderColor: 'gray',
         borderRadius: 10,
-        borderWidth: 1,
-        padding: 5,
         margin: 5,
-        backgroundColor: "#555",
-        color: "white"
     },
     buttons: {
         height: 40,

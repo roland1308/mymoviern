@@ -1,13 +1,13 @@
 import React, { Component } from 'react'
 import {
-    View,
     StyleSheet,
     FlatList,
 } from 'react-native'
+import { Layout } from '@ui-kitten/components';
 import { API_KEY } from 'react-native-dotenv'
 import SearchResult from './components/SearchResult'
-
 import { connect } from 'react-redux';
+import { isBackVisible } from '../store/actions/generalActions';
 
 const axios = require("axios");
 
@@ -25,6 +25,13 @@ class FindList extends Component {
 
     componentDidMount() {
         this.getList()
+        this.props.dispatch(isBackVisible("on"))
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.general.isBackButton != this.props.general.isBackButton) {
+            this.props.navigation.goBack()
+        }
     }
 
     async getList() {
@@ -56,8 +63,8 @@ class FindList extends Component {
     render() {
         const { type } = this.props.route.params
         return (
-            <View style={styles.container}>
-                <View>
+            <Layout style={styles.container}>
+                <Layout>
                     <FlatList
                         renderItem={({ item }) => (
                             <SearchResult
@@ -71,12 +78,12 @@ class FindList extends Component {
                         )}
                         data={this.state.results}
                         keyExtractor={item => item.id.toString()}
-                        ItemSeparatorComponent={() => <View style={{ height: 5 }} />}
+                        ItemSeparatorComponent={() => <Layout style={{ height: 5 }} />}
                         onEndReachedThreshold="0.5"
                         onEndReached={this.loadMoreData}
                     />
-                </View>
-            </View>
+                </Layout>
+            </Layout>
         )
     }
 }
@@ -85,7 +92,6 @@ const styles = StyleSheet.create({
     container: {
         width: "100%",
         flex: 1,
-        backgroundColor: '#222',
         padding: 10
     },
 })

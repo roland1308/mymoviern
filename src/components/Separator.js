@@ -1,12 +1,11 @@
 import React from 'react'
-import {
-    View,
-    StyleSheet,
-} from 'react-native'
+import { StyleSheet } from 'react-native'
+import { Layout } from '@ui-kitten/components';
+
 
 function Separator() {
     return (
-        <View style={styles.separator} />
+        <Layout style={styles.separator} />
     )
 }
 

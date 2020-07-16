@@ -1,1 +1,4 @@
 export const SET_LANGUAGE = 'SET_LANGUAGE'
+export const TOGGLE_BACK = 'TOGGLE_BACK'
+export const IS_BACK_VISIBLE = 'IS_BACK_VISIBLE'
+export const SET_SUBTITLE = 'SET_SUBTITLE'

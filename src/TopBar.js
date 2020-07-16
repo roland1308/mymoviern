@@ -1,14 +1,16 @@
-import React from 'react';
+import React, { Component } from 'react'
 import { Icon, Layout, MenuItem, OverflowMenu, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
 import { StyleSheet } from 'react-native';
+import { toggleBack } from '../store/actions/generalActions';
+import { connect } from 'react-redux';
 
-const BackIcon = (props) => (
-    <Icon {...props} name='arrow-back' />
+const HomeIcon = (props) => (
+    <Icon {...props} name='home' />
 );
 
-const EditIcon = (props) => (
-    <Icon {...props} name='edit' />
-);
+// const EditIcon = (props) => (
+//     <Icon {...props} name='edit' />
+// );
 
 const MenuIcon = (props) => (
     <Icon {...props} name='more-vertical' />
@@ -22,46 +24,58 @@ const LogoutIcon = (props) => (
     <Icon {...props} name='log-out' />
 );
 
-export const TopBar = () => {
+class TopBar extends Component {
+    constructor(props) {
+        super(props)
+        this.toggleBack = this.toggleBack.bind(this);
+        this.state = {
+            menuVisible: false
+        }
+    }
 
-    const [menuVisible, setMenuVisible] = React.useState(false);
+    toggleMenu = () => {
+        this.setState({
+            menuVisible: !this.state.menuVisible
+        })
+    }
 
-    const toggleMenu = () => {
-        setMenuVisible(!menuVisible);
-    };
-
-    const renderMenuAction = () => (
-        <TopNavigationAction icon={MenuIcon} onPress={toggleMenu} />
+    renderMenuAction = () => (
+        <TopNavigationAction icon={MenuIcon} onPress={this.toggleMenu} />
     );
 
-    const renderRightActions = () => (
+    renderRightActions = () => (
         <React.Fragment>
-            <TopNavigationAction icon={EditIcon} />
+            {/* <TopNavigationAction icon={EditIcon} /> */}
             <OverflowMenu
-                anchor={renderMenuAction}
-                visible={menuVisible}
-                onBackdropPress={toggleMenu}>
+                anchor={this.renderMenuAction}
+                visible={this.state.menuVisible}
+                onBackdropPress={this.toggleMenu}>
                 <MenuItem accessoryLeft={InfoIcon} title='About' />
                 <MenuItem accessoryLeft={LogoutIcon} title='Logout' />
             </OverflowMenu>
         </React.Fragment>
     );
 
-    const renderBackAction = () => (
-        <TopNavigationAction icon={BackIcon} />
-    );
+    toggleBack() {
+        this.props.dispatch(toggleBack());
+    }
 
-    return (
-        <Layout style={styles.container} level='1'>
-            <TopNavigation
-                alignment='center'
-                title='My Movie DB'
-                subtitle='Home'
-                accessoryLeft={renderBackAction}
-                accessoryRight={renderRightActions}
-            />
-        </Layout>
+    renderHomeAction = () => (
+        <TopNavigationAction icon={HomeIcon} onPress={this.toggleBack} />
     );
+    render() {
+        const { backIs } = this.props.general
+        return (
+            <Layout style={styles.container} level='1'>
+                <TopNavigation
+                    alignment='center'
+                    title='My Movie DB'
+                    accessoryLeft={backIs === "on" && this.renderHomeAction}
+                    accessoryRight={this.renderRightActions}
+                />
+            </Layout>
+        );
+    }
 };
 
 const styles = StyleSheet.create({
@@ -70,4 +84,7 @@ const styles = StyleSheet.create({
     },
 });
 
-export default TopBar
+const mapStateToProps = state => ({
+    general: state.general,
+});
+export default connect(mapStateToProps)(TopBar)
