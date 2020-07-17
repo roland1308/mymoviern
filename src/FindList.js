@@ -2,12 +2,13 @@ import React, { Component } from 'react'
 import {
     StyleSheet,
     FlatList,
+    BackHandler
 } from 'react-native'
 import { Layout } from '@ui-kitten/components';
 import { API_KEY } from 'react-native-dotenv'
 import SearchResult from './components/SearchResult'
 import { connect } from 'react-redux';
-import { isBackVisible } from '../store/actions/generalActions';
+import { setHomeBar, setOtherBar } from '../store/actions/generalActions';
 
 const axios = require("axios");
 
@@ -25,13 +26,18 @@ class FindList extends Component {
 
     componentDidMount() {
         this.getList()
-        this.props.dispatch(isBackVisible("on"))
+        this.props.dispatch(setOtherBar())
     }
 
     componentDidUpdate(prevProps, prevState) {
         if (prevProps.general.isBackButton != this.props.general.isBackButton) {
-            this.props.navigation.goBack()
+            this.props.dispatch(setHomeBar())
+            this.props.navigation.navigate("Home")
         }
+    }
+
+    componentWillUnmount() {
+        this.props.dispatch(setHomeBar())
     }
 
     async getList() {

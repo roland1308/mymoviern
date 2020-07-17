@@ -10,7 +10,7 @@ import { API_KEY } from 'react-native-dotenv'
 import Separator from './components/Separator';
 import { Button, Layout, Text, Input } from '@ui-kitten/components';
 import { connect } from 'react-redux';
-import { setLanguage, isBackVisible } from '../store/actions/generalActions';
+import { setHomeBar } from '../store/actions/generalActions';
 
 const axios = require("axios");
 
@@ -19,7 +19,7 @@ function Item({ id, poster_path, type, navigation }) {
         <TouchableHighlight
             underlayColor="#DDDDDD"
             onPress={() => {
-                navigation.navigate('Details', { detailsId: id, type })
+                navigation.navigate('Details', { detailsId: id, type, source: "list" })
             }}>
             <Image
                 style={{ width: 120, height: 180 }}
@@ -45,7 +45,7 @@ class List extends Component {
     }
 
     componentDidMount() {
-        this.props.dispatch(isBackVisible("off"))
+        this.props.dispatch(setHomeBar())
         this.getList()
     }
 
@@ -90,14 +90,9 @@ class List extends Component {
         this.setState({ search })
     }
 
-    setLang(lang) {
-        this.props.dispatch(setLanguage(lang));
-    }
-
     render() {
         const navigation = this.props.navigation
         const { search } = this.state
-        const { language, backIs } = this.props.general
         return (
             <Layout style={styles.container}>
                 <Input

@@ -12,12 +12,12 @@ function SearchResult({ id, poster_path, title, type, navigation }) {
             <TouchableHighlight
                 underlayColor="#DDDDDD"
                 onPress={() => {
-                    navigation.navigate('Details', { detailsId: id, type })
+                    navigation.navigate('Details', { detailsId: id, type, source: "search" })
                 }}>
                 <Layout style={styles.grid}>
                     <Image
                         style={{ width: 60, height: 90 }}
-                        source={{ uri: "https://image.tmdb.org/t/p/w154" + poster_path }}
+                        source={poster_path == null ? require("../../assets/noPoster.png") : { uri: "https://image.tmdb.org/t/p/w154" + poster_path }}
                     />
                     <Text style={styles.title}>{title}</Text>
                 </Layout>

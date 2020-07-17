@@ -1,16 +1,21 @@
 import React, { Component } from 'react'
 import { Icon, Layout, MenuItem, OverflowMenu, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
 import { StyleSheet } from 'react-native';
-import { toggleBack } from '../store/actions/generalActions';
+import { toggleBack, setLanguage } from '../store/actions/generalActions';
 import { connect } from 'react-redux';
+import Separator from './components/Separator';
 
 const HomeIcon = (props) => (
     <Icon {...props} name='home' />
 );
 
-// const EditIcon = (props) => (
-//     <Icon {...props} name='edit' />
-// );
+const GlobeIcon = (props) => (
+    <Icon {...props} name='globe' />
+);
+
+const FlagIcon = (props) => (
+    <Icon {...props} name='flag' />
+);
 
 const MenuIcon = (props) => (
     <Icon {...props} name='more-vertical' />
@@ -28,8 +33,10 @@ class TopBar extends Component {
     constructor(props) {
         super(props)
         this.toggleBack = this.toggleBack.bind(this);
+        this.setLanguage = this.setLanguage.bind(this);
         this.state = {
-            menuVisible: false
+            menuVisible: false,
+            languageVisible: false,
         }
     }
 
@@ -39,13 +46,36 @@ class TopBar extends Component {
         })
     }
 
+    toggleLanguage = () => {
+        this.setState({
+            languageVisible: !this.state.languageVisible
+        })
+    }
+    setLanguage(lang) {
+        this.toggleLanguage()
+        this.props.dispatch(setLanguage(lang));
+    }
+
     renderMenuAction = () => (
         <TopNavigationAction icon={MenuIcon} onPress={this.toggleMenu} />
     );
 
+    renderLanguageAction = () => (
+        <TopNavigationAction icon={GlobeIcon} onPress={this.toggleLanguage} />
+    );
+
     renderRightActions = () => (
         <React.Fragment>
-            {/* <TopNavigationAction icon={EditIcon} /> */}
+            {this.props.general.worldIs === "on" &&
+                <OverflowMenu
+                    anchor={this.renderLanguageAction}
+                    visible={this.state.languageVisible}
+                    onBackdropPress={this.props.general.worldIs === "on" && this.toggleLanguage}>
+                    <MenuItem disabled={this.props.general.language === "en-US"} accessoryLeft={FlagIcon} title='English' onPress={() => this.setLanguage("en-US")} />
+                    <MenuItem disabled={this.props.general.language === "it"} accessoryLeft={FlagIcon} title='Italiano' onPress={() => this.setLanguage("it")} />
+                    <MenuItem disabled={this.props.general.language === "es"} accessoryLeft={FlagIcon} title='Español' onPress={() => this.setLanguage("es")} />
+                </OverflowMenu>
+            }
             <OverflowMenu
                 anchor={this.renderMenuAction}
                 visible={this.state.menuVisible}
