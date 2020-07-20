@@ -13,7 +13,7 @@ import { setOtherBar, setHomeBar } from '../store/actions/generalActions';
 
 const axios = require("axios");
 
-class Details extends Component {
+class TvDetails extends Component {
     constructor(props) {
         super(props)
 
@@ -93,4 +93,4 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => ({
     general: state.general,
 });
-export default connect(mapStateToProps)(Details)
+export default connect(mapStateToProps)(TvDetails)

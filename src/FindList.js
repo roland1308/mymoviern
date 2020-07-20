@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import {
     StyleSheet,
     FlatList,
-    BackHandler
 } from 'react-native'
 import { Layout } from '@ui-kitten/components';
 import { API_KEY } from 'react-native-dotenv'

@@ -8,7 +8,7 @@ import {
 } from 'react-native'
 import { API_KEY } from 'react-native-dotenv'
 import Separator from './components/Separator';
-import { Button, Layout, Text, Input } from '@ui-kitten/components';
+import { Button, Layout, Text, Input, Spinner } from '@ui-kitten/components';
 import { connect } from 'react-redux';
 import { setHomeBar } from '../store/actions/generalActions';
 
@@ -19,7 +19,11 @@ function Item({ id, poster_path, type, navigation }) {
         <TouchableHighlight
             underlayColor="#DDDDDD"
             onPress={() => {
-                navigation.navigate('Details', { detailsId: id, type, source: "list" })
+                if (type === 'movie') {
+                    navigation.navigate('Movie Details', { detailsId: id, source: "list" })
+                } else {
+                    navigation.navigate('Tv Details', { detailsId: id, type, source: "list" })
+                }
             }}>
             <Image
                 style={{ width: 120, height: 180 }}
@@ -41,6 +45,7 @@ class List extends Component {
             video: false,
             page: 1,
             search: "",
+            isLoading: true,
         }
     }
 
@@ -77,9 +82,9 @@ class List extends Component {
                 "&page=" + this.state.page
             response = await axios.get(url);
             this.setState({
-                series: response.data.results
+                series: response.data.results,
+                isLoading: false
             })
-
         } catch (error) {
             console.log(error);
         }
@@ -91,7 +96,13 @@ class List extends Component {
     }
 
     render() {
-        const navigation = this.props.navigation
+        if (this.state.isLoading) {
+            return (
+                <Layout style={{ flex: 1, alignItems: 'center', paddingTop: 50 }}>
+                    <Spinner size='giant' />
+                </Layout>
+            )
+        } const navigation = this.props.navigation
         const { search } = this.state
         return (
             <Layout style={styles.container}>

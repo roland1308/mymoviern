@@ -3,7 +3,6 @@ import { Icon, Layout, MenuItem, OverflowMenu, TopNavigation, TopNavigationActio
 import { StyleSheet } from 'react-native';
 import { toggleBack, setLanguage } from '../store/actions/generalActions';
 import { connect } from 'react-redux';
-import Separator from './components/Separator';
 
 const HomeIcon = (props) => (
     <Icon {...props} name='home' />
