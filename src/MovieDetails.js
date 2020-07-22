@@ -11,6 +11,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 import { setOtherBar, setHomeBar } from '../store/actions/generalActions';
 import Separator from './components/Separator';
+import FormatDate from './components/FormatDate';
 
 const axios = require("axios");
 
@@ -59,13 +60,6 @@ class MovieDetails extends Component {
         // console.log(response.data.credits.cast.slice(0, 5));
     }
 
-    formatDate(input) {
-        var datePart = input.match(/\d+/g),
-            year = datePart[0].substring(0),
-            month = datePart[1], day = datePart[2];
-        return day + '/' + month + '/' + year;
-    }
-
     render() {
         if (this.state.isLoading) {
             return (
@@ -74,11 +68,11 @@ class MovieDetails extends Component {
                 </Layout>
             )
         }
-        const { title, name, backdrop_path, overview, release_date, tagline, homepage, credits } = this.state.details
-        const date = this.formatDate(release_date)
+        const { title, backdrop_path, overview, release_date, tagline, homepage, credits } = this.state.details
+        const date = FormatDate(release_date)
         return (
             <Layout style={styles.container}>
-                <Text style={styles.title}>{title}{name}</Text>
+                <Text style={styles.title}>{title}</Text>
                 <Separator />
                 <Image
                     style={{ width: "100%", flex: 0.5 }}

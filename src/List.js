@@ -22,7 +22,7 @@ function Item({ id, poster_path, type, navigation }) {
                 if (type === 'movie') {
                     navigation.navigate('Movie Details', { detailsId: id, source: "list" })
                 } else {
-                    navigation.navigate('Tv Details', { detailsId: id, type, source: "list" })
+                    navigation.navigate('Tv Details', { detailsId: id, source: "list" })
                 }
             }}>
             <Image

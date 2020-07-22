@@ -12,7 +12,11 @@ function SearchResult({ id, poster_path, title, type, navigation }) {
             <TouchableHighlight
                 underlayColor="#DDDDDD"
                 onPress={() => {
-                    navigation.navigate('Details', { detailsId: id, type, source: "search" })
+                    if (type === 'movie') {
+                        navigation.navigate('Movie Details', { detailsId: id, source: "search" })
+                    } else {
+                        navigation.navigate('Tv Details', { detailsId: id, source: "search" })
+                    }
                 }}>
                 <Layout style={styles.grid}>
                     <Image
