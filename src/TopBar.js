@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Icon, Layout, MenuItem, OverflowMenu, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
+import { Icon, Layout, MenuItem, OverflowMenu, TopNavigation, TopNavigationAction, Button, Card, Modal, Text } from '@ui-kitten/components';
 import { StyleSheet } from 'react-native';
 import { toggleBack, setLanguage } from '../store/actions/generalActions';
 import { connect } from 'react-redux';
@@ -24,10 +24,6 @@ const InfoIcon = (props) => (
     <Icon {...props} name='info' />
 );
 
-const LogoutIcon = (props) => (
-    <Icon {...props} name='log-out' />
-);
-
 class TopBar extends Component {
     constructor(props) {
         super(props)
@@ -36,6 +32,7 @@ class TopBar extends Component {
         this.state = {
             menuVisible: false,
             languageVisible: false,
+            modalVisible: false,
         }
     }
 
@@ -50,6 +47,14 @@ class TopBar extends Component {
             languageVisible: !this.state.languageVisible
         })
     }
+
+    toggleModal = () => {
+        this.setState({
+            modalVisible: !this.state.modalVisible,
+            menuVisible: false,
+        })
+    }
+
     setLanguage(lang) {
         this.toggleLanguage()
         this.props.dispatch(setLanguage(lang));
@@ -79,8 +84,8 @@ class TopBar extends Component {
                 anchor={this.renderMenuAction}
                 visible={this.state.menuVisible}
                 onBackdropPress={this.toggleMenu}>
-                <MenuItem accessoryLeft={InfoIcon} title='About' />
-                <MenuItem accessoryLeft={LogoutIcon} title='Logout' />
+                <MenuItem accessoryLeft={InfoIcon} title='About' onPress={() => this.toggleModal()} />
+                {/* <MenuItem accessoryLeft={LoginIcon} title='Login' /> */}
             </OverflowMenu>
         </React.Fragment>
     );
@@ -94,14 +99,28 @@ class TopBar extends Component {
     );
     render() {
         const { backIs } = this.props.general
+        const { modalVisible } = this.state
         return (
             <Layout style={styles.container} level='1'>
                 <TopNavigation
                     alignment='center'
-                    title='My Movie DB'
+                    title='My Movies DB'
                     accessoryLeft={backIs === "on" && this.renderHomeAction}
                     accessoryRight={this.renderRightActions}
                 />
+                <Modal
+                    visible={modalVisible}
+                    backdropStyle={styles.backdrop}
+                    onBackdropPress={() => this.toggleModal()}>
+                    <Card disabled={true}>
+                        <Text>My Movies DB</Text>
+                        <Text>Version 1.0</Text>
+                        <Text>Copyright 2020 Renato</Text>
+                        <Button style={{ marginTop: 20 }} status='success' onPress={() => this.toggleModal()}>
+                            DISMISS
+                        </Button>
+                    </Card>
+                </Modal>
             </Layout>
         );
     }
@@ -110,6 +129,9 @@ class TopBar extends Component {
 const styles = StyleSheet.create({
     container: {
         minHeight: 56,
+    },
+    backdrop: {
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
 });
 

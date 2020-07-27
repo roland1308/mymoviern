@@ -21,7 +21,8 @@
       "supportsTablet": true
     },
     "android": {
-      "package": "com.example.my_movies"
+      "package": "com.example.my_movies",
+      "permissions": []
     },
     "web": {
       "favicon": "./assets/favicon.png"

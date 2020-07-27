@@ -91,6 +91,8 @@ class TvDetails extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        padding: 5,
+        paddingTop: 10,
     },
     list: {
         height: 207,
