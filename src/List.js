@@ -11,11 +11,12 @@ import {
 } from 'react-native'
 import { API_KEY } from 'react-native-dotenv'
 import Separator from './components/Separator';
-import { Button, Layout, Text, Input, Icon, Modal, Card, Menu, MenuItem } from '@ui-kitten/components';
+import { Button, Layout, Text, Input, Icon, Modal, Card, Menu, MenuItem, Spinner } from '@ui-kitten/components';
 import { connect } from 'react-redux';
 import { setHomeBar } from '../store/actions/generalActions';
 import { ScrollView } from 'react-native-gesture-handler';
-import { setLanguage } from '../store/actions/generalActions';
+import { setLanguage, setMessage } from '../store/actions/generalActions';
+import { addUser } from '../store/actions/userActions';
 
 
 if (Platform.OS === 'android') {
@@ -66,12 +67,10 @@ class List extends Component {
             search: "",
             isLoginVisible: false,
             isRegisterVisible: false,
-            username: "",
+            userName: "",
             password: "",
             chkPassword: "",
             secureTextEntry: true,
-            error: false,
-            errorMsg: "",
             selectedIndex: { "row": 0 }
         }
     }
@@ -157,7 +156,7 @@ class List extends Component {
                 property: LayoutAnimation.Properties.opacity
             }
         })
-        this.setState({ isLoginVisible: mode, username: "", password: "" })
+        this.setState({ isLoginVisible: mode, userName: "", password: "" })
     }
 
     setisRegisterVisible(mode) {
@@ -172,7 +171,7 @@ class List extends Component {
                 property: LayoutAnimation.Properties.opacity
             }
         })
-        this.setState({ isRegisterVisible: mode, username: "", password: "", chkPassword: "" })
+        this.setState({ isRegisterVisible: mode, userName: "", password: "", chkPassword: "" })
     }
 
     toggleSecureEntry = () => {
@@ -186,7 +185,7 @@ class List extends Component {
     );
 
     setUsername(name) {
-        this.setState({ username: name })
+        this.setState({ userName: name })
     }
 
     setPassword(pw) {
@@ -198,40 +197,31 @@ class List extends Component {
     }
 
     logUser = () => {
-        console.log(this.state.username, this.state.password);
+        console.log(this.state.userName, this.state.password);
     }
 
     registerUser = () => {
-        const { username, password, chkPassword } = this.state
+        const { userName, password, chkPassword } = this.state
         const { language } = this.props.general
-        if (!username || !password || !chkPassword) {
-            this.setState({
-                error: true,
-                errorMsg: "Please fill in all fields"
-            })
+        if (!userName || !password || !chkPassword) {
+            this.props.dispatch(setMessage("Please fill in all fields"))
             return
         }
         if (password.length < 8) {
-            this.setState({
-                error: true,
-                errorMsg: "Password too short"
-            })
+            this.props.dispatch(setMessage("Password too short"))
             return
         }
         if (password !== chkPassword) {
-            this.setState({
-                error: true,
-                errorMsg: "Please confirm the password"
-            })
+            this.props.dispatch(setMessage("Please confirm the password"))
             return
         }
+        this.props.dispatch(addUser({ userName, password, language }))
     }
-
     toggleError = () => {
-        this.setState({
-            error: false,
-            errorMsg: ""
-        })
+        if (this.props.general.popupMsg === "User correctly created") {
+            this.setisRegisterVisible(false)
+        }
+        this.props.dispatch(setMessage(null))
     }
 
     setSelectedIndex = (index) => {
@@ -255,15 +245,23 @@ class List extends Component {
 
     render() {
         const navigation = this.props.navigation
-        const { search, isLoginVisible, isRegisterVisible, username, password, chkPassword, secureTextEntry, error, errorMsg, selectedIndex } = this.state
-        return (
+        const { search, isLoginVisible, isRegisterVisible, userName, password, chkPassword, secureTextEntry, selectedIndex } = this.state
+        const { popupMsg } = this.props.general
+        const { loadingUser } = this.props.user
+        if (loadingUser) {
+            return (
+                <Layout style={{ flex: 1, alignItems: 'center', paddingTop: 50 }}>
+                    <Spinner size='giant' />
+                </Layout>
+            )
+        } return (
             <Layout style={styles.container}>
                 <Modal
-                    visible={error}
+                    visible={popupMsg}
                     backdropStyle={styles.backdrop}
                     onBackdropPress={() => this.toggleError()}>
                     <Card disabled={true}>
-                        <Text>{errorMsg}</Text>
+                        <Text>{popupMsg}</Text>
                         <Button style={{ marginTop: 20 }} status='success' onPress={() => this.toggleError()}>
                             DISMISS
                     </Button>
@@ -295,7 +293,7 @@ class List extends Component {
                                 User Log In
                             </Text>
                             <Input
-                                value={username}
+                                value={userName}
                                 label='Username'
                                 placeholder='Place your Text'
                                 onChangeText={nextUsername => this.setUsername(nextUsername)}
@@ -322,7 +320,7 @@ class List extends Component {
                                 Register new user
                             </Text>
                             <Input
-                                value={username}
+                                value={userName}
                                 label='Username'
                                 placeholder='Place your Text'
                                 onChangeText={nextUsername => this.setUsername(nextUsername)}
@@ -461,9 +459,13 @@ const styles = StyleSheet.create({
         justifyContent: "space-evenly",
         marginBottom: 5,
     },
+    backdrop: {
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
 })
 const mapStateToProps = state => ({
     general: state.general,
+    user: state.user,
 });
 
 export default connect(mapStateToProps)(List)

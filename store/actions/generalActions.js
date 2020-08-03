@@ -1,4 +1,4 @@
-import { SET_LANGUAGE, TOGGLE_BACK, IS_BACK_VISIBLE, IS_WORLD_VISIBLE, SET_HOME_BAR, SET_OTHER_BAR } from '../constants';
+import { SET_LANGUAGE, TOGGLE_BACK, IS_BACK_VISIBLE, IS_WORLD_VISIBLE, SET_HOME_BAR, SET_OTHER_BAR, SET_MESSAGE } from '../constants';
 
 export function setLanguage(lang) {
     return {
@@ -38,3 +38,8 @@ export function setOtherBar() {
         type: SET_OTHER_BAR,
     }
 }
+
+export const setMessage = (msg) => ({
+    type: SET_MESSAGE,
+    payload: msg
+});
