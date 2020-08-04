@@ -1,10 +1,11 @@
-import { SET_LANGUAGE, TOGGLE_BACK, IS_BACK_VISIBLE, IS_WORLD_VISIBLE, SET_HOME_BAR, SET_OTHER_BAR, SET_MESSAGE } from '../constants';
+import { SET_LANGUAGE, TOGGLE_BACK, IS_BACK_VISIBLE, IS_WORLD_VISIBLE, SET_HOME_BAR, SET_OTHER_BAR, SET_MESSAGE, SET_IS_LOGGED } from '../constants';
 const initialState = {
     language: 'en-US',
     isBackButton: "true",
     backIs: "off",
     worldIs: "on",
-    popupMsg: null
+    popupMsg: null,
+    isLogged: false
 };
 
 const generalReducer = (state = initialState, action) => {
@@ -45,6 +46,11 @@ const generalReducer = (state = initialState, action) => {
             return {
                 ...state,
                 popupMsg: action.payload
+            };
+        case SET_IS_LOGGED:
+            return {
+                ...state,
+                isLogged: action.payload
             };
         default:
             return state;

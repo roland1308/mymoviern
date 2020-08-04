@@ -13,7 +13,7 @@ import { API_KEY } from 'react-native-dotenv'
 import Separator from './components/Separator';
 import { Button, Layout, Text, Input, Icon, Modal, Card, Menu, MenuItem, Spinner } from '@ui-kitten/components';
 import { connect } from 'react-redux';
-import { setHomeBar } from '../store/actions/generalActions';
+import { setHomeBar, setIsLogged } from '../store/actions/generalActions';
 import { ScrollView } from 'react-native-gesture-handler';
 import { setLanguage, setMessage } from '../store/actions/generalActions';
 import { addUser } from '../store/actions/userActions';
@@ -203,23 +203,25 @@ class List extends Component {
     registerUser = () => {
         const { userName, password, chkPassword } = this.state
         const { language } = this.props.general
-        if (!userName || !password || !chkPassword) {
-            this.props.dispatch(setMessage("Please fill in all fields"))
-            return
-        }
-        if (password.length < 8) {
-            this.props.dispatch(setMessage("Password too short"))
-            return
-        }
-        if (password !== chkPassword) {
-            this.props.dispatch(setMessage("Please confirm the password"))
-            return
-        }
+        // if (!userName || !password || !chkPassword) {
+        //     this.props.dispatch(setMessage("Please fill in all fields"))
+        //     return
+        // }
+        // if (password.length < 8) {
+        //     this.props.dispatch(setMessage("Password too short"))
+        //     return
+        // }
+        // if (password !== chkPassword) {
+        //     this.props.dispatch(setMessage("Please confirm the password"))
+        //     return
+        // }
         this.props.dispatch(addUser({ userName, password, language }))
     }
+
     toggleError = () => {
         if (this.props.general.popupMsg === "User correctly created") {
             this.setisRegisterVisible(false)
+            this.props.dispatch(setIsLogged(true))
         }
         this.props.dispatch(setMessage(null))
     }
@@ -246,7 +248,7 @@ class List extends Component {
     render() {
         const navigation = this.props.navigation
         const { search, isLoginVisible, isRegisterVisible, userName, password, chkPassword, secureTextEntry, selectedIndex } = this.state
-        const { popupMsg } = this.props.general
+        const { popupMsg, isLogged } = this.props.general
         const { loadingUser } = this.props.user
         if (loadingUser) {
             return (
@@ -267,7 +269,7 @@ class List extends Component {
                     </Button>
                     </Card>
                 </Modal>
-                {!isLoginVisible && !isRegisterVisible &&
+                {!isLoginVisible && !isRegisterVisible && !isLogged &&
                     <Layout style={styles.containerIntro}>
                         <Text category='h1'>
                             Welcome guest!
@@ -362,9 +364,15 @@ class List extends Component {
                 {!isLoginVisible && !isRegisterVisible &&
                     <>
                         <Layout style={{ height: 120 }}>
-                            <Text category='s1' style={{ marginTop: 5, alignSelf: 'center' }}>
-                                ..or just surf The Movie DataBase
-                            </Text>
+                            {isLogged ?
+                                (<Text category='s1' style={{ marginTop: 5, alignSelf: 'center' }}>
+                                    Welcome {this.props.user.userName}
+                                </Text>)
+                                :
+                                (<Text category='s1' style={{ marginTop: 5, alignSelf: 'center' }}>
+                                    ..or just surf The Movie DataBase
+                                </Text>)
+                            }
                             <Input
                                 style={styles.search}
                                 placeholder="Search for ..."

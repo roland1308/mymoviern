@@ -10,14 +10,18 @@ export const addUser = user => {
             const response = await axios.post("https://mymoviesback.herokuapp.com/users/add", user)
             if (response.status !== 200) {
                 dispatch(addUserFailure());
-                dispatch(setMessage(response.data.errmsg))
+                dispatch(setMessage(response))
             } else {
-                dispatch(addUserSuccess(response.data));
+                dispatch(addUserSuccess(response.data))
                 dispatch(setMessage("User correctly created"))
             }
         } catch (error) {
             dispatch(addUserFailure())
-            dispatch(setMessage(error.message))
+            if (error.response.data.code === 11000) {
+                dispatch(setMessage("Username already exists"))
+            } else {
+                dispatch(setMessage(error.message))
+            }
         }
         return "done";
     };
