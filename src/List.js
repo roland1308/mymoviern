@@ -16,7 +16,7 @@ import { connect } from 'react-redux';
 import { setHomeBar, setIsLogged } from '../store/actions/generalActions';
 import { ScrollView } from 'react-native-gesture-handler';
 import { setLanguage, setMessage } from '../store/actions/generalActions';
-import { addUser } from '../store/actions/userActions';
+import { addUser, logUser } from '../store/actions/userActions';
 
 
 if (Platform.OS === 'android') {
@@ -123,7 +123,6 @@ class List extends Component {
                 "&language=" + this.props.general.language +
                 "&sort_by=" + this.state.sort_by +
                 "&include_adult=" + this.state.adult +
-                "&include_video=" + this.state.video +
                 "&page=" + this.state.page
             response = await axios.get(url);
             if (response.status === 200) {
@@ -197,7 +196,12 @@ class List extends Component {
     }
 
     logUser = () => {
-        console.log(this.state.userName, this.state.password);
+        const { userName, password } = this.state
+        // if (!userName || !password ) {
+        //     this.props.dispatch(setMessage("Please fill in all fields"))
+        //     return
+        // }        
+        this.props.dispatch(logUser({ userName, password }))
     }
 
     registerUser = () => {
@@ -219,9 +223,20 @@ class List extends Component {
     }
 
     toggleError = () => {
-        if (this.props.general.popupMsg === "User correctly created") {
-            this.setisRegisterVisible(false)
-            this.props.dispatch(setIsLogged(true))
+        const { popupMsg } = this.props.general
+        const { language } = this.props.user
+        switch (popupMsg) {
+            case "User correctly created":
+                this.setisRegisterVisible(false)
+                this.props.dispatch(setIsLogged(true))
+                break;
+            case "User logged in":
+                this.setisLoginVisible(false)
+                this.props.dispatch(setIsLogged(true))
+                this.props.dispatch(setLanguage(language));
+                break;
+            default:
+                break;
         }
         this.props.dispatch(setMessage(null))
     }
@@ -275,7 +290,7 @@ class List extends Component {
                             Welcome guest!
                         </Text>
                         <Text category='s1'>
-                            To enjoy the fully functionalities, please:
+                            To enjoy full functionality, please:
                         </Text>
                         <Layout style={[styles.buttons, { marginTop: 5, marginBottom: 0 }]}>
                             <Button status='success' onPress={() => this.setisLoginVisible(true)}>

@@ -27,6 +27,30 @@ export const addUser = user => {
     };
 };
 
+export const logUser = user => {
+    return async dispatch => {
+        dispatch(addUserBegin());
+        try {
+            const response = await axios.post("https://mymoviesback.herokuapp.com/users/login", user)
+            if (response.status !== 200) {
+                dispatch(addUserFailure());
+                dispatch(setMessage(response))
+            } else {
+                dispatch(addUserSuccess(response.data))
+                dispatch(setMessage("User logged in"))
+            }
+        } catch (error) {
+            dispatch(addUserFailure())
+            if (error.response.data) {
+                dispatch(setMessage("Log In Error"))
+            } else {
+                dispatch(setMessage(error.message))
+            }
+        }
+        return "done";
+    };
+};
+
 export const addUserBegin = () => ({
     type: ADD_USER_BEGIN
 });

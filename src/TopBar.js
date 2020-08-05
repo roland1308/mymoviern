@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Icon, Layout, MenuItem, OverflowMenu, TopNavigation, TopNavigationAction, Button, Card, Modal, Text } from '@ui-kitten/components';
 import { StyleSheet } from 'react-native';
-import { toggleBack, setLanguage } from '../store/actions/generalActions';
+import { toggleBack, setLanguage, setIsLogged } from '../store/actions/generalActions';
 import { connect } from 'react-redux';
 
 const HomeIcon = (props) => (
@@ -24,6 +24,9 @@ const InfoIcon = (props) => (
     <Icon {...props} name='info' />
 );
 
+const LogoutIcon = (props) => (
+    <Icon {...props} name='log-out-outline' />
+);
 class TopBar extends Component {
     constructor(props) {
         super(props)
@@ -40,6 +43,13 @@ class TopBar extends Component {
         this.setState({
             menuVisible: !this.state.menuVisible
         })
+    }
+
+    logOut = () => {
+        this.setState({
+            menuVisible: false,
+        })
+        this.props.dispatch(setIsLogged(false))
     }
 
     toggleLanguage = () => {
@@ -85,7 +95,7 @@ class TopBar extends Component {
                 visible={this.state.menuVisible}
                 onBackdropPress={this.toggleMenu}>
                 <MenuItem accessoryLeft={InfoIcon} title='About' onPress={() => this.toggleModal()} />
-                {/* <MenuItem accessoryLeft={LoginIcon} title='Login' /> */}
+                {this.props.general.isLogged && <MenuItem accessoryLeft={LogoutIcon} title='Logout' onPress={this.logOut} />}
             </OverflowMenu>
         </React.Fragment>
     );

@@ -13,7 +13,6 @@ const generalReducer = (state = initialState, action) => {
                 userName: null,
                 language: null,
                 loadingUser: true,
-                errorUser: null
             };
         case ADD_USER_SUCCESS:
             const { userName, language } = action.payload
@@ -22,7 +21,6 @@ const generalReducer = (state = initialState, action) => {
                 userName,
                 language,
                 loadingUser: false,
-                errorUser: null
             };
         case ADD_USER_FAILURE:
             return {
