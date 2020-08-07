@@ -4,12 +4,12 @@ import {
     StyleSheet,
     Linking,
 } from 'react-native'
-import { Layout, Text, Spinner } from '@ui-kitten/components';
+import { Layout, Text, Spinner, Modal, Card, Button, Icon } from '@ui-kitten/components';
 
 import { API_KEY } from 'react-native-dotenv'
 import { ScrollView } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
-import { setOtherBar, setHomeBar } from '../store/actions/generalActions';
+import { setOtherBar, setHomeBar, setDetailBar } from '../store/actions/generalActions';
 import Separator from './components/Separator';
 import FormatDate from './components/FormatDate';
 
@@ -32,7 +32,7 @@ class MovieDetails extends Component {
         this.setState({ source })
         let uri = "https://api.themoviedb.org/3/movie/" + detailsId + "?api_key=" + API_KEY + "&language=" + this.props.general.language + "&append_to_response=credits"
         this.getDetails(uri).done()
-        this.props.dispatch(setOtherBar())
+        this.props.dispatch(setDetailBar())
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -70,8 +70,54 @@ class MovieDetails extends Component {
         }
         const { title, backdrop_path, overview, release_date, tagline, homepage, credits } = this.state.details
         const date = FormatDate(release_date)
+        const { addMovieStar } = this.props.general
         return (
             <Layout style={styles.container}>
+                <Modal
+                    visible={addMovieStar}
+                    backdropStyle={styles.backdrop}
+                // onBackdropPress={() => this.toggleError()}
+                >
+                    <Card disabled={true}>
+                        <Text>As you saw this movie, please value it</Text>
+                        <Layout style={styles.iconsContainer}>
+                            <Icon
+                                style={styles.icon}
+                                name="star-outline"
+                                fill='#FFFF00'
+                            />
+                            <Icon
+                                style={styles.icon}
+                                name="star-outline"
+                                fill='#FFFF00'
+                            />
+                            <Icon
+                                style={styles.icon}
+                                name="star-outline"
+                                fill='#FFFF00'
+                            />
+                            <Icon
+                                style={styles.icon}
+                                name="star-outline"
+                                fill='#FFFF00'
+                            />
+                            <Icon
+                                style={styles.icon}
+                                name="star-outline"
+                                fill='#FFFF00'
+                            />
+                        </Layout>
+                        <Layout style={styles.iconsContainer}>
+                            <Button style={{ marginTop: 20 }} status='success' onPress={() => this.toggleError()}>
+                                Vote
+                        </Button>
+                            <Button style={{ marginTop: 20 }} status='danger' onPress={() => this.toggleError()}>
+                                Cancel
+                        </Button>
+                        </Layout>
+
+                    </Card>
+                </Modal>
                 <Text style={styles.title}>{title}</Text>
                 <Separator />
                 <Image
@@ -122,7 +168,19 @@ const styles = StyleSheet.create({
         margin: 20,
         fontSize: 15,
         fontStyle: "italic",
-    }
+    },
+    backdrop: {
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    iconsContainer: {
+        flexDirection: "row",
+        justifyContent: "space-evenly",
+    },
+    icon: {
+        width: 32,
+        height: 32,
+        marginTop: 10,
+    },
 })
 
 const mapStateToProps = state => ({

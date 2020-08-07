@@ -1,4 +1,4 @@
-import { SET_LANGUAGE, TOGGLE_BACK, IS_BACK_VISIBLE, IS_WORLD_VISIBLE, SET_HOME_BAR, SET_OTHER_BAR, SET_MESSAGE, SET_IS_LOGGED } from '../constants';
+import { SET_LANGUAGE, TOGGLE_BACK, IS_BACK_VISIBLE, IS_WORLD_VISIBLE, SET_HOME_BAR, SET_OTHER_BAR, SET_MESSAGE, SET_IS_LOGGED, SET_DETAIL_BAR } from '../constants';
 
 export function setLanguage(lang) {
     return {
@@ -36,6 +36,12 @@ export function setHomeBar() {
 export function setOtherBar() {
     return {
         type: SET_OTHER_BAR,
+    }
+}
+
+export function setDetailBar() {
+    return {
+        type: SET_DETAIL_BAR,
     }
 }
 

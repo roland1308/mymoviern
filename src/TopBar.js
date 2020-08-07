@@ -8,6 +8,10 @@ const HomeIcon = (props) => (
     <Icon {...props} name='home' />
 );
 
+const CheckIcon = (props) => (
+    <Icon {...props} name='checkmark-square-outline' />
+);
+
 const GlobeIcon = (props) => (
     <Icon {...props} name='globe' />
 );
@@ -80,11 +84,12 @@ class TopBar extends Component {
 
     renderRightActions = () => (
         <React.Fragment>
-            {this.props.general.worldIs === "on" &&
+            {this.props.general.checkIs && <TopNavigationAction icon={CheckIcon} onPress={this.toggleBack} />}
+            {this.props.general.worldIs &&
                 <OverflowMenu
                     anchor={this.renderLanguageAction}
                     visible={this.state.languageVisible}
-                    onBackdropPress={this.props.general.worldIs === "on" && this.toggleLanguage}>
+                    onBackdropPress={this.props.general.worldIs && this.toggleLanguage}>
                     <MenuItem disabled={this.props.general.language === "en-US"} accessoryLeft={FlagIcon} title='English' onPress={() => this.setLanguage("en-US")} />
                     <MenuItem disabled={this.props.general.language === "it"} accessoryLeft={FlagIcon} title='Italiano' onPress={() => this.setLanguage("it")} />
                     <MenuItem disabled={this.props.general.language === "es"} accessoryLeft={FlagIcon} title='Español' onPress={() => this.setLanguage("es")} />
@@ -115,7 +120,7 @@ class TopBar extends Component {
                 <TopNavigation
                     alignment='center'
                     title='My Movies DB'
-                    accessoryLeft={backIs === "on" && this.renderHomeAction}
+                    accessoryLeft={backIs && this.renderHomeAction}
                     accessoryRight={this.renderRightActions}
                 />
                 <Modal

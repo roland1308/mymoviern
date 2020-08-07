@@ -1,11 +1,13 @@
-import { SET_LANGUAGE, TOGGLE_BACK, IS_BACK_VISIBLE, IS_WORLD_VISIBLE, SET_HOME_BAR, SET_OTHER_BAR, SET_MESSAGE, SET_IS_LOGGED } from '../constants';
+import { SET_LANGUAGE, TOGGLE_BACK, IS_BACK_VISIBLE, IS_WORLD_VISIBLE, SET_HOME_BAR, SET_OTHER_BAR, SET_MESSAGE, SET_IS_LOGGED, SET_DETAIL_BAR } from '../constants';
 const initialState = {
     language: 'en-US',
     isBackButton: "true",
-    backIs: "off",
-    worldIs: "on",
+    backIs: false,
+    worldIs: true,
+    checkIs: false,
     popupMsg: null,
-    isLogged: false
+    isLogged: false,
+    addMovieStar: true,
 };
 
 const generalReducer = (state = initialState, action) => {
@@ -33,14 +35,23 @@ const generalReducer = (state = initialState, action) => {
         case SET_HOME_BAR:
             return {
                 ...state,
-                worldIs: "on",
-                backIs: "off"
+                worldIs: true,
+                backIs: false,
+                checkIs: false
             };
         case SET_OTHER_BAR:
             return {
                 ...state,
-                worldIs: "off",
-                backIs: "on"
+                worldIs: false,
+                backIs: true,
+                checkIs: false
+            };
+        case SET_DETAIL_BAR:
+            return {
+                ...state,
+                worldIs: false,
+                backIs: true,
+                checkIs: true
             };
         case SET_MESSAGE:
             return {

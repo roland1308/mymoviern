@@ -1,4 +1,4 @@
-import { ADD_USER_BEGIN, ADD_USER_SUCCESS, ADD_USER_FAILURE } from '../constants';
+import { ADD_USER_BEGIN, ADD_USER_SUCCESS, ADD_USER_FAILURE, SET_ISLOADING } from '../constants';
 import { setMessage } from './generalActions';
 
 const axios = require("axios");
@@ -58,7 +58,12 @@ export const addUserSuccess = user => ({
     type: ADD_USER_SUCCESS,
     payload: user
 });
-export const addUserFailure = error => ({
+export const addUserFailure = () => ({
     type: ADD_USER_FAILURE,
+});
+
+export const setIsLoading = status => ({
+    type: SET_ISLOADING,
+    payload: status
 });
 

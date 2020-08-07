@@ -13,10 +13,9 @@ import { API_KEY } from 'react-native-dotenv'
 import Separator from './components/Separator';
 import { Button, Layout, Text, Input, Icon, Modal, Card, Menu, MenuItem, Spinner } from '@ui-kitten/components';
 import { connect } from 'react-redux';
-import { setHomeBar, setIsLogged } from '../store/actions/generalActions';
 import { ScrollView } from 'react-native-gesture-handler';
-import { setLanguage, setMessage } from '../store/actions/generalActions';
-import { addUser, logUser } from '../store/actions/userActions';
+import { setLanguage, setMessage, setHomeBar, setIsLogged } from '../store/actions/generalActions';
+import { addUser, logUser, setIsLoading } from '../store/actions/userActions';
 
 
 if (Platform.OS === 'android') {
@@ -102,14 +101,24 @@ class List extends Component {
     }
 
     async getList() {
-        try {
-            let url =
-                "https://api.themoviedb.org/3/discover/movie?api_key=" + API_KEY +
-                "&language=" + this.props.general.language +
-                "&sort_by=" + this.state.sort_by +
-                "&include_adult=" + this.state.adult +
-                "&page=" + this.state.page
-            let response = await axios.get(url);
+        this.props.dispatch(setIsLoading(true))
+        const url =
+            "https://api.themoviedb.org/3/discover/movie?api_key=" + API_KEY +
+            "&language=" + this.props.general.language +
+            "&sort_by=" + this.state.sort_by +
+            "&include_adult=" + this.state.adult +
+            "&page=" + this.state.page
+        const url2 =
+            "https://api.themoviedb.org/3/discover/tv?api_key=" + API_KEY +
+            "&language=" + this.props.general.language +
+            "&sort_by=" + this.state.sort_by +
+            "&include_adult=" + this.state.adult +
+            "&page=" + this.state.page
+        const request = await axios.get(url);
+        const request1 = await axios.get(url2);
+        axios.all([request, request1]).then(axios.spread((...responses) => {
+            const response = responses[0]
+            const response1 = responses[1]
             if (response.status === 200) {
                 this.setState({
                     films: response.data.results
@@ -118,25 +127,19 @@ class List extends Component {
                 this.setState({ error: true, errorMsg: response.data.status_message })
                 return
             }
-            url =
-                "https://api.themoviedb.org/3/discover/tv?api_key=" + API_KEY +
-                "&language=" + this.props.general.language +
-                "&sort_by=" + this.state.sort_by +
-                "&include_adult=" + this.state.adult +
-                "&page=" + this.state.page
-            response = await axios.get(url);
-            if (response.status === 200) {
+            if (response1.status === 200) {
                 this.setState({
-                    series: response.data.results
+                    series: response1.data.results
                 })
             } else {
-                this.setState({ error: true, errorMsg: response.data.status_message })
+                this.setState({ error: true, errorMsg: response2.data.status_message })
                 return
             }
-        } catch (error) {
-            console.log(error);
-        }
-        return;
+        })).catch(errors => {
+            this.setState({ error: true, errorMsg: error.message })
+        })
+        this.props.dispatch(setIsLoading(false))
+        return
     }
 
     updateSearch(search) {
@@ -238,6 +241,7 @@ class List extends Component {
             default:
                 break;
         }
+        this.props.dispatch(setIsLoading(false))
         this.props.dispatch(setMessage(null))
     }
 
@@ -264,15 +268,16 @@ class List extends Component {
         const navigation = this.props.navigation
         const { search, isLoginVisible, isRegisterVisible, userName, password, chkPassword, secureTextEntry, selectedIndex } = this.state
         const { popupMsg, isLogged } = this.props.general
-        const { loadingUser } = this.props.user
-        if (loadingUser) {
-            return (
-                <Layout style={{ flex: 1, alignItems: 'center', paddingTop: 50 }}>
-                    <Spinner size='giant' />
-                </Layout>
-            )
-        } return (
+        const { isLoading } = this.props.user
+        return (
             <Layout style={styles.container}>
+                <Modal visible={isLoading}
+                    backdropStyle={styles.backdrop}
+                    onBackdropPress={() => this.toggleError()}>
+                    <Card disabled={true} style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)', borderRadius: 50 }}>
+                        <Spinner size='giant' />
+                    </Card>
+                </Modal>
                 <Modal
                     visible={popupMsg}
                     backdropStyle={styles.backdrop}
@@ -281,7 +286,7 @@ class List extends Component {
                         <Text>{popupMsg}</Text>
                         <Button style={{ marginTop: 20 }} status='success' onPress={() => this.toggleError()}>
                             DISMISS
-                    </Button>
+                        </Button>
                     </Card>
                 </Modal>
                 {!isLoginVisible && !isRegisterVisible && !isLogged &&

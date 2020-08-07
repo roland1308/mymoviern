@@ -1,8 +1,8 @@
-import { ADD_USER_SUCCESS, ADD_USER_BEGIN, ADD_USER_FAILURE } from '../constants';
+import { ADD_USER_SUCCESS, ADD_USER_BEGIN, ADD_USER_FAILURE, SET_ISLOADING } from '../constants';
 const initialState = {
     userName: null,
     language: null,
-    loadingUser: false,
+    isLoading: false,
 };
 
 const generalReducer = (state = initialState, action) => {
@@ -12,7 +12,7 @@ const generalReducer = (state = initialState, action) => {
                 ...state,
                 userName: null,
                 language: null,
-                loadingUser: true,
+                isLoading: true,
             };
         case ADD_USER_SUCCESS:
             const { userName, language } = action.payload
@@ -20,14 +20,19 @@ const generalReducer = (state = initialState, action) => {
                 ...state,
                 userName,
                 language,
-                loadingUser: false,
+                isLoading: false,
             };
         case ADD_USER_FAILURE:
             return {
                 ...state,
                 userName: null,
                 language: null,
-                loadingUser: false,
+                isLoading: false,
+            };
+        case SET_ISLOADING:
+            return {
+                ...state,
+                isLoading: action.payload,
             };
         default:
             return state;
