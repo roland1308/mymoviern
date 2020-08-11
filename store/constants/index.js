@@ -8,6 +8,7 @@ export const SET_HOME_BAR = 'SET_HOME_BAR'
 export const SET_OTHER_BAR = 'SET_OTHER_BAR'
 export const SET_DETAIL_BAR = 'SET_DETAIL_BAR'
 export const SET_IS_LOGGED = 'SET_IS_LOGGED'
+export const SET_ADDMOVIESTAR = 'SET_ADDMOVIESTAR'
 
 export const SET_MESSAGE = 'SET_MESSAGE'
 

@@ -30,10 +30,6 @@ const AlertIcon = (props) => (
     <Icon {...props} name='alert-circle-outline' />
 );
 
-const GlobeIcon = (props) => (
-    <Icon {...props} name='globe' />
-);
-
 function Item({ id, poster_path, type, navigation }) {
     return (
         <TouchableHighlight

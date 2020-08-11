@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Icon, Layout, MenuItem, OverflowMenu, TopNavigation, TopNavigationAction, Button, Card, Modal, Text } from '@ui-kitten/components';
 import { StyleSheet } from 'react-native';
-import { toggleBack, setLanguage, setIsLogged } from '../store/actions/generalActions';
+import { toggleBack, setLanguage, setIsLogged, setAddMovieStar } from '../store/actions/generalActions';
 import { connect } from 'react-redux';
 
 const HomeIcon = (props) => (
@@ -69,6 +69,10 @@ class TopBar extends Component {
         })
     }
 
+    toggleStar = () => {
+        this.props.dispatch(setAddMovieStar(!this.props.general.addMovieStar))
+    }
+
     setLanguage(lang) {
         this.toggleLanguage()
         this.props.dispatch(setLanguage(lang));
@@ -84,7 +88,7 @@ class TopBar extends Component {
 
     renderRightActions = () => (
         <React.Fragment>
-            {this.props.general.checkIs && <TopNavigationAction icon={CheckIcon} onPress={this.toggleBack} />}
+            {this.props.general.checkIs && <TopNavigationAction icon={CheckIcon} onPress={this.toggleStar} />}
             {this.props.general.worldIs &&
                 <OverflowMenu
                     anchor={this.renderLanguageAction}

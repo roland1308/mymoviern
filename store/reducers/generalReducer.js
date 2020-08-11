@@ -1,4 +1,4 @@
-import { SET_LANGUAGE, TOGGLE_BACK, IS_BACK_VISIBLE, IS_WORLD_VISIBLE, SET_HOME_BAR, SET_OTHER_BAR, SET_MESSAGE, SET_IS_LOGGED, SET_DETAIL_BAR } from '../constants';
+import { SET_LANGUAGE, TOGGLE_BACK, IS_BACK_VISIBLE, IS_WORLD_VISIBLE, SET_HOME_BAR, SET_OTHER_BAR, SET_MESSAGE, SET_IS_LOGGED, SET_DETAIL_BAR, SET_ADDMOVIESTAR } from '../constants';
 const initialState = {
     language: 'en-US',
     isBackButton: "true",
@@ -7,7 +7,7 @@ const initialState = {
     checkIs: false,
     popupMsg: null,
     isLogged: false,
-    addMovieStar: true,
+    addMovieStar: false,
 };
 
 const generalReducer = (state = initialState, action) => {
@@ -62,6 +62,11 @@ const generalReducer = (state = initialState, action) => {
             return {
                 ...state,
                 isLogged: action.payload
+            };
+        case SET_ADDMOVIESTAR:
+            return {
+                ...state,
+                addMovieStar: action.payload
             };
         default:
             return state;
