@@ -8,8 +8,12 @@ const HomeIcon = (props) => (
     <Icon {...props} name='home' />
 );
 
-const CheckIcon = (props) => (
-    <Icon {...props} name='checkmark-square-outline' />
+const CheckYellowIcon = (props) => (
+    <Icon {...props} name='checkmark-square-outline' fill='#FFFF00' />
+);
+
+const CheckRedIcon = (props) => (
+    <Icon {...props} name='checkmark-square-outline' fill='#FF0000' />
 );
 
 const GlobeIcon = (props) => (
@@ -88,7 +92,9 @@ class TopBar extends Component {
 
     renderRightActions = () => (
         <React.Fragment>
-            {this.props.general.checkIs && <TopNavigationAction icon={CheckIcon} onPress={this.toggleStar} />}
+            {this.props.general.checkIs && this.props.general.isLogged &&
+                <TopNavigationAction icon={this.props.general.alreadyStarred ? CheckYellowIcon : CheckRedIcon} onPress={this.toggleStar} />
+            }
             {this.props.general.worldIs &&
                 <OverflowMenu
                     anchor={this.renderLanguageAction}

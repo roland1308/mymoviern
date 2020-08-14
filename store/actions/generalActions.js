@@ -1,4 +1,4 @@
-import { SET_LANGUAGE, TOGGLE_BACK, IS_BACK_VISIBLE, IS_WORLD_VISIBLE, SET_HOME_BAR, SET_OTHER_BAR, SET_MESSAGE, SET_IS_LOGGED, SET_DETAIL_BAR, SET_ADDMOVIESTAR } from '../constants';
+import { SET_LANGUAGE, TOGGLE_BACK, IS_BACK_VISIBLE, IS_WORLD_VISIBLE, SET_HOME_BAR, SET_OTHER_BAR, SET_MESSAGE, SET_IS_LOGGED, SET_DETAIL_BAR, SET_ADDMOVIESTAR, SET_ALREADYSTARRED } from '../constants';
 
 export function setLanguage(lang) {
     return {
@@ -57,5 +57,10 @@ export const setIsLogged = (status) => ({
 
 export const setAddMovieStar = (status) => ({
     type: SET_ADDMOVIESTAR,
+    payload: status
+});
+
+export const setAlreadyStarred = (status) => ({
+    type: SET_ALREADYSTARRED,
     payload: status
 });

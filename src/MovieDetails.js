@@ -9,9 +9,10 @@ import { Layout, Text, Spinner, Modal, Card, Button, Icon } from '@ui-kitten/com
 import { API_KEY } from 'react-native-dotenv'
 import { ScrollView } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
-import { setOtherBar, setHomeBar, setDetailBar, setAddMovieStar } from '../store/actions/generalActions';
+import { setOtherBar, setHomeBar, setDetailBar, setAddMovieStar, setAlreadyStarred } from '../store/actions/generalActions';
 import Separator from './components/Separator';
 import FormatDate from './components/FormatDate';
+import { addMovieToUser } from '../store/actions/userActions';
 
 const axios = require("axios");
 
@@ -26,16 +27,26 @@ class MovieDetails extends Component {
             activeSections: [],
             oldStarVote: 0,
             newStarVote: 0,
+            position: null
         }
     }
 
     componentDidMount() {
         const { detailsId, source } = this.props.route.params
-        this.setState({ source })
+        const { movies, movieStars } = this.props.user
+        const index = movies.indexOf(detailsId)
         let uri = "https://api.themoviedb.org/3/movie/" + detailsId + "?api_key=" + API_KEY + "&language=" + this.props.general.language + "&append_to_response=credits"
+        if (index !== -1) {
+            this.props.dispatch(setAlreadyStarred(true))
+            this.setState({ oldStarVote: movieStars[index], newStarVote: movieStars[index], position: index })
+        } else {
+            this.props.dispatch(setAlreadyStarred(false))
+            this.setState({ position: movies.length })
+            console.log(movies.length);
+        }
+        this.setState({ source })
         this.getDetails(uri).done()
         this.props.dispatch(setDetailBar())
-        this.setState({ newStarVote: this.state.oldStarVote })
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -75,6 +86,14 @@ class MovieDetails extends Component {
     confirmAddStar = () => {
         this.props.dispatch(setAddMovieStar(!this.props.general.addMovieStar))
         this.setState({ oldStarVote: this.state.newStarVote })
+        const data = {
+            index: this.state.position,
+            userName: this.props.user.userName,
+            movieId: this.props.route.params.detailsId,
+            stars: this.state.newStarVote
+        }
+        this.props.dispatch(addMovieToUser(data))
+        this.props.dispatch(setAlreadyStarred(true))
     }
 
     render() {
@@ -89,7 +108,18 @@ class MovieDetails extends Component {
         const { newStarVote } = this.state
         const date = FormatDate(release_date)
         const { addMovieStar } = this.props.general
-        let stars = newStarVote
+        const starItems = []
+        for (let i = 1; i < 6; i++) {
+            starItems.push(
+                <Icon
+                    key={i}
+                    style={styles.icon}
+                    name={i <= newStarVote ? "star" : "star-outline"}
+                    fill='#FFFF00'
+                    onPress={() => this.setVote(i)}
+                />
+            )
+        }
         return (
             <Layout style={styles.container}>
                 <Modal
@@ -100,36 +130,7 @@ class MovieDetails extends Component {
                     <Card disabled={true}>
                         <Text>As you saw this movie, please value it</Text>
                         <Layout style={styles.iconsContainer} >
-                            <Icon
-                                style={styles.icon}
-                                name={stars >= 1 ? "star" : "star-outline"}
-                                fill='#FFFF00'
-                                onPress={() => this.setVote(1)}
-                            />
-                            <Icon
-                                style={styles.icon}
-                                name={stars >= 2 ? "star" : "star-outline"}
-                                fill='#FFFF00'
-                                onPress={() => this.setVote(2)}
-                            />
-                            <Icon
-                                style={styles.icon}
-                                name={stars >= 3 ? "star" : "star-outline"}
-                                fill='#FFFF00'
-                                onPress={() => this.setVote(3)}
-                            />
-                            <Icon
-                                style={styles.icon}
-                                name={stars >= 4 ? "star" : "star-outline"}
-                                fill='#FFFF00'
-                                onPress={() => this.setVote(4)}
-                            />
-                            <Icon
-                                style={styles.icon}
-                                name={stars === 5 ? "star" : "star-outline"}
-                                fill='#FFFF00'
-                                onPress={() => this.setVote(5)}
-                            />
+                            {starItems}
                         </Layout>
                         <Layout style={styles.iconsContainer}>
                             <Button style={{ marginTop: 20 }} status='success' onPress={() => this.confirmAddStar()}>
@@ -208,5 +209,6 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => ({
     general: state.general,
+    user: state.user
 });
 export default connect(mapStateToProps)(MovieDetails)
