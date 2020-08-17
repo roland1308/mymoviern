@@ -42,7 +42,6 @@ class MovieDetails extends Component {
         } else {
             this.props.dispatch(setAlreadyStarred(false))
             this.setState({ position: movies.length })
-            console.log(movies.length);
         }
         this.setState({ source })
         this.getDetails(uri).done()

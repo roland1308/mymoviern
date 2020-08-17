@@ -8,15 +8,16 @@ import {
     LayoutAnimation,
     UIManager,
     TouchableWithoutFeedback,
+    Switch,
 } from 'react-native'
-import { API_KEY } from 'react-native-dotenv'
+import { API_KEY, GEN_PW } from 'react-native-dotenv'
 import Separator from './components/Separator';
 import { Button, Layout, Text, Input, Icon, Modal, Card, Menu, MenuItem, Spinner } from '@ui-kitten/components';
 import { connect } from 'react-redux';
 import { ScrollView } from 'react-native-gesture-handler';
 import { setLanguage, setMessage, setHomeBar, setIsLogged } from '../store/actions/generalActions';
 import { addUser, logUser, setIsLoading } from '../store/actions/userActions';
-
+import AsyncStorage from '@react-native-community/async-storage'
 
 if (Platform.OS === 'android') {
     if (UIManager.setLayoutAnimationEnabledExperimental) {
@@ -64,18 +65,33 @@ class List extends Component {
             isRegisterVisible: false,
             userName: "",
             password: "",
+            rememberMe: false,
             chkPassword: "",
             secureTextEntry: true,
             selectedIndex: { "row": 0 }
         }
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         this.props.dispatch(setHomeBar())
+        const userName = await this.getRememberedUser()
+        if (userName != null) {
+            this.setState({
+                userName,
+                rememberMe: true
+            })
+            this.props.dispatch(setIsLogged(true))
+            this.props.dispatch(logUser({ userName, password: GEN_PW }))
+        } else {
+            this.setState({
+                rememberMe: false
+            })
+            this.props.dispatch(setIsLogged(false))
+        }
         this.getList()
     }
 
-    componentDidUpdate(prevProps, prevState) {
+    async componentDidUpdate(prevProps, prevState) {
         if (prevProps.general.language != this.props.general.language) {
             this.getList()
             let temp = { row: 0 }
@@ -190,17 +206,54 @@ class List extends Component {
         this.setState({ password: pw })
     }
 
+    toggleRememberMe = value => {
+        this.setState({ rememberMe: value })
+    }
+
+    rememberUser = async () => {
+        try {
+            await AsyncStorage.setItem('YOUR-KEY', this.state.userName);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    getRememberedUser = async () => {
+        try {
+            const userName = await AsyncStorage.getItem('YOUR-KEY');
+            if (userName !== null) {
+                // We have userName!!
+                return userName;
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    forgetUser = async () => {
+        try {
+            await AsyncStorage.removeItem('YOUR-KEY');
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     setChkPassword(pw) {
         this.setState({ chkPassword: pw })
     }
 
     logUser = () => {
-        const { userName, password } = this.state
-        // if (!userName || !password ) {
-        //     this.props.dispatch(setMessage("Please fill in all fields"))
-        //     return
-        // }        
+        const { userName, password, rememberMe } = this.state
+        if (!userName || !password) {
+            this.props.dispatch(setMessage("Please fill in all fields"))
+            return
+        }
         this.props.dispatch(logUser({ userName, password }))
+        if (rememberMe === true) {
+            this.rememberUser();
+        } else {
+            this.forgetUser();
+        }
     }
 
     registerUser = () => {
@@ -324,6 +377,13 @@ class List extends Component {
                                 secureTextEntry={secureTextEntry}
                                 onChangeText={nextPassword => this.setPassword(nextPassword)}
                             />
+                            <Layout style={styles.buttons}>
+                                <Switch
+                                    value={this.state.rememberMe}
+                                    onValueChange={(value) => this.toggleRememberMe(value)}
+                                />
+                                <Text>Remember Me</Text>
+                            </Layout>
                             <Layout style={styles.buttons}>
                                 <Button status='success' onPress={this.logUser}>Log In</Button>
                                 <Button onPress={() => this.setisLoginVisible(false)}>Cancel</Button>
@@ -482,6 +542,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-evenly",
         marginBottom: 5,
+        alignItems: "center",
     },
     backdrop: {
         backgroundColor: 'rgba(0, 0, 0, 0.5)',

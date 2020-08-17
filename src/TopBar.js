@@ -3,6 +3,7 @@ import { Icon, Layout, MenuItem, OverflowMenu, TopNavigation, TopNavigationActio
 import { StyleSheet } from 'react-native';
 import { toggleBack, setLanguage, setIsLogged, setAddMovieStar } from '../store/actions/generalActions';
 import { connect } from 'react-redux';
+import AsyncStorage from '@react-native-community/async-storage'
 
 const HomeIcon = (props) => (
     <Icon {...props} name='home' />
@@ -54,10 +55,19 @@ class TopBar extends Component {
     }
 
     logOut = () => {
+        this.forgetUser()
         this.setState({
             menuVisible: false,
         })
         this.props.dispatch(setIsLogged(false))
+    }
+
+    forgetUser = async () => {
+        try {
+            await AsyncStorage.removeItem('YOUR-KEY');
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     toggleLanguage = () => {
@@ -139,7 +149,7 @@ class TopBar extends Component {
                     onBackdropPress={() => this.toggleModal()}>
                     <Card disabled={true}>
                         <Text>My Movies DB</Text>
-                        <Text>Version 1.0</Text>
+                        <Text>Version 1.0.1</Text>
                         <Text>Copyright 2020 Renato</Text>
                         <Button style={{ marginTop: 20 }} status='success' onPress={() => this.toggleModal()}>
                             DISMISS
