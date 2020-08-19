@@ -13,6 +13,7 @@ import { setOtherBar, setHomeBar, setDetailBar, setAddMovieStar, setAlreadyStarr
 import Separator from './components/Separator';
 import FormatDate from './components/FormatDate';
 import { addMovieToUser } from '../store/actions/userActions';
+import { Row } from 'native-base';
 
 const axios = require("axios");
 
@@ -27,7 +28,9 @@ class MovieDetails extends Component {
             activeSections: [],
             oldStarVote: 0,
             newStarVote: 0,
-            position: null
+            position: null,
+            totStars: 0,
+            views: 0
         }
     }
 
@@ -65,12 +68,34 @@ class MovieDetails extends Component {
     }
 
     async getDetails(uri) {
-        const response = await axios.get(uri)
-        this.setState({
-            details: response.data,
-            isLoading: false
+        const request = await axios.get(uri)
+        const request1 = await axios.get("https://mymoviesback.herokuapp.com/films/getstats/" + this.props.route.params.detailsId)
+        axios.all([request, request1]).then(axios.spread((...responses) => {
+            const response = responses[0]
+            const response1 = responses[1]
+            if (response.status === 200) {
+                this.setState({
+                    details: response.data,
+                })
+            } else {
+                this.setState({ error: true, errorMsg: response.data.status_message })
+                return
+            }
+            if (response1.status === 200) {
+                const { totStars, views } = response1.data
+                this.setState({
+                    totStars,
+                    views,
+                    isLoading: false
+                })
+            } else {
+                console.log(response1.data.status_message)
+                return
+            }
+        })).catch(errors => {
+            console.log(errors)
         })
-        // console.log(response.data.credits.cast.slice(0, 5));
+        return
     }
 
     setVote = (vote) => {
@@ -83,14 +108,21 @@ class MovieDetails extends Component {
     }
 
     confirmAddStar = () => {
+        const { position, newStarVote, oldStarVote, views, totStars } = this.state
         this.props.dispatch(setAddMovieStar(!this.props.general.addMovieStar))
-        this.setState({ oldStarVote: this.state.newStarVote })
         const data = {
-            index: this.state.position,
+            index: position,
             userName: this.props.user.userName,
             movieId: this.props.route.params.detailsId,
-            stars: this.state.newStarVote
+            stars: newStarVote,
+            starsToAdd: newStarVote - oldStarVote,
+            alreadyStarred: this.props.general.alreadyStarred
         }
+        this.setState({
+            oldStarVote: newStarVote,
+            views: views + (1 && !this.props.general.alreadyStarred),
+            totStars: totStars + data.starsToAdd
+        })
         this.props.dispatch(addMovieToUser(data))
         this.props.dispatch(setAlreadyStarred(true))
     }
@@ -104,7 +136,7 @@ class MovieDetails extends Component {
             )
         }
         const { title, backdrop_path, overview, release_date, tagline, homepage, credits } = this.state.details
-        const { newStarVote } = this.state
+        const { newStarVote, totStars, views } = this.state
         const date = FormatDate(release_date)
         const { addMovieStar } = this.props.general
         const starItems = []
@@ -148,8 +180,28 @@ class MovieDetails extends Component {
                     source={backdrop_path == null ? require("../assets/noBackdrop.png") : { uri: "https://image.tmdb.org/t/p/w500" + backdrop_path }} />
                 <Text style={styles.subTitle}>{tagline}</Text>
                 <Separator />
-                <Text>Release date: {date}</Text>
-                <Text style={{ color: "#A70207", fontSize: 18 }} onPress={() => Linking.openURL(homepage)}>Home Page</Text>
+                <Layout style={styles.votes}>
+                    <Text>Release date: {date}</Text>
+                    <Layout style={styles.votes}>
+                        <Icon
+                            style={styles.iconSmall}
+                            name="star"
+                            fill='#FFFF00'
+                        />
+                        <Text>{(totStars / views) || 0}</Text>
+                    </Layout>
+                </Layout>
+                <Layout style={styles.votes}>
+                    <Text style={{ color: "#A70207", fontSize: 18 }} onPress={() => Linking.openURL(homepage)}>Home Page</Text>
+                    <Layout style={styles.votes}>
+                        <Icon
+                            style={styles.iconSmall}
+                            name="eye"
+                            fill='#00FF00'
+                        />
+                        <Text>{views || 0}</Text>
+                    </Layout>
+                </Layout>
                 <Separator />
                 <ScrollView style={{ flex: 1 }}>
                     <Text style={styles.overview}>{overview ? overview : "No Description"}</Text>
@@ -204,6 +256,16 @@ const styles = StyleSheet.create({
         height: 32,
         marginTop: 10,
     },
+    iconSmall: {
+        width: 22,
+        height: 22,
+        marginRight: 10
+    },
+    votes: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center"
+    }
 })
 
 const mapStateToProps = state => ({

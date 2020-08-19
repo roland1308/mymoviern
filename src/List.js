@@ -144,11 +144,11 @@ class List extends Component {
                     series: response1.data.results
                 })
             } else {
-                this.setState({ error: true, errorMsg: response2.data.status_message })
+                this.setState({ error: true, errorMsg: response1.data.status_message })
                 return
             }
         })).catch(errors => {
-            this.setState({ error: true, errorMsg: error.message })
+            this.setState({ error: true, errorMsg: errors.message })
         })
         this.props.dispatch(setIsLoading(false))
         return

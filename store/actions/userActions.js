@@ -58,8 +58,9 @@ export const addMovieToUser = data => {
             const response = await axios.put("https://mymoviesback.herokuapp.com/users/addStars", data)
             if (response.status !== 200) {
                 dispatch(addMovieFailure());
-                dispatch(setMessage("response"))
+                dispatch(setMessage(response))
             } else {
+                await axios.put("https://mymoviesback.herokuapp.com/films/addfilm", data)
                 dispatch(addMovieSuccess(data))
                 dispatch(setMessage("Thank you!"))
             }
@@ -68,7 +69,7 @@ export const addMovieToUser = data => {
             if (error.response.data) {
                 dispatch(setMessage("An error has occurred"))
             } else {
-                dispatch(setMessage("error.message"))
+                dispatch(setMessage(error.message))
             }
         }
         return "done";
