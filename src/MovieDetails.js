@@ -108,20 +108,19 @@ class MovieDetails extends Component {
     }
 
     confirmAddStar = () => {
-        const { position, newStarVote, oldStarVote, views, totStars } = this.state
         this.props.dispatch(setAddMovieStar(!this.props.general.addMovieStar))
         const data = {
-            index: position,
+            index: this.state.position,
             userName: this.props.user.userName,
             movieId: this.props.route.params.detailsId,
-            stars: newStarVote,
-            starsToAdd: newStarVote - oldStarVote,
+            stars: this.state.newStarVote,
+            starsToAdd: this.state.newStarVote - this.state.oldStarVote,
             alreadyStarred: this.props.general.alreadyStarred
         }
         this.setState({
-            oldStarVote: newStarVote,
-            views: views + (1 && !this.props.general.alreadyStarred),
-            totStars: totStars + data.starsToAdd
+            oldStarVote: data.newStarVote,
+            views: (this.state.views || 0) + (1 && !data.alreadyStarred),
+            totStars: (this.state.totStars || 0) + data.starsToAdd
         })
         this.props.dispatch(addMovieToUser(data))
         this.props.dispatch(setAlreadyStarred(true))
