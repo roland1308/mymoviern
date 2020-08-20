@@ -13,7 +13,7 @@ import { setOtherBar, setHomeBar, setDetailBar, setAddMovieStar, setAlreadyStarr
 import Separator from './components/Separator';
 import FormatDate from './components/FormatDate';
 import { addMovieToUser } from '../store/actions/userActions';
-import { Row } from 'native-base';
+import removeTrailinZeros from 'remove-trailing-zeros'
 
 const axios = require("axios");
 
@@ -25,23 +25,23 @@ class MovieDetails extends Component {
             details: {},
             source: null,
             isLoading: true,
-            activeSections: [],
             oldStarVote: 0,
             newStarVote: 0,
             position: null,
             totStars: 0,
-            views: 0
+            views: 0,
+            medStars: 0
         }
     }
 
     componentDidMount() {
         const { detailsId, source } = this.props.route.params
         const { movies, movieStars } = this.props.user
-        const index = movies.indexOf(detailsId)
+        const movieIndex = movies.indexOf(detailsId)
         let uri = "https://api.themoviedb.org/3/movie/" + detailsId + "?api_key=" + API_KEY + "&language=" + this.props.general.language + "&append_to_response=credits"
-        if (index !== -1) {
+        if (movieIndex !== -1) {
             this.props.dispatch(setAlreadyStarred(true))
-            this.setState({ oldStarVote: movieStars[index], newStarVote: movieStars[index], position: index })
+            this.setState({ oldStarVote: movieStars[movieIndex], newStarVote: movieStars[movieIndex], position: movieIndex })
         } else {
             this.props.dispatch(setAlreadyStarred(false))
             this.setState({ position: movies.length })
@@ -82,10 +82,11 @@ class MovieDetails extends Component {
                 return
             }
             if (response1.status === 200) {
-                const { totStars, views } = response1.data
+                const { totStars, views, medStars } = response1.data
                 this.setState({
                     totStars,
                     views,
+                    medStars,
                     isLoading: false
                 })
             } else {
@@ -110,17 +111,21 @@ class MovieDetails extends Component {
     confirmAddStar = () => {
         this.props.dispatch(setAddMovieStar(!this.props.general.addMovieStar))
         const data = {
-            index: this.state.position,
+            movieIndex: this.state.position,
             userName: this.props.user.userName,
             movieId: this.props.route.params.detailsId,
-            stars: this.state.newStarVote,
+            thisMovieStars: this.state.newStarVote,
             starsToAdd: this.state.newStarVote - this.state.oldStarVote,
             alreadyStarred: this.props.general.alreadyStarred
         }
+        let views = (this.state.views || 0) + (1 && !data.alreadyStarred),
+            totStars = (this.state.totStars || 0) + data.starsToAdd,
+            medStars = removeTrailinZeros(totStars / views)
         this.setState({
             oldStarVote: data.newStarVote,
-            views: (this.state.views || 0) + (1 && !data.alreadyStarred),
-            totStars: (this.state.totStars || 0) + data.starsToAdd
+            views,
+            totStars,
+            medStars
         })
         this.props.dispatch(addMovieToUser(data))
         this.props.dispatch(setAlreadyStarred(true))
@@ -135,7 +140,7 @@ class MovieDetails extends Component {
             )
         }
         const { title, backdrop_path, overview, release_date, tagline, homepage, credits } = this.state.details
-        const { newStarVote, totStars, views } = this.state
+        const { newStarVote, views, medStars } = this.state
         const date = FormatDate(release_date)
         const { addMovieStar } = this.props.general
         const starItems = []
@@ -173,7 +178,6 @@ class MovieDetails extends Component {
                     </Card>
                 </Modal>
                 <Text style={styles.title}>{title}</Text>
-                <Separator />
                 <Image
                     style={{ width: "100%", flex: 0.5 }}
                     source={backdrop_path == null ? require("../assets/noBackdrop.png") : { uri: "https://image.tmdb.org/t/p/w500" + backdrop_path }} />
@@ -187,7 +191,7 @@ class MovieDetails extends Component {
                             name="star"
                             fill='#FFFF00'
                         />
-                        <Text>{(totStars / views) || 0}</Text>
+                        <Text>{medStars || 0}</Text>
                     </Layout>
                 </Layout>
                 <Layout style={styles.votes}>

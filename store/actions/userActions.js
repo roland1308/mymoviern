@@ -1,4 +1,4 @@
-import { ADD_USER_BEGIN, ADD_USER_SUCCESS, ADD_USER_FAILURE, ADD_MOVIE_BEGIN, ADD_MOVIE_SUCCESS, ADD_MOVIE_FAILURE, SET_ISLOADING } from '../constants';
+import { ADD_USER_BEGIN, ADD_USER_SUCCESS, ADD_USER_FAILURE, ADD_MOVIE_BEGIN, ADD_MOVIE_SUCCESS, ADD_SERIE_SUCCESS, ADD_MOVIE_FAILURE, SET_ISLOADING } from '../constants';
 import { setMessage } from './generalActions';
 
 const axios = require("axios");
@@ -55,7 +55,7 @@ export const addMovieToUser = data => {
     return async dispatch => {
         dispatch(addMovieBegin());
         try {
-            const response = await axios.put("https://mymoviesback.herokuapp.com/users/addStars", data)
+            const response = await axios.put("https://mymoviesback.herokuapp.com/users/addmoviestars", data)
             if (response.status !== 200) {
                 dispatch(addMovieFailure());
                 dispatch(setMessage(response))
@@ -76,6 +76,32 @@ export const addMovieToUser = data => {
     };
 };
 
+export const addSerieToUser = data => {
+    return async dispatch => {
+        dispatch(addMovieBegin());
+        try {
+            const response = await axios.put("https://mymoviesback.herokuapp.com/users/addseriestars", data)
+            if (response.status !== 200) {
+                dispatch(addMovieFailure());
+                dispatch(setMessage(response))
+            } else {
+                await axios.put("https://mymoviesback.herokuapp.com/series/addserie", data)
+                dispatch(addSerieSuccess(data))
+                dispatch(setMessage("Thank you!"))
+            }
+        } catch (error) {
+            dispatch(addMovieFailure())
+            if (error.response.data) {
+                dispatch(setMessage("An error has occurred"))
+            } else {
+                dispatch(setMessage(error.message))
+            }
+        }
+        return "done";
+    };
+};
+
+
 export const addUserBegin = () => ({
     type: ADD_USER_BEGIN
 });
@@ -92,6 +118,10 @@ export const addMovieBegin = () => ({
 });
 export const addMovieSuccess = user => ({
     type: ADD_MOVIE_SUCCESS,
+    payload: user
+});
+export const addSerieSuccess = user => ({
+    type: ADD_SERIE_SUCCESS,
     payload: user
 });
 export const addMovieFailure = () => ({

@@ -57,6 +57,8 @@ class List extends Component {
         this.state = {
             films: [],
             series: [],
+            topFilms: [],
+            topSeries: [],
             sort_by: "popularity.desc",
             adult: false,
             page: 1,
@@ -114,23 +116,33 @@ class List extends Component {
 
     async getList() {
         this.props.dispatch(setIsLoading(true))
+        this.setState({
+            topFilms: [],
+            topSeries: []
+        })
         const url =
             "https://api.themoviedb.org/3/discover/movie?api_key=" + API_KEY +
             "&language=" + this.props.general.language +
             "&sort_by=" + this.state.sort_by +
             "&include_adult=" + this.state.adult +
             "&page=" + this.state.page
-        const url2 =
+        const url1 =
             "https://api.themoviedb.org/3/discover/tv?api_key=" + API_KEY +
             "&language=" + this.props.general.language +
             "&sort_by=" + this.state.sort_by +
             "&include_adult=" + this.state.adult +
             "&page=" + this.state.page
+        const url2 = "https://mymoviesback.herokuapp.com/films/topmovies"
+        const url3 = "https://mymoviesback.herokuapp.com/series/topseries"
         const request = await axios.get(url);
-        const request1 = await axios.get(url2);
-        axios.all([request, request1]).then(axios.spread((...responses) => {
+        const request1 = await axios.get(url1);
+        const request2 = await axios.get(url2);
+        const request3 = await axios.get(url3);
+        axios.all([request, request1, request2, request3]).then(axios.spread((...responses) => {
             const response = responses[0]
             const response1 = responses[1]
+            const response2 = responses[2]
+            const response3 = responses[3]
             if (response.status === 200) {
                 this.setState({
                     films: response.data.results
@@ -147,10 +159,45 @@ class List extends Component {
                 this.setState({ error: true, errorMsg: response1.data.status_message })
                 return
             }
+            if (response2.status === 200) {
+                let topFilmsUri = [],
+                    momTopFilms = []
+                response2.data.map(movie => {
+                    topFilmsUri.push("https://api.themoviedb.org/3/movie/" + movie.movieId + "?api_key=" + API_KEY + "&language=" + this.props.general.language)
+                })
+                topFilmsUri.map(async uri => {
+                    let response = await axios.get(uri)
+                    momTopFilms = this.state.topFilms
+                    momTopFilms.push(response.data)
+                    this.setState({
+                        topFilms: momTopFilms
+                    })
+                })
+            } else {
+                this.setState({ error: true, errorMsg: response2.data.status_message })
+                return
+            }
+            if (response3.status === 200) {
+                let topSeriesUri = [],
+                    momTopSeries = []
+                response3.data.map(serie => {
+                    topSeriesUri.push("https://api.themoviedb.org/3/tv/" + serie.serieId + "?api_key=" + API_KEY + "&language=" + this.props.general.language)
+                })
+                topSeriesUri.map(async uri => {
+                    let response = await axios.get(uri)
+                    momTopSeries = this.state.topSeries
+                    momTopSeries.push(response.data)
+                    this.setState({
+                        topSeries: momTopSeries
+                    })
+                })
+            } else {
+                this.setState({ error: true, errorMsg: response3.data.status_message })
+                return
+            }
         })).catch(errors => {
             this.setState({ error: true, errorMsg: errors.message })
         })
-        this.props.dispatch(setIsLoading(false))
         return
     }
 
@@ -259,18 +306,18 @@ class List extends Component {
     registerUser = () => {
         const { userName, password, chkPassword } = this.state
         const { language } = this.props.general
-        // if (!userName || !password || !chkPassword) {
-        //     this.props.dispatch(setMessage("Please fill in all fields"))
-        //     return
-        // }
-        // if (password.length < 8) {
-        //     this.props.dispatch(setMessage("Password too short"))
-        //     return
-        // }
-        // if (password !== chkPassword) {
-        //     this.props.dispatch(setMessage("Please confirm the password"))
-        //     return
-        // }
+        if (!userName || !password || !chkPassword) {
+            this.props.dispatch(setMessage("Please fill in all fields"))
+            return
+        }
+        if (password.length < 8) {
+            this.props.dispatch(setMessage("Password too short"))
+            return
+        }
+        if (password !== chkPassword) {
+            this.props.dispatch(setMessage("Please confirm the password"))
+            return
+        }
         this.props.dispatch(addUser({ userName, password, language }))
     }
 
@@ -469,6 +516,42 @@ class List extends Component {
                         <Layout style={{ flex: 1 }}>
                             <ScrollView>
                                 <Layout style={styles.list}>
+                                    <Text style={styles.title}>Top 20 My Movies DB</Text>
+                                    <FlatList
+                                        horizontal
+                                        ItemSeparatorComponent={() => <Layout style={{ width: 5 }} />}
+                                        renderItem={({ item }) => (
+                                            <Item
+                                                poster_path={item.poster_path}
+                                                id={item.id}
+                                                navigation={this.props.navigation}
+                                                type="movie"
+                                            />
+                                        )}
+                                        data={this.state.topFilms}
+                                        keyExtractor={item => item.id.toString() + "mmdb"}
+                                    />
+                                </Layout>
+                                <Separator />
+                                <Layout style={styles.list}>
+                                    <Text style={styles.title}>Top 20 My Series DB</Text>
+                                    <FlatList
+                                        horizontal
+                                        ItemSeparatorComponent={() => <Layout style={{ width: 5 }} />}
+                                        renderItem={({ item }) => (
+                                            <Item
+                                                poster_path={item.poster_path}
+                                                id={item.id}
+                                                navigation={this.props.navigation}
+                                                type="movie"
+                                            />
+                                        )}
+                                        data={this.state.topSeries}
+                                        keyExtractor={item => item.id.toString() + "mmdb"}
+                                    />
+                                </Layout>
+                                <Separator />
+                                <Layout style={styles.list}>
                                     <Text style={styles.title}>Top 20 TMDB Films</Text>
                                     <FlatList
                                         horizontal
@@ -482,9 +565,10 @@ class List extends Component {
                                             />
                                         )}
                                         data={this.state.films}
-                                        keyExtractor={item => item.id.toString()}
+                                        keyExtractor={item => item.id.toString() + "tmdb"}
                                     />
                                 </Layout>
+                                <Separator />
                                 <Layout style={styles.list}>
                                     <Text style={styles.title}>Top 20 TMDB Series</Text>
                                     <FlatList
@@ -500,7 +584,7 @@ class List extends Component {
                                             />
                                         )}
                                         data={this.state.series}
-                                        keyExtractor={item => item.id.toString()}
+                                        keyExtractor={item => item.id.toString() + "tmdb"}
                                     />
                                 </Layout>
                             </ScrollView>
