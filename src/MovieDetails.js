@@ -9,7 +9,7 @@ import { Layout, Text, Spinner, Modal, Card, Button, Icon } from '@ui-kitten/com
 import { API_KEY } from 'react-native-dotenv'
 import { ScrollView } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
-import { setOtherBar, setHomeBar, setDetailBar, setAddMovieStar, setAlreadyStarred } from '../store/actions/generalActions';
+import { setOtherBar, setHomeBar, setDetailBar, setAddMovieStar, setAlreadyStarred, toggleMustRefresh } from '../store/actions/generalActions';
 import Separator from './components/Separator';
 import FormatDate from './components/FormatDate';
 import { addMovieToUser } from '../store/actions/userActions';
@@ -129,6 +129,7 @@ class MovieDetails extends Component {
         })
         this.props.dispatch(addMovieToUser(data))
         this.props.dispatch(setAlreadyStarred(true))
+        this.props.dispatch(toggleMustRefresh())
     }
 
     render() {

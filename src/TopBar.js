@@ -149,7 +149,7 @@ class TopBar extends Component {
                     onBackdropPress={() => this.toggleModal()}>
                     <Card disabled={true}>
                         <Text>My Movies DB</Text>
-                        <Text>Version 1.0.1</Text>
+                        <Text>Version 1.1.0</Text>
                         <Text>Copyright 2020 Renato</Text>
                         <Button style={{ marginTop: 20 }} status='success' onPress={() => this.toggleModal()}>
                             DISMISS

@@ -94,6 +94,9 @@ class List extends Component {
     }
 
     async componentDidUpdate(prevProps, prevState) {
+        if (prevProps.general.mustRefresh != this.props.general.mustRefresh) {
+            this.getList()
+        }
         if (prevProps.general.language != this.props.general.language) {
             this.getList()
             let temp = { row: 0 }
@@ -116,10 +119,6 @@ class List extends Component {
 
     async getList() {
         this.props.dispatch(setIsLoading(true))
-        this.setState({
-            topFilms: [],
-            topSeries: []
-        })
         const url =
             "https://api.themoviedb.org/3/discover/movie?api_key=" + API_KEY +
             "&language=" + this.props.general.language +
@@ -148,6 +147,7 @@ class List extends Component {
                     films: response.data.results
                 })
             } else {
+                this.props.dispatch(setIsLoading(false))
                 this.setState({ error: true, errorMsg: response.data.status_message })
                 return
             }
@@ -156,6 +156,7 @@ class List extends Component {
                     series: response1.data.results
                 })
             } else {
+                this.props.dispatch(setIsLoading(false))
                 this.setState({ error: true, errorMsg: response1.data.status_message })
                 return
             }
@@ -167,13 +168,15 @@ class List extends Component {
                 })
                 topFilmsUri.map(async uri => {
                     let response = await axios.get(uri)
-                    momTopFilms = this.state.topFilms
                     momTopFilms.push(response.data)
-                    this.setState({
-                        topFilms: momTopFilms
-                    })
+                    if (momTopFilms.length === response2.data.length) {
+                        this.setState({
+                            topFilms: momTopFilms
+                        })
+                    }
                 })
             } else {
+                this.props.dispatch(setIsLoading(false))
                 this.setState({ error: true, errorMsg: response2.data.status_message })
                 return
             }
@@ -185,19 +188,24 @@ class List extends Component {
                 })
                 topSeriesUri.map(async uri => {
                     let response = await axios.get(uri)
-                    momTopSeries = this.state.topSeries
                     momTopSeries.push(response.data)
-                    this.setState({
-                        topSeries: momTopSeries
-                    })
+                    if (momTopSeries.length === response3.data.length) {
+                        this.setState({
+                            topSeries: momTopSeries
+                        })
+                    }
                 })
             } else {
+                this.props.dispatch(setIsLoading(false))
                 this.setState({ error: true, errorMsg: response3.data.status_message })
                 return
             }
         })).catch(errors => {
+            this.props.dispatch(setIsLoading(false))
             this.setState({ error: true, errorMsg: errors.message })
+            return
         })
+        this.props.dispatch(setIsLoading(false))
         return
     }
 
@@ -516,7 +524,7 @@ class List extends Component {
                         <Layout style={{ flex: 1 }}>
                             <ScrollView>
                                 <Layout style={styles.list}>
-                                    <Text style={styles.title}>Top 20 My Movies DB</Text>
+                                    <Text style={styles.title}>Last rated Movies</Text>
                                     <FlatList
                                         horizontal
                                         ItemSeparatorComponent={() => <Layout style={{ width: 5 }} />}
@@ -534,7 +542,7 @@ class List extends Component {
                                 </Layout>
                                 <Separator />
                                 <Layout style={styles.list}>
-                                    <Text style={styles.title}>Top 20 My Series DB</Text>
+                                    <Text style={styles.title}>Last rated Series</Text>
                                     <FlatList
                                         horizontal
                                         ItemSeparatorComponent={() => <Layout style={{ width: 5 }} />}
