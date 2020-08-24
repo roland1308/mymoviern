@@ -30,7 +30,8 @@ class MovieDetails extends Component {
             position: null,
             totStars: 0,
             views: 0,
-            medStars: 0
+            medStars: 0,
+            needRefresh: false
         }
     }
 
@@ -65,6 +66,7 @@ class MovieDetails extends Component {
         } else {
             this.props.dispatch(setOtherBar())
         }
+        if (this.state.needRefresh) { this.props.dispatch(toggleMustRefresh()) }
     }
 
     async getDetails(uri) {
@@ -125,11 +127,11 @@ class MovieDetails extends Component {
             oldStarVote: data.newStarVote,
             views,
             totStars,
-            medStars
+            medStars,
+            needRefresh: true
         })
         this.props.dispatch(addMovieToUser(data))
         this.props.dispatch(setAlreadyStarred(true))
-        this.props.dispatch(toggleMustRefresh())
     }
 
     render() {

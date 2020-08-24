@@ -162,16 +162,28 @@ class List extends Component {
             }
             if (response2.status === 200) {
                 let topFilmsUri = [],
-                    momTopFilms = []
-                response2.data.map(movie => {
+                    topFilmsId = [],
+                    momTopFilms = [],
+                    definitiveTopFilms = [],
+                    filmsIdSorted = response2.data
+                filmsIdSorted.map(movie => {
                     topFilmsUri.push("https://api.themoviedb.org/3/movie/" + movie.movieId + "?api_key=" + API_KEY + "&language=" + this.props.general.language)
+                    topFilmsId.push(movie.movieId)
                 })
                 topFilmsUri.map(async uri => {
                     let response = await axios.get(uri)
                     momTopFilms.push(response.data)
-                    if (momTopFilms.length === response2.data.length) {
+                    let len = momTopFilms.length
+                    if (len === response2.data.length) {
+                        for (let i = 0; i < len; i++) {
+                            for (let f = 0; f < len; f++)
+                                if (momTopFilms[f].id == topFilmsId[i]) {
+                                    definitiveTopFilms.push(momTopFilms[f])
+                                    break
+                                }
+                        }
                         this.setState({
-                            topFilms: momTopFilms
+                            topFilms: definitiveTopFilms
                         })
                     }
                 })
@@ -182,16 +194,28 @@ class List extends Component {
             }
             if (response3.status === 200) {
                 let topSeriesUri = [],
-                    momTopSeries = []
-                response3.data.map(serie => {
+                    topSeriesId = [],
+                    definitiveTopSeries = [],
+                    momTopSeries = [],
+                    seriesIdSorted = response3.data
+                seriesIdSorted.map(serie => {
                     topSeriesUri.push("https://api.themoviedb.org/3/tv/" + serie.serieId + "?api_key=" + API_KEY + "&language=" + this.props.general.language)
+                    topSeriesId.push(serie.serieId)
                 })
                 topSeriesUri.map(async uri => {
                     let response = await axios.get(uri)
                     momTopSeries.push(response.data)
-                    if (momTopSeries.length === response3.data.length) {
+                    let len = momTopSeries.length
+                    if (len === response3.data.length) {
+                        for (let i = 0; i < len; i++) {
+                            for (let f = 0; f < len; f++)
+                                if (momTopSeries[f].id == topSeriesId[i]) {
+                                    definitiveTopSeries.push(momTopSeries[f])
+                                    break
+                                }
+                        }
                         this.setState({
-                            topSeries: momTopSeries
+                            topSeries: definitiveTopSeries
                         })
                     }
                 })
@@ -551,7 +575,7 @@ class List extends Component {
                                                 poster_path={item.poster_path}
                                                 id={item.id}
                                                 navigation={this.props.navigation}
-                                                type="movie"
+                                                type="tv"
                                             />
                                         )}
                                         data={this.state.topSeries}
