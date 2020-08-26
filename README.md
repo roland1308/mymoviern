@@ -9,7 +9,7 @@ Rating system
 
 -------------------
 
-# Version Histoey:
+# Version History:
 
 2.3.0 Added version history in menu.
 2.2.1 Latest rated sorting corrected.
