@@ -82,8 +82,8 @@ class List extends Component {
                 userName,
                 rememberMe: true
             })
-            this.props.dispatch(setIsLogged(true))
             this.props.dispatch(logUser({ userName, password: GEN_PW }))
+            this.props.dispatch(setIsLogged(true))
         } else {
             this.setState({
                 rememberMe: false
@@ -98,7 +98,6 @@ class List extends Component {
             this.getList()
         }
         if (prevProps.general.language != this.props.general.language) {
-            this.getList()
             let temp = { row: 0 }
             switch (this.props.general.language) {
                 case "en-US":
@@ -114,6 +113,7 @@ class List extends Component {
                     break;
             }
             this.setState({ selectedIndex: temp })
+            this.getList()
         }
     }
 
@@ -291,7 +291,7 @@ class List extends Component {
 
     rememberUser = async () => {
         try {
-            await AsyncStorage.setItem('YOUR-KEY', this.state.userName);
+            await AsyncStorage.setItem('USER', this.state.userName);
         } catch (error) {
             console.log(error);
         }
@@ -299,7 +299,7 @@ class List extends Component {
 
     getRememberedUser = async () => {
         try {
-            const userName = await AsyncStorage.getItem('YOUR-KEY');
+            const userName = await AsyncStorage.getItem('USER');
             if (userName !== null) {
                 // We have userName!!
                 return userName;
@@ -311,7 +311,7 @@ class List extends Component {
 
     forgetUser = async () => {
         try {
-            await AsyncStorage.removeItem('YOUR-KEY');
+            await AsyncStorage.removeItem('USER');
         } catch (error) {
             console.log(error);
         }

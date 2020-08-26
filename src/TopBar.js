@@ -1,9 +1,24 @@
 import React, { Component } from 'react'
-import { Icon, Layout, MenuItem, OverflowMenu, TopNavigation, TopNavigationAction, Button, Card, Modal, Text } from '@ui-kitten/components';
+import { Icon, Layout, MenuItem, OverflowMenu, TopNavigation, TopNavigationAction, Button, Card, Modal, Text, Divider } from '@ui-kitten/components';
 import { StyleSheet } from 'react-native';
 import { toggleBack, setLanguage, setIsLogged, setAddMovieStar } from '../store/actions/generalActions';
 import { connect } from 'react-redux';
 import AsyncStorage from '@react-native-community/async-storage'
+import Axios from 'axios';
+import { ScrollView } from 'react-native-gesture-handler';
+import Separator from './components/Separator';
+
+function TextScroll(prop) {
+    return (
+        <Layout style={{ maxHeight: 200 }}>
+            <Text style={{ textAlign: 'center', marginBottom: 10 }} category="h4">Version History</Text>
+            <Separator />
+            <ScrollView>
+                <Text style={{ marginTop: 10 }}>{prop.text}</Text>
+            </ScrollView>
+        </Layout>
+    )
+}
 
 const HomeIcon = (props) => (
     <Icon {...props} name='home' />
@@ -36,6 +51,11 @@ const InfoIcon = (props) => (
 const LogoutIcon = (props) => (
     <Icon {...props} name='log-out-outline' />
 );
+
+const VersionIcon = (props) => (
+    <Icon {...props} name='trending-up-outline' />
+);
+
 class TopBar extends Component {
     constructor(props) {
         super(props)
@@ -45,6 +65,59 @@ class TopBar extends Component {
             menuVisible: false,
             languageVisible: false,
             modalVisible: false,
+            versionVisible: false,
+            updateVisible: false,
+            thanksVisible: false,
+            versionings: "",
+            actualVersion: "2.3.0"
+        }
+    }
+
+    async componentDidMount() {
+        const response = await Axios.get("https://mymoviesback.herokuapp.com/versionings/getversions")
+        const versionsArray = response.data.map(ver => {
+            return ver['version'] + " " + ver['update'] + "\n\n"
+        })
+        const latestVersion = response.data[0].version
+        const rememberedVersion = await this.getRememberedVersion()
+        // if (latestVersion !== this.state.actualVersion) {
+        //     this.setState({ updateVisible: true })
+        // } else {
+        //     if (rememberedVersion == null) {
+        //         this.setState({ thanksVisible: true })
+        //     }
+        // }
+        this.setState({
+            versionings: versionsArray
+        })
+        console.log(versionsArray);
+    }
+
+    rememberVersion = async () => {
+        try {
+            await AsyncStorage.setItem('VERSION', 'true');
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    getRememberedVersion = async () => {
+        try {
+            const userName = await AsyncStorage.getItem('VERSION');
+            if (userName !== null) {
+                // We have userName!!
+                return userName;
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    forgetVersion = async () => {
+        try {
+            await AsyncStorage.removeItem('VERSION');
+        } catch (error) {
+            console.log(error);
         }
     }
 
@@ -64,7 +137,7 @@ class TopBar extends Component {
 
     forgetUser = async () => {
         try {
-            await AsyncStorage.removeItem('YOUR-KEY');
+            await AsyncStorage.removeItem('USER');
         } catch (error) {
             console.log(error);
         }
@@ -81,6 +154,27 @@ class TopBar extends Component {
             modalVisible: !this.state.modalVisible,
             menuVisible: false,
         })
+    }
+
+    toggleVersion = () => {
+        this.setState({
+            versionVisible: !this.state.versionVisible,
+            menuVisible: false,
+        })
+    }
+
+    toggleUpdate = () => {
+        this.setState({
+            updateVisible: !this.state.updateVisible,
+        })
+        this.forgetVersion()
+    }
+
+    toggleThanks = () => {
+        this.setState({
+            thanksVisible: !this.state.thanksVisible,
+        })
+        this.rememberVersion()
     }
 
     toggleStar = () => {
@@ -120,6 +214,7 @@ class TopBar extends Component {
                 visible={this.state.menuVisible}
                 onBackdropPress={this.toggleMenu}>
                 <MenuItem accessoryLeft={InfoIcon} title='About' onPress={() => this.toggleModal()} />
+                <MenuItem accessoryLeft={VersionIcon} title='Versions' onPress={() => this.toggleVersion()} />
                 {this.props.general.isLogged && <MenuItem accessoryLeft={LogoutIcon} title='Logout' onPress={this.logOut} />}
             </OverflowMenu>
         </React.Fragment>
@@ -134,7 +229,7 @@ class TopBar extends Component {
     );
     render() {
         const { backIs } = this.props.general
-        const { modalVisible } = this.state
+        const { modalVisible, actualVersion, versionVisible, updateVisible, thanksVisible, versionings } = this.state
         return (
             <Layout style={styles.container} level='1'>
                 <TopNavigation
@@ -149,9 +244,47 @@ class TopBar extends Component {
                     onBackdropPress={() => this.toggleModal()}>
                     <Card disabled={true}>
                         <Text>My Movies DB</Text>
-                        <Text>Version 1.1.0</Text>
+                        <Text>Version {actualVersion}</Text>
                         <Text>Copyright 2020 Renato</Text>
                         <Button style={{ marginTop: 20 }} status='success' onPress={() => this.toggleModal()}>
+                            DISMISS
+                        </Button>
+                    </Card>
+                </Modal>
+                <Modal
+                    visible={versionVisible}
+                    backdropStyle={styles.backdrop}
+                    onBackdropPress={() => this.toggleVersion()}>
+                    <Card disabled={true}>
+                        <TextScroll text={versionings} />
+                        <Button style={{ marginTop: 20 }} status='success' onPress={() => this.toggleVersion()}>
+                            DISMISS
+                        </Button>
+                    </Card>
+                </Modal>
+                <Modal
+                    visible={updateVisible}
+                    backdropStyle={styles.backdrop}
+                    onBackdropPress={() => this.toggleUpdate()}>
+                    <Card disabled={true}>
+                        <Text style={{ textAlign: 'center' }}>A new version is available</Text>
+                        <Layout style={styles.buttonsContainer}>
+                            {/* <Button style={{ margin: 20 }} status='success' onPress={() => this.downloadFile()}>
+                                Update
+                            </Button> */}
+                            <Button style={{ margin: 20 }} status='danger' onPress={() => this.toggleUpdate()}>
+                                Not now
+                            </Button>
+                        </Layout>
+                    </Card>
+                </Modal>
+                <Modal
+                    visible={thanksVisible}
+                    backdropStyle={styles.backdrop}
+                    onBackdropPress={() => this.toggleThanks()}>
+                    <Card disabled={true}>
+                        <Text>Thank you for updating the app</Text>
+                        <Button style={{ marginTop: 20 }} status='success' onPress={() => this.toggleThanks()}>
                             DISMISS
                         </Button>
                     </Card>
@@ -167,6 +300,9 @@ const styles = StyleSheet.create({
     },
     backdrop: {
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    buttonsContainer: {
+        flexDirection: "row",
     },
 });
 

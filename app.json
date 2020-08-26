@@ -2,7 +2,7 @@
   "expo": {
     "name": "My Movies DB",
     "slug": "mymoviern",
-    "version": "1.1.0",
+    "version": "2.3.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -22,7 +22,9 @@
     },
     "android": {
       "package": "com.example.my_movies",
-      "permissions": []
+      "permissions": [
+        "CAMERA_ROLL"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
