@@ -11,8 +11,10 @@ Rating system
 
 # Version History:
 
-##2.3.0 Added version history in menu./n
-##2.2.1 Latest rated sorting corrected./n
+2.3.0 Added version history in menu.
+
+2.2.1 Latest rated sorting corrected.
+
 2.2.0 In the first screen, you will see the latest 20 rated movies and series.
 
 2.1.0 Rate movies and series that you watch.
