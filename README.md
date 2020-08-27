@@ -6,10 +6,13 @@ Redux
 AsyncStorage
 Password encrypt
 Rating system
+Update version advising
 
 -------------------
 
 # Version History:
+
+2.3.1 Checking version working
 
 2.3.0 Added version history in menu.
 

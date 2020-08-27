@@ -69,7 +69,7 @@ class TopBar extends Component {
             updateVisible: false,
             thanksVisible: false,
             versionings: "",
-            actualVersion: "2.3.0"
+            actualVersion: "2.3.1"
         }
     }
 
@@ -80,17 +80,16 @@ class TopBar extends Component {
         })
         const latestVersion = response.data[0].version
         const rememberedVersion = await this.getRememberedVersion()
-        // if (latestVersion !== this.state.actualVersion) {
-        //     this.setState({ updateVisible: true })
-        // } else {
-        //     if (rememberedVersion == null) {
-        //         this.setState({ thanksVisible: true })
-        //     }
-        // }
+        if (latestVersion !== this.state.actualVersion) {
+            this.setState({ updateVisible: true })
+        } else {
+            if (rememberedVersion == null) {
+                this.setState({ thanksVisible: true })
+            }
+        }
         this.setState({
             versionings: versionsArray
         })
-        console.log(versionsArray);
     }
 
     rememberVersion = async () => {
@@ -267,8 +266,9 @@ class TopBar extends Component {
                     backdropStyle={styles.backdrop}
                     onBackdropPress={() => this.toggleUpdate()}>
                     <Card disabled={true}>
-                        <Text style={{ textAlign: 'center' }}>A new version is available</Text>
-                        <Layout style={styles.buttonsContainer}>
+                        <Text style={{ textAlign: 'center' }}>A new version is available: please contact a.renato@gmail.com</Text>
+                        <Layout>
+                            {/* <Layout style={styles.buttonsContainer}> */}
                             {/* <Button style={{ margin: 20 }} status='success' onPress={() => this.downloadFile()}>
                                 Update
                             </Button> */}
