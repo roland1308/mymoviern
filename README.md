@@ -12,6 +12,8 @@ Update version advising
 
 # Version History:
 
+2.4.0 Now you can see who rated: just touch the ⭐️
+
 2.3.1 Checking version working
 
 2.3.0 Added version history in menu.

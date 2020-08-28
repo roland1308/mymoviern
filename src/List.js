@@ -548,7 +548,7 @@ class List extends Component {
                         <Layout style={{ flex: 1 }}>
                             <ScrollView>
                                 <Layout style={styles.list}>
-                                    <Text style={styles.title}>Last rated Movies</Text>
+                                    <Text style={styles.title}>Last 20 rated Movies</Text>
                                     <FlatList
                                         horizontal
                                         ItemSeparatorComponent={() => <Layout style={{ width: 5 }} />}
@@ -566,7 +566,7 @@ class List extends Component {
                                 </Layout>
                                 <Separator />
                                 <Layout style={styles.list}>
-                                    <Text style={styles.title}>Last rated Series</Text>
+                                    <Text style={styles.title}>Last 20 rated Series</Text>
                                     <FlatList
                                         horizontal
                                         ItemSeparatorComponent={() => <Layout style={{ width: 5 }} />}

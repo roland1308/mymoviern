@@ -1,24 +1,11 @@
 import React, { Component } from 'react'
-import { Icon, Layout, MenuItem, OverflowMenu, TopNavigation, TopNavigationAction, Button, Card, Modal, Text, Divider } from '@ui-kitten/components';
+import { Icon, Layout, MenuItem, OverflowMenu, TopNavigation, TopNavigationAction, Button, Card, Modal, Text } from '@ui-kitten/components';
 import { StyleSheet } from 'react-native';
 import { toggleBack, setLanguage, setIsLogged, setAddMovieStar } from '../store/actions/generalActions';
 import { connect } from 'react-redux';
 import AsyncStorage from '@react-native-community/async-storage'
 import Axios from 'axios';
-import { ScrollView } from 'react-native-gesture-handler';
-import Separator from './components/Separator';
-
-function TextScroll(prop) {
-    return (
-        <Layout style={{ maxHeight: 200 }}>
-            <Text style={{ textAlign: 'center', marginBottom: 10 }} category="h4">Version History</Text>
-            <Separator />
-            <ScrollView>
-                <Text style={{ marginTop: 10 }}>{prop.text}</Text>
-            </ScrollView>
-        </Layout>
-    )
-}
+import TextScroll from './components/TextScroll';
 
 const HomeIcon = (props) => (
     <Icon {...props} name='home' />
@@ -69,7 +56,7 @@ class TopBar extends Component {
             updateVisible: false,
             thanksVisible: false,
             versionings: "",
-            actualVersion: "2.3.1"
+            actualVersion: "2.4.0"
         }
     }
 
@@ -255,7 +242,7 @@ class TopBar extends Component {
                     backdropStyle={styles.backdrop}
                     onBackdropPress={() => this.toggleVersion()}>
                     <Card disabled={true}>
-                        <TextScroll text={versionings} />
+                        <TextScroll text={versionings} title="Version History" />
                         <Button style={{ marginTop: 20 }} status='success' onPress={() => this.toggleVersion()}>
                             DISMISS
                         </Button>
@@ -266,7 +253,7 @@ class TopBar extends Component {
                     backdropStyle={styles.backdrop}
                     onBackdropPress={() => this.toggleUpdate()}>
                     <Card disabled={true}>
-                        <Text style={{ textAlign: 'center' }}>A new version is available: please contact a.renato@gmail.com</Text>
+                        <Text style={{ textAlign: 'center' }}>A newer version is available: please contact a.renato@gmail.com</Text>
                         <Layout>
                             {/* <Layout style={styles.buttonsContainer}> */}
                             {/* <Button style={{ margin: 20 }} status='success' onPress={() => this.downloadFile()}>

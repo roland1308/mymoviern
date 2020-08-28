@@ -7,13 +7,14 @@ import {
 import { Layout, Text, Spinner, Modal, Card, Button, Icon } from '@ui-kitten/components';
 
 import { API_KEY } from 'react-native-dotenv'
-import { ScrollView } from 'react-native-gesture-handler';
+import { ScrollView, TouchableHighlight } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 import { setOtherBar, setHomeBar, setDetailBar, setAddMovieStar, setAlreadyStarred, toggleMustRefresh } from '../store/actions/generalActions';
 import Separator from './components/Separator';
 import FormatDate from './components/FormatDate';
 import { addSerieToUser } from '../store/actions/userActions';
 import removeTrailinZeros from 'remove-trailing-zeros'
+import TextScroll from './components/TextScroll';
 
 const axios = require("axios");
 
@@ -22,7 +23,7 @@ class TvDetails extends Component {
         super(props)
 
         this.state = {
-            details: {},
+            details: null,
             source: null,
             isLoading: true,
             oldStarVote: 0,
@@ -31,7 +32,9 @@ class TvDetails extends Component {
             totStars: 0,
             views: 0,
             medStars: 0,
-            needRefresh: false
+            needRefresh: false,
+            whoStarredVisible: false,
+            whoHasStarred: []
         }
     }
 
@@ -134,8 +137,29 @@ class TvDetails extends Component {
         this.props.dispatch(setAlreadyStarred(true))
     }
 
+    async whoStarred() {
+        this.setState({ isLoading: true })
+        const serieId = this.props.route.params.detailsId
+        const response = await axios.get("https://mymoviesback.herokuapp.com/users/whostarred/" + serieId + "/series")
+        const momArray = response.data.map(user => {
+            let index = user.series.indexOf(serieId)
+            let stars = user.serieStars[index]
+            let len = user.userName.length
+            return user.userName + " " + ".".repeat(40 - len - stars) + " " + "⭐️".repeat(stars) + "\n\n"
+        })
+        this.setState({
+            whoHasStarred: momArray,
+            isLoading: false,
+            whoStarredVisible: true,
+        })
+    }
+
+    toggleWhoStarred = () => {
+        this.setState({ whoStarredVisible: !this.state.whoStarredVisible })
+    }
+
     render() {
-        if (this.state.isLoading) {
+        if (this.state.details === null) {
             return (
                 <Layout style={{ flex: 1, alignItems: 'center', paddingTop: 50 }}>
                     <Spinner size='giant' />
@@ -143,7 +167,7 @@ class TvDetails extends Component {
             )
         }
         const { name, backdrop_path, overview, first_air_date, last_air_date, homepage } = this.state.details
-        const { newStarVote, medStars, views } = this.state
+        const { newStarVote, medStars, views, whoStarredVisible, whoHasStarred, isLoading } = this.state
         const first_date = FormatDate(first_air_date)
         const last_date = FormatDate(last_air_date)
         const { addMovieStar } = this.props.general
@@ -161,6 +185,12 @@ class TvDetails extends Component {
         }
         return (
             <Layout style={styles.container}>
+                <Modal visible={isLoading}
+                    backdropStyle={styles.backdrop}>
+                    <Card disabled={true} style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)', borderRadius: 50 }}>
+                        <Spinner size='giant' />
+                    </Card>
+                </Modal>
                 <Modal
                     visible={addMovieStar}
                     backdropStyle={styles.backdrop}
@@ -181,6 +211,17 @@ class TvDetails extends Component {
                         </Layout>
                     </Card>
                 </Modal>
+                <Modal
+                    visible={whoStarredVisible}
+                    backdropStyle={styles.backdrop}
+                    onBackdropPress={() => this.toggleWhoStarred()}>
+                    <Card disabled={true}>
+                        <TextScroll text={whoHasStarred} title="Users' likes" />
+                        <Button style={{ marginTop: 20 }} status='success' onPress={() => this.toggleWhoStarred()}>
+                            DISMISS
+                        </Button>
+                    </Card>
+                </Modal>
                 <Text style={styles.title}>{name}</Text>
                 <Image
                     style={{ width: "100%", flex: 0.5 }}
@@ -188,25 +229,37 @@ class TvDetails extends Component {
                 <Separator />
                 <Layout style={styles.votes}>
                     <Text>Release date: {first_date}</Text>
-                    <Layout style={styles.votes}>
-                        <Icon
-                            style={styles.iconSmall}
-                            name="star"
-                            fill='#FFFF00'
-                        />
-                        <Text>{medStars || 0}</Text>
-                    </Layout>
+                    <TouchableHighlight
+                        underlayColor="#DDDDDD"
+                        onPress={() => {
+                            this.whoStarred()
+                        }}>
+                        <Layout style={styles.votes}>
+                            <Icon
+                                style={styles.iconSmall}
+                                name="star"
+                                fill='#FFFF00'
+                            />
+                            <Text>{medStars || 0}</Text>
+                        </Layout>
+                    </TouchableHighlight>
                 </Layout>
                 <Layout style={styles.votes}>
                     <Text>Last date: {last_date}</Text>
-                    <Layout style={styles.votes}>
-                        <Icon
-                            style={styles.iconSmall}
-                            name="eye"
-                            fill='#00FF00'
-                        />
-                        <Text>{views || 0}</Text>
-                    </Layout>
+                    <TouchableHighlight
+                        underlayColor="#DDDDDD"
+                        onPress={() => {
+                            this.whoStarred()
+                        }}>
+                        <Layout style={styles.votes}>
+                            <Icon
+                                style={styles.iconSmall}
+                                name="eye"
+                                fill='#00FF00'
+                            />
+                            <Text>{views || 0}</Text>
+                        </Layout>
+                    </TouchableHighlight>
                 </Layout>
                 <Text style={{ color: "#A70207", fontSize: 18 }} onPress={() => Linking.openURL(homepage)}>Home Page</Text>
                 <Separator />
