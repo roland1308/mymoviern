@@ -15,6 +15,7 @@ import FormatDate from './components/FormatDate';
 import { addSerieToUser } from '../store/actions/userActions';
 import removeTrailinZeros from 'remove-trailing-zeros'
 import TextScroll from './components/TextScroll';
+import YoutubePlayer from "react-native-youtube-iframe";
 
 const axios = require("axios");
 
@@ -34,7 +35,8 @@ class TvDetails extends Component {
             medStars: 0,
             needRefresh: false,
             whoStarredVisible: false,
-            whoHasStarred: []
+            whoHasStarred: [],
+            playing: false,
         }
     }
 
@@ -42,7 +44,7 @@ class TvDetails extends Component {
         const { detailsId, source } = this.props.route.params
         const { series, serieStars } = this.props.user
         const serieIndex = series.indexOf(detailsId)
-        let uri = "https://api.themoviedb.org/3/tv/" + detailsId + "?api_key=" + API_KEY + "&language=" + this.props.general.language
+        let uri = "https://api.themoviedb.org/3/tv/" + detailsId + "?api_key=" + API_KEY + "&language=" + this.props.general.language + "&append_to_response=videos"
         if (serieIndex !== -1) {
             this.props.dispatch(setAlreadyStarred(true))
             this.setState({ oldStarVote: serieStars[serieIndex], newStarVote: serieStars[serieIndex], position: serieIndex })
@@ -79,8 +81,12 @@ class TvDetails extends Component {
             const response = responses[0]
             const response1 = responses[1]
             if (response.status === 200) {
+                const momTrailersArray = response.data.videos.results.map(trailer => {
+                    return trailer['key']
+                })
                 this.setState({
                     details: response.data,
+                    trailersArray: momTrailersArray
                 })
             } else {
                 this.setState({ error: true, errorMsg: response.data.status_message })
@@ -167,7 +173,7 @@ class TvDetails extends Component {
             )
         }
         const { name, backdrop_path, overview, first_air_date, last_air_date, homepage } = this.state.details
-        const { newStarVote, medStars, views, whoStarredVisible, whoHasStarred, isLoading } = this.state
+        const { newStarVote, medStars, views, whoStarredVisible, whoHasStarred, isLoading, playing, trailersArray } = this.state
         const first_date = FormatDate(first_air_date)
         const last_date = FormatDate(last_air_date)
         const { addMovieStar } = this.props.general
@@ -223,9 +229,13 @@ class TvDetails extends Component {
                     </Card>
                 </Modal>
                 <Text style={styles.title}>{name}</Text>
-                <Image
-                    style={{ width: "100%", flex: 0.5 }}
-                    source={backdrop_path == null ? require("../assets/noBackdrop.png") : { uri: "https://image.tmdb.org/t/p/w500" + backdrop_path }} />
+                <YoutubePlayer
+                    height={200}
+                    style={{ aspectRatio: 1 }}
+                    play={playing}
+                    playList={trailersArray}
+                    onChangeState={() => this.onStateChange}
+                />
                 <Separator />
                 <Layout style={styles.votes}>
                     <Text>Release date: {first_date}</Text>
@@ -261,7 +271,7 @@ class TvDetails extends Component {
                         </Layout>
                     </TouchableHighlight>
                 </Layout>
-                <Text style={{ color: "#A70207", fontSize: 18 }} onPress={() => Linking.openURL(homepage)}>Home Page</Text>
+                {homepage != "" ? (<Text style={{ color: "#A70207", fontSize: 18 }} onPress={() => Linking.openURL(homepage)}>Home Page</Text>) : <Text />}
                 <Separator />
                 <ScrollView style={{ flex: 1 }}>
                     <Text style={styles.overview}>{overview ? overview : "No Description"}</Text>

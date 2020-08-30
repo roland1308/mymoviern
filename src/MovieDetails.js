@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import {
-    Image,
     StyleSheet,
     Linking,
 } from 'react-native'
@@ -15,6 +14,7 @@ import FormatDate from './components/FormatDate';
 import { addMovieToUser } from '../store/actions/userActions';
 import removeTrailinZeros from 'remove-trailing-zeros'
 import TextScroll from './components/TextScroll';
+import YoutubePlayer from "react-native-youtube-iframe";
 
 const axios = require("axios");
 
@@ -34,7 +34,8 @@ class MovieDetails extends Component {
             medStars: 0,
             needRefresh: false,
             whoStarredVisible: false,
-            whoHasStarred: []
+            whoHasStarred: [],
+            playing: false,
         }
     }
 
@@ -42,7 +43,7 @@ class MovieDetails extends Component {
         const { detailsId, source } = this.props.route.params
         const { movies, movieStars } = this.props.user
         const movieIndex = movies.indexOf(detailsId)
-        let uri = "https://api.themoviedb.org/3/movie/" + detailsId + "?api_key=" + API_KEY + "&language=" + this.props.general.language + "&append_to_response=credits"
+        let uri = "https://api.themoviedb.org/3/movie/" + detailsId + "?api_key=" + API_KEY + "&language=" + this.props.general.language + "&append_to_response=credits,videos"
         if (movieIndex !== -1) {
             this.props.dispatch(setAlreadyStarred(true))
             this.setState({ oldStarVote: movieStars[movieIndex], newStarVote: movieStars[movieIndex], position: movieIndex })
@@ -79,8 +80,12 @@ class MovieDetails extends Component {
             const response = responses[0]
             const response1 = responses[1]
             if (response.status === 200) {
+                const momTrailersArray = response.data.videos.results.map(trailer => {
+                    return trailer['key']
+                })
                 this.setState({
                     details: response.data,
+                    trailersArray: momTrailersArray
                 })
             } else {
                 this.setState({ error: true, errorMsg: response.data.status_message })
@@ -166,8 +171,8 @@ class MovieDetails extends Component {
                 </Layout>
             )
         }
-        const { title, backdrop_path, overview, release_date, tagline, homepage, credits } = this.state.details
-        const { newStarVote, views, medStars, whoStarredVisible, whoHasStarred, isLoading } = this.state
+        const { title, overview, release_date, tagline, homepage, credits } = this.state.details
+        const { newStarVote, views, medStars, whoStarredVisible, whoHasStarred, isLoading, playing, trailersArray } = this.state
         const date = FormatDate(release_date)
         const { addMovieStar } = this.props.general
         const starItems = []
@@ -222,9 +227,13 @@ class MovieDetails extends Component {
                     </Card>
                 </Modal>
                 <Text style={styles.title}>{title}</Text>
-                <Image
-                    style={{ width: "100%", flex: 0.5 }}
-                    source={backdrop_path == null ? require("../assets/noBackdrop.png") : { uri: "https://image.tmdb.org/t/p/w500" + backdrop_path }} />
+                <YoutubePlayer
+                    height={200}
+                    style={{ aspectRatio: 1 }}
+                    play={playing}
+                    playList={trailersArray}
+                    onChangeState={() => this.onStateChange}
+                />
                 <Text style={styles.subTitle}>{tagline}</Text>
                 <Separator />
                 <Layout style={styles.votes}>
@@ -245,7 +254,7 @@ class MovieDetails extends Component {
                     </TouchableHighlight>
                 </Layout>
                 <Layout style={styles.votes}>
-                    <Text style={{ color: "#A70207", fontSize: 18 }} onPress={() => Linking.openURL(homepage)}>Home Page</Text>
+                    {homepage != "" ? (<Text style={{ color: "#A70207", fontSize: 18 }} onPress={() => Linking.openURL(homepage)}>Home Page</Text>) : <Text />}
                     <TouchableHighlight
                         underlayColor="#DDDDDD"
                         onPress={() => {
@@ -324,6 +333,10 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center"
+    },
+    youtube: {
+        alignSelf: 'stretch',
+        height: 300
     }
 })
 

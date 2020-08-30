@@ -7,14 +7,17 @@ AsyncStorage
 Password encrypt
 Rating system
 Update version advising
+YouTube API data - https://reactnativeforyou.com/how-to-add-youtube-video-in-your-react-native-app
 
 -------------------
 
 # Version History:
 
-2.4.0 Now you can see who rated: just touch the ⭐️
+2.5.0 If available, you can play YouTube trailers.
 
-2.3.1 Checking version working
+2.4.0 Now you can see who rated: just touch the ⭐️.
+
+2.3.1 Checking version working.
 
 2.3.0 Added version history in menu.
 

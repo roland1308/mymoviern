@@ -1,5 +1,5 @@
 import { ADD_USER_BEGIN, ADD_USER_SUCCESS, ADD_USER_FAILURE, ADD_MOVIE_BEGIN, ADD_MOVIE_SUCCESS, ADD_SERIE_SUCCESS, ADD_MOVIE_FAILURE, SET_ISLOADING } from '../constants';
-import { setMessage } from './generalActions';
+import { setMessage, setIsLogged } from './generalActions';
 
 const axios = require("axios");
 
@@ -36,8 +36,9 @@ export const logUser = user => {
                 dispatch(addUserFailure());
                 dispatch(setMessage(response))
             } else {
-                dispatch(addUserSuccess(response.data))
                 dispatch(setMessage("User logged in"))
+                dispatch(setIsLogged(true))
+                dispatch(addUserSuccess(response.data))
             }
         } catch (error) {
             dispatch(addUserFailure())

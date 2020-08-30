@@ -70,7 +70,8 @@ class List extends Component {
             rememberMe: false,
             chkPassword: "",
             secureTextEntry: true,
-            selectedIndex: { "row": 0 }
+            selectedIndex: { "row": 0 },
+            isListLoading: false
         }
     }
 
@@ -83,12 +84,10 @@ class List extends Component {
                 rememberMe: true
             })
             this.props.dispatch(logUser({ userName, password: GEN_PW }))
-            this.props.dispatch(setIsLogged(true))
         } else {
             this.setState({
                 rememberMe: false
             })
-            this.props.dispatch(setIsLogged(false))
         }
         this.getList()
     }
@@ -118,7 +117,7 @@ class List extends Component {
     }
 
     async getList() {
-        this.props.dispatch(setIsLoading(true))
+        this.setState({ isListLoading: true })
         const url =
             "https://api.themoviedb.org/3/discover/movie?api_key=" + API_KEY +
             "&language=" + this.props.general.language +
@@ -147,8 +146,7 @@ class List extends Component {
                     films: response.data.results
                 })
             } else {
-                this.props.dispatch(setIsLoading(false))
-                this.setState({ error: true, errorMsg: response.data.status_message })
+                this.setState({ error: true, errorMsg: response.data.status_message, isListLoading: false })
                 return
             }
             if (response1.status === 200) {
@@ -156,8 +154,7 @@ class List extends Component {
                     series: response1.data.results
                 })
             } else {
-                this.props.dispatch(setIsLoading(false))
-                this.setState({ error: true, errorMsg: response1.data.status_message })
+                this.setState({ error: true, errorMsg: response1.data.status_message, isListLoading: false })
                 return
             }
             if (response2.status === 200) {
@@ -188,8 +185,7 @@ class List extends Component {
                     }
                 })
             } else {
-                this.props.dispatch(setIsLoading(false))
-                this.setState({ error: true, errorMsg: response2.data.status_message })
+                this.setState({ error: true, errorMsg: response2.data.status_message, isListLoading: false })
                 return
             }
             if (response3.status === 200) {
@@ -220,16 +216,14 @@ class List extends Component {
                     }
                 })
             } else {
-                this.props.dispatch(setIsLoading(false))
-                this.setState({ error: true, errorMsg: response3.data.status_message })
+                this.setState({ error: true, errorMsg: response3.data.status_message, isListLoading: false })
                 return
             }
         })).catch(errors => {
-            this.props.dispatch(setIsLoading(false))
-            this.setState({ error: true, errorMsg: errors.message })
+            this.setState({ error: true, errorMsg: errors.message, isListLoading: false })
             return
         })
-        this.props.dispatch(setIsLoading(false))
+        this.setState({ isListLoading: false })
         return
     }
 
@@ -369,6 +363,7 @@ class List extends Component {
             default:
                 break;
         }
+        this.setState({ isListLoading: false })
         this.props.dispatch(setIsLoading(false))
         this.props.dispatch(setMessage(null))
     }
@@ -394,12 +389,12 @@ class List extends Component {
 
     render() {
         const navigation = this.props.navigation
-        const { search, isLoginVisible, isRegisterVisible, userName, password, chkPassword, secureTextEntry, selectedIndex } = this.state
+        const { search, isLoginVisible, isRegisterVisible, userName, password, chkPassword, secureTextEntry, selectedIndex, isListLoading } = this.state
         const { popupMsg, isLogged } = this.props.general
         const { isLoading } = this.props.user
         return (
             <Layout style={styles.container}>
-                <Modal visible={isLoading}
+                <Modal visible={isLoading || isListLoading}
                     backdropStyle={styles.backdrop}
                     onBackdropPress={() => this.toggleError()}>
                     <Card disabled={true} style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)', borderRadius: 50 }}>
