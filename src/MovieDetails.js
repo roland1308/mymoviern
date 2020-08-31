@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import {
     StyleSheet,
     Linking,
+    Image
 } from 'react-native'
 import { Layout, Text, Spinner, Modal, Card, Button, Icon } from '@ui-kitten/components';
 
@@ -36,6 +37,7 @@ class MovieDetails extends Component {
             whoStarredVisible: false,
             whoHasStarred: [],
             playing: false,
+            trailersArray: null
         }
     }
 
@@ -171,7 +173,7 @@ class MovieDetails extends Component {
                 </Layout>
             )
         }
-        const { title, overview, release_date, tagline, homepage, credits } = this.state.details
+        const { title, overview, release_date, tagline, homepage, credits, backdrop_path } = this.state.details
         const { newStarVote, views, medStars, whoStarredVisible, whoHasStarred, isLoading, playing, trailersArray } = this.state
         const date = FormatDate(release_date)
         const { addMovieStar } = this.props.general
@@ -227,13 +229,20 @@ class MovieDetails extends Component {
                     </Card>
                 </Modal>
                 <Text style={styles.title}>{title}</Text>
-                <YoutubePlayer
-                    height={200}
-                    style={{ aspectRatio: 1 }}
-                    play={playing}
-                    playList={trailersArray}
-                    onChangeState={() => this.onStateChange}
-                />
+                {trailersArray.length > 0 ?
+                    <YoutubePlayer
+                        height={200}
+                        style={{ aspectRatio: 1 }}
+                        play={playing}
+                        playList={trailersArray}
+                        onChangeState={() => this.onStateChange}
+                    />
+                    :
+                    <Image
+                        style={{ width: "100%", flex: 0.5 }}
+                        source={backdrop_path == null ? require("../assets/noBackdrop.png") : { uri: "https://image.tmdb.org/t/p/w500" + backdrop_path }}
+                    />
+                }
                 <Text style={styles.subTitle}>{tagline}</Text>
                 <Separator />
                 <Layout style={styles.votes}>
@@ -334,10 +343,6 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center"
     },
-    youtube: {
-        alignSelf: 'stretch',
-        height: 300
-    }
 })
 
 const mapStateToProps = state => ({

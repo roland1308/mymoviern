@@ -7,11 +7,13 @@ AsyncStorage
 Password encrypt
 Rating system
 Update version advising
-YouTube API data - https://reactnativeforyou.com/how-to-add-youtube-video-in-your-react-native-app
+YouTube trailers iFrame
 
 -------------------
 
 # Version History:
+
+2.5.1 If no video trailer, show the poster. Cosmetics changes.
 
 2.5.0 If available, you can play YouTube trailers.
 

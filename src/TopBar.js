@@ -56,7 +56,7 @@ class TopBar extends Component {
             updateVisible: false,
             thanksVisible: false,
             versionings: "",
-            actualVersion: "2.5.0"
+            actualVersion: "2.5.1"
         }
     }
 

@@ -37,6 +37,7 @@ class TvDetails extends Component {
             whoStarredVisible: false,
             whoHasStarred: [],
             playing: false,
+            trailersArray: null
         }
     }
 
@@ -229,13 +230,20 @@ class TvDetails extends Component {
                     </Card>
                 </Modal>
                 <Text style={styles.title}>{name}</Text>
-                <YoutubePlayer
-                    height={200}
-                    style={{ aspectRatio: 1 }}
-                    play={playing}
-                    playList={trailersArray}
-                    onChangeState={() => this.onStateChange}
-                />
+                {trailersArray.length > 0 ?
+                    <YoutubePlayer
+                        height={200}
+                        style={{ aspectRatio: 1 }}
+                        play={playing}
+                        playList={trailersArray}
+                        onChangeState={() => this.onStateChange}
+                    />
+                    :
+                    <Image
+                        style={{ width: "100%", flex: 0.5 }}
+                        source={backdrop_path == null ? require("../assets/noBackdrop.png") : { uri: "https://image.tmdb.org/t/p/w500" + backdrop_path }}
+                    />
+                }
                 <Separator />
                 <Layout style={styles.votes}>
                     <Text>Release date: {first_date}</Text>

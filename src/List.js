@@ -85,6 +85,7 @@ class List extends Component {
             })
             this.props.dispatch(logUser({ userName, password: GEN_PW }))
         } else {
+            this.props.dispatch(setLanguage("en.US"));
             this.setState({
                 rememberMe: false
             })
@@ -117,6 +118,7 @@ class List extends Component {
     }
 
     async getList() {
+        if (this.props.general.language === "") { return }
         this.setState({ isListLoading: true })
         const url =
             "https://api.themoviedb.org/3/discover/movie?api_key=" + API_KEY +
@@ -401,17 +403,6 @@ class List extends Component {
                         <Spinner size='giant' />
                     </Card>
                 </Modal>
-                <Modal
-                    visible={popupMsg}
-                    backdropStyle={styles.backdrop}
-                    onBackdropPress={() => this.toggleError()}>
-                    <Card disabled={true}>
-                        <Text>{popupMsg}</Text>
-                        <Button style={{ marginTop: 20 }} status='success' onPress={() => this.toggleError()}>
-                            DISMISS
-                        </Button>
-                    </Card>
-                </Modal>
                 {!isLoginVisible && !isRegisterVisible && !isLogged &&
                     <Layout style={styles.containerIntro}>
                         <Text category='h1'>
@@ -618,6 +609,17 @@ class List extends Component {
                         </Layout>
                     </>
                 }
+                <Modal
+                    visible={popupMsg}
+                    backdropStyle={styles.backdrop}
+                    onBackdropPress={() => this.toggleError()}>
+                    <Card disabled={true}>
+                        <Text>{popupMsg}</Text>
+                        <Button style={{ marginTop: 20 }} status='success' onPress={() => this.toggleError()}>
+                            DISMISS
+                        </Button>
+                    </Card>
+                </Modal>
             </Layout >
         )
     }

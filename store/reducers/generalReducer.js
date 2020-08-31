@@ -1,7 +1,7 @@
 import { SET_LANGUAGE, TOGGLE_BACK, IS_BACK_VISIBLE, IS_WORLD_VISIBLE, SET_HOME_BAR, SET_OTHER_BAR, SET_MESSAGE, SET_IS_LOGGED, SET_DETAIL_BAR, SET_ADDMOVIESTAR, SET_ALREADYSTARRED, REFRESH } from '../constants';
 const initialState = {
-    language: 'en-US',
-    isBackButton: "true",
+    language: '',
+    isBackButton: 'true',
     backIs: false,
     worldIs: true,
     checkIs: false,
