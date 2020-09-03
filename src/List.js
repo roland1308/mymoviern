@@ -523,10 +523,10 @@ class List extends Component {
                             />
                             <Layout style={styles.buttons}>
                                 <Button
-                                    onPress={() => (search !== "") && navigation.navigate('Search Result', { search, type: "movie" })}
+                                    onPress={() => (search !== "") && navigation.navigate('Find List', { search, type: "movie" })}
                                 >Movies</Button>
                                 <Button
-                                    onPress={() => (search !== "") && navigation.navigate('Search Result', { search, type: "tv" })}
+                                    onPress={() => (search !== "") && navigation.navigate('Find List', { search, type: "tv" })}
                                 >Series</Button>
                             </Layout>
                         </Layout>

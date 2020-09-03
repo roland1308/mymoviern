@@ -13,6 +13,8 @@ YouTube trailers iFrame
 
 # Version History:
 
+2.6.0 Now you can list your starred movies and series!
+
 2.5.1 If no video trailer, show the poster. Cosmetics changes.
 
 2.5.0 If available, you can play YouTube trailers.

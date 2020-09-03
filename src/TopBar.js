@@ -6,6 +6,8 @@ import { connect } from 'react-redux';
 import AsyncStorage from '@react-native-community/async-storage'
 import Axios from 'axios';
 import TextScroll from './components/TextScroll';
+import Separator from './components/Separator';
+import * as RootNavigation from './RootNavigation'
 
 const HomeIcon = (props) => (
     <Icon {...props} name='home' />
@@ -21,6 +23,14 @@ const CheckRedIcon = (props) => (
 
 const GlobeIcon = (props) => (
     <Icon {...props} name='globe' />
+);
+
+const MovieIcon = (props) => (
+    <Icon {...props} name='film-outline' />
+);
+
+const SerieIcon = (props) => (
+    <Icon {...props} name='tv-outline' />
 );
 
 const FlagIcon = (props) => (
@@ -56,7 +66,7 @@ class TopBar extends Component {
             updateVisible: false,
             thanksVisible: false,
             versionings: "",
-            actualVersion: "2.5.1"
+            actualVersion: "2.6.0"
         }
     }
 
@@ -91,7 +101,6 @@ class TopBar extends Component {
         try {
             const userName = await AsyncStorage.getItem('VERSION');
             if (userName !== null) {
-                // We have userName!!
                 return userName;
             }
         } catch (error) {
@@ -180,16 +189,24 @@ class TopBar extends Component {
         <TopNavigationAction icon={GlobeIcon} onPress={this.toggleLanguage} />
     );
 
+    goTo = (type) => {
+        this.toggleMenu()
+        RootNavigation.navigate("User Lists", { type })
+    }
+
     renderRightActions = () => (
-        <React.Fragment>
-            {this.props.general.checkIs && this.props.general.isLogged &&
+        < React.Fragment >
+            {
+                this.props.general.checkIs && this.props.general.isLogged &&
                 <TopNavigationAction icon={this.props.general.alreadyStarred ? CheckYellowIcon : CheckRedIcon} onPress={this.toggleStar} />
             }
-            {this.props.general.worldIs &&
+            {
+                this.props.general.worldIs &&
                 <OverflowMenu
                     anchor={this.renderLanguageAction}
                     visible={this.state.languageVisible}
-                    onBackdropPress={this.props.general.worldIs && this.toggleLanguage}>
+                    onBackdropPress={this.props.general.worldIs && this.toggleLanguage}
+                    backdropStyle={styles.backdrop}>
                     <MenuItem disabled={this.props.general.language === "en-US"} accessoryLeft={FlagIcon} title='English' onPress={() => this.setLanguage("en-US")} />
                     <MenuItem disabled={this.props.general.language === "it"} accessoryLeft={FlagIcon} title='Italiano' onPress={() => this.setLanguage("it")} />
                     <MenuItem disabled={this.props.general.language === "es"} accessoryLeft={FlagIcon} title='Español' onPress={() => this.setLanguage("es")} />
@@ -198,12 +215,21 @@ class TopBar extends Component {
             <OverflowMenu
                 anchor={this.renderMenuAction}
                 visible={this.state.menuVisible}
-                onBackdropPress={this.toggleMenu}>
+                onBackdropPress={this.toggleMenu}
+                backdropStyle={styles.backdrop}>
+                {this.props.general.isLogged && <>
+                    <MenuItem accessoryLeft={MovieIcon} title='My Movies' onPress={() => this.goTo('movie')} />
+                    <MenuItem accessoryLeft={SerieIcon} title='My Series' onPress={() => this.goTo('tv')} />
+                    <Separator /></>
+                }
                 <MenuItem accessoryLeft={InfoIcon} title='About' onPress={() => this.toggleModal()} />
-                <MenuItem accessoryLeft={VersionIcon} title='Versions' onPress={() => this.toggleVersion()} />
-                {this.props.general.isLogged && <MenuItem accessoryLeft={LogoutIcon} title='Logout' onPress={this.logOut} />}
+                <MenuItem accessoryLeft={VersionIcon} title='App Versions' onPress={() => this.toggleVersion()} />
+                {this.props.general.isLogged && <>
+                    <Separator />
+                    <MenuItem accessoryLeft={LogoutIcon} title='Logout' onPress={this.logOut} /></>
+                }
             </OverflowMenu>
-        </React.Fragment>
+        </React.Fragment >
     );
 
     toggleBack() {
