@@ -6,7 +6,7 @@ import {
 } from 'react-native'
 import { Layout, Text } from '@ui-kitten/components';
 
-function SearchResult({ id, poster_path, title, type, navigation }) {
+function SearchResult({ id, poster_path, title, type, navigation, stars }) {
     return (
         <Layout style={styles.item}>
             <TouchableHighlight
@@ -23,7 +23,7 @@ function SearchResult({ id, poster_path, title, type, navigation }) {
                         style={{ width: 60, height: 90 }}
                         source={poster_path == null ? require("../../assets/noPoster.png") : { uri: "https://image.tmdb.org/t/p/w154" + poster_path }}
                     />
-                    <Text style={styles.title}>{title}</Text>
+                    <Text style={styles.title}>{title + "\n" + "⭐️".repeat(stars)}</Text>
                 </Layout>
             </TouchableHighlight>
         </Layout>

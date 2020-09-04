@@ -7,7 +7,7 @@ import { Layout } from '@ui-kitten/components';
 import { API_KEY } from 'react-native-dotenv'
 import SearchResult from './components/SearchResult'
 import { connect } from 'react-redux';
-import { setHomeBar, setOtherBar } from '../store/actions/generalActions';
+import { setHomeBar, setOtherBar, setMessage } from '../store/actions/generalActions';
 
 const axios = require("axios");
 
@@ -50,9 +50,14 @@ class FindList extends Component {
                 "&page=" + this.state.page +
                 "&include_adult=false"
             let response = await axios.get(url)
-            this.setState({
-                results: this.state.page === 1 ? response.data.results : [...this.state.results, ...response.data.results]
-            })
+            if (response.data.results.length === 0) {
+                this.props.navigation.navigate("Home")
+                this.props.dispatch(setMessage("Sorry: no results"))
+            } else {
+                this.setState({
+                    results: this.state.page === 1 ? response.data.results : [...this.state.results, ...response.data.results]
+                })
+            }
         } catch (error) {
             console.log(error);
         }

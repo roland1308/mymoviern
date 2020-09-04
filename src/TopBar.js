@@ -66,7 +66,9 @@ class TopBar extends Component {
             updateVisible: false,
             thanksVisible: false,
             versionings: "",
-            actualVersion: "2.6.0"
+            nrOfMovies: 0,
+            nrOfSeries: 0,
+            actualVersion: "2.6.1"
         }
     }
 
@@ -87,6 +89,15 @@ class TopBar extends Component {
         this.setState({
             versionings: versionsArray
         })
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.user.movies.length != this.props.user.movies.length) {
+            this.setState({ nrOfMovies: this.props.user.movies.length })
+        }
+        if (prevProps.user.series.length != this.props.user.series.length) {
+            this.setState({ nrOfSeries: this.props.user.series.length })
+        }
     }
 
     rememberVersion = async () => {
@@ -191,7 +202,7 @@ class TopBar extends Component {
 
     goTo = (type) => {
         this.toggleMenu()
-        RootNavigation.navigate("User Lists", { type })
+        RootNavigation.navigate("User Lists", { type, route: 'myList' })
     }
 
     renderRightActions = () => (
@@ -218,8 +229,10 @@ class TopBar extends Component {
                 onBackdropPress={this.toggleMenu}
                 backdropStyle={styles.backdrop}>
                 {this.props.general.isLogged && <>
-                    <MenuItem accessoryLeft={MovieIcon} title='My Movies' onPress={() => this.goTo('movie')} />
-                    <MenuItem accessoryLeft={SerieIcon} title='My Series' onPress={() => this.goTo('tv')} />
+                    <MenuItem accessoryLeft={MovieIcon} title={'My Movies (' + this.state.nrOfMovies + ')'}
+                        onPress={() => { this.state.nrOfMovies != 0 && this.goTo('movie') }} />
+                    <MenuItem accessoryLeft={SerieIcon} title={'My Series (' + this.state.nrOfSeries + ')'}
+                        onPress={() => { this.state.nrOfSeries != 0 && this.goTo('tv') }} />
                     <Separator /></>
                 }
                 <MenuItem accessoryLeft={InfoIcon} title='About' onPress={() => this.toggleModal()} />
@@ -321,5 +334,6 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = state => ({
     general: state.general,
+    user: state.user
 });
 export default connect(mapStateToProps)(TopBar)

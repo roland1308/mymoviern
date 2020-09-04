@@ -67,12 +67,12 @@ class UserLists extends Component {
                 </Layout>
             )
         }
-        const { type } = this.props.route.params
+        const { type, route } = this.props.route.params
         return (
             <Layout style={styles.container} >
                 <Layout>
                     <FlatList
-                        renderItem={({ item }) => (
+                        renderItem={({ item, index }) => (
                             <SearchResult
                                 poster_path={item.poster_path}
                                 title={item.title}
@@ -80,6 +80,7 @@ class UserLists extends Component {
                                 title={type === "movie" ? item.title : item.name}
                                 navigation={this.props.navigation}
                                 type={type}
+                                stars={(type === 'movie' && route === 'myList') ? this.props.user.movieStars[index] : this.props.user.serieStars[index]}
                             />
                         )}
                         data={this.state.results}
