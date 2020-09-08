@@ -132,9 +132,9 @@ class TvDetails extends Component {
         }
         let views = (this.state.views || 0) + (1 && !data.alreadyStarred),
             totStars = (this.state.totStars || 0) + data.starsToAdd,
-            medStars = removeTrailinZeros(totStars / views)
+            medStars = removeTrailinZeros((totStars / views).toFixed(2))
         this.setState({
-            oldStarVote: data.newStarVote,
+            oldStarVote: this.state.newStarVote,
             views,
             totStars,
             medStars,

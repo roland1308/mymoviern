@@ -23,10 +23,13 @@ function SearchResult({ id, poster_path, title, type, navigation, stars }) {
                         style={{ width: 60, height: 90 }}
                         source={poster_path == null ? require("../../assets/noPoster.png") : { uri: "https://image.tmdb.org/t/p/w154" + poster_path }}
                     />
-                    <Text style={styles.title}>{title + "\n" + "⭐️".repeat(stars)}</Text>
+                    <Text style={styles.subTitle}>
+                        <Text style={styles.title}>{title}</Text>
+                        {"\n" + "⭐️".repeat(stars)}
+                    </Text>
                 </Layout>
             </TouchableHighlight>
-        </Layout>
+        </Layout >
     )
 }
 
@@ -34,6 +37,11 @@ const styles = StyleSheet.create({
     title: {
         width: "80%",
         fontSize: 20,
+        margin: 5,
+    },
+    subTitle: {
+        width: "80%",
+        fontSize: 12,
         margin: 5,
     },
     grid: {
