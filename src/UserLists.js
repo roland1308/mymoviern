@@ -68,6 +68,7 @@ class UserLists extends Component {
             )
         }
         const { type, route } = this.props.route.params
+        const resultsOk = this.state.results.reverse()
         return (
             <Layout style={styles.container} >
                 <Layout>
@@ -83,7 +84,7 @@ class UserLists extends Component {
                                 stars={(type === 'movie' && route === 'myList') ? this.props.user.movieStars[index] : this.props.user.serieStars[index]}
                             />
                         )}
-                        data={this.state.results}
+                        data={resultsOk}
                         keyExtractor={item => item.id.toString()}
                         ItemSeparatorComponent={() => <Layout style={{ height: 5 }} />}
                     />

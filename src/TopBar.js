@@ -68,12 +68,14 @@ class TopBar extends Component {
             versionings: "",
             nrOfMovies: 0,
             nrOfSeries: 0,
+            lastModifications: "",
             actualVersion: "2.6.1"
         }
     }
 
     async componentDidMount() {
         const response = await Axios.get("https://mymoviesback.herokuapp.com/versionings/getversions")
+        const lastModifications = response.data[0].update
         const versionsArray = response.data.map(ver => {
             return ver['version'] + " " + ver['update'] + "\n\n"
         })
@@ -87,7 +89,8 @@ class TopBar extends Component {
             }
         }
         this.setState({
-            versionings: versionsArray
+            versionings: versionsArray,
+            lastModifications
         })
     }
 
@@ -254,7 +257,7 @@ class TopBar extends Component {
     );
     render() {
         const { backIs } = this.props.general
-        const { modalVisible, actualVersion, versionVisible, updateVisible, thanksVisible, versionings } = this.state
+        const { modalVisible, actualVersion, versionVisible, updateVisible, thanksVisible, versionings, lastModifications } = this.state
         return (
             <Layout style={styles.container} level='1'>
                 <TopNavigation
@@ -309,7 +312,8 @@ class TopBar extends Component {
                     backdropStyle={styles.backdrop}
                     onBackdropPress={() => this.toggleThanks()}>
                     <Card disabled={true}>
-                        <Text>Thank you for updating the app</Text>
+                        <Text>Thank you for updating the app!</Text>
+                        <Text>{lastModifications}</Text>
                         <Button style={{ marginTop: 20 }} status='success' onPress={() => this.toggleThanks()}>
                             DISMISS
                         </Button>
