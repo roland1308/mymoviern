@@ -66,8 +66,6 @@ class TopBar extends Component {
             updateVisible: false,
             thanksVisible: false,
             versionings: "",
-            nrOfMovies: 0,
-            nrOfSeries: 0,
             lastModifications: "",
             actualVersion: "2.6.1"
         }
@@ -92,15 +90,6 @@ class TopBar extends Component {
             versionings: versionsArray,
             lastModifications
         })
-    }
-
-    componentDidUpdate(prevProps, prevState) {
-        if (prevProps.user.movies.length != this.props.user.movies.length) {
-            this.setState({ nrOfMovies: this.props.user.movies.length })
-        }
-        if (prevProps.user.series.length != this.props.user.series.length) {
-            this.setState({ nrOfSeries: this.props.user.series.length })
-        }
     }
 
     rememberVersion = async () => {
@@ -232,10 +221,10 @@ class TopBar extends Component {
                 onBackdropPress={this.toggleMenu}
                 backdropStyle={styles.backdrop}>
                 {this.props.general.isLogged && <>
-                    <MenuItem accessoryLeft={MovieIcon} title={'My Movies (' + this.state.nrOfMovies + ')'}
-                        onPress={() => { this.state.nrOfMovies != 0 && this.goTo('movie') }} />
-                    <MenuItem accessoryLeft={SerieIcon} title={'My Series (' + this.state.nrOfSeries + ')'}
-                        onPress={() => { this.state.nrOfSeries != 0 && this.goTo('tv') }} />
+                    <MenuItem accessoryLeft={MovieIcon} title={'My Movies (' + this.props.user.movies.length + ')'}
+                        onPress={() => { this.props.user.movies.length != 0 && this.goTo('movie') }} />
+                    <MenuItem accessoryLeft={SerieIcon} title={'My Series (' + this.props.user.series.length + ')'}
+                        onPress={() => { this.props.user.series.length != 0 && this.goTo('tv') }} />
                     <Separator /></>
                 }
                 <MenuItem accessoryLeft={InfoIcon} title='About' onPress={() => this.toggleModal()} />

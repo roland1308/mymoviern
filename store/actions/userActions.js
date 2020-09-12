@@ -1,4 +1,4 @@
-import { ADD_USER_BEGIN, ADD_USER_SUCCESS, ADD_USER_FAILURE, ADD_MOVIE_BEGIN, ADD_MOVIE_SUCCESS, ADD_SERIE_SUCCESS, ADD_MOVIE_FAILURE, SET_ISLOADING } from '../constants';
+import { ADD_USER_BEGIN, ADD_USER_SUCCESS, ADD_USER_FAILURE, ADD_MOVIE_BEGIN, ADD_MOVIE_SUCCESS, ADD_SERIE_SUCCESS, ADD_MOVIE_FAILURE, SET_ISLOADING, REMOVE_MOVIE_SUCCESS, REMOVE_SERIE_SUCCESS } from '../constants';
 import { setMessage, setIsLogged } from './generalActions';
 
 const axios = require("axios");
@@ -67,6 +67,37 @@ export const addMovieToUser = data => {
             }
         } catch (error) {
             dispatch(addMovieFailure())
+            if (error) {
+                dispatch(setMessage("An error has occurred"))
+            } else {
+                dispatch(setMessage(error.message))
+            }
+        }
+        return "done";
+    };
+};
+
+export const removeMovieToUser = data => {
+    return async dispatch => {
+        dispatch(addMovieBegin());
+        try {
+            const response = await axios.put("https://mymoviesback.herokuapp.com/users/removemoviestars", data)
+            if (response.status !== 200) {
+                dispatch(addMovieFailure());
+                dispatch(setMessage(response))
+            } else {
+                const response1 = await axios.put("https://mymoviesback.herokuapp.com/films/removefilm", data)
+                if (response1.status !== 200) {
+                    dispatch(addMovieFailure());
+                    dispatch(setMessage(response1))
+                } else {
+                    dispatch(removeMovieSuccess(data))
+                    dispatch(setMessage("Removed!"))
+                }
+            }
+        } catch (error) {
+            console.log(error);
+            dispatch(addMovieFailure())
             if (error.response.data) {
                 dispatch(setMessage("An error has occurred"))
             } else {
@@ -102,6 +133,36 @@ export const addSerieToUser = data => {
     };
 };
 
+export const removeSerieToUser = data => {
+    return async dispatch => {
+        dispatch(addMovieBegin());
+        try {
+            const response = await axios.put("https://mymoviesback.herokuapp.com/users/removeseriestars", data)
+            if (response.status !== 200) {
+                dispatch(addMovieFailure());
+                dispatch(setMessage(response))
+            } else {
+                const response1 = await axios.put("https://mymoviesback.herokuapp.com/series/removeserie", data)
+                if (response1.status !== 200) {
+                    dispatch(addMovieFailure());
+                    dispatch(setMessage(response1))
+                } else {
+                    dispatch(removeSerieSuccess(data))
+                    dispatch(setMessage("Removed!"))
+                }
+            }
+        } catch (error) {
+            console.log(error);
+            dispatch(addMovieFailure())
+            if (error.response.data) {
+                dispatch(setMessage("An error has occurred"))
+            } else {
+                dispatch(setMessage(error.message))
+            }
+        }
+        return "done";
+    };
+};
 
 export const addUserBegin = () => ({
     type: ADD_USER_BEGIN
@@ -127,6 +188,16 @@ export const addSerieSuccess = user => ({
 });
 export const addMovieFailure = () => ({
     type: ADD_MOVIE_FAILURE,
+});
+
+export const removeMovieSuccess = data => ({
+    type: REMOVE_MOVIE_SUCCESS,
+    payload: data
+});
+
+export const removeSerieSuccess = data => ({
+    type: REMOVE_SERIE_SUCCESS,
+    payload: data
 });
 
 export const setIsLoading = status => ({

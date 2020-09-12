@@ -15,7 +15,7 @@ import Separator from './components/Separator';
 import { Button, Layout, Text, Input, Icon, Modal, Card, Menu, MenuItem, Spinner } from '@ui-kitten/components';
 import { connect } from 'react-redux';
 import { ScrollView } from 'react-native-gesture-handler';
-import { setLanguage, setMessage, setHomeBar, setIsLogged } from '../store/actions/generalActions';
+import { setLanguage, setMessage, setHomeBar, setIsLogged, toggleMustRefresh } from '../store/actions/generalActions';
 import { addUser, logUser, setIsLoading } from '../store/actions/userActions';
 import AsyncStorage from '@react-native-community/async-storage'
 
@@ -362,6 +362,8 @@ class List extends Component {
                 this.props.dispatch(setIsLogged(true))
                 this.props.dispatch(setLanguage(language));
                 break;
+            case "Removed!":
+                this.props.dispatch(toggleMustRefresh())
             default:
                 break;
         }

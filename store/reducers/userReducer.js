@@ -1,4 +1,4 @@
-import { ADD_USER_SUCCESS, ADD_USER_BEGIN, ADD_USER_FAILURE, ADD_MOVIE_BEGIN, ADD_MOVIE_SUCCESS, ADD_SERIE_SUCCESS, ADD_MOVIE_FAILURE, SET_ISLOADING } from '../constants';
+import { ADD_USER_SUCCESS, ADD_USER_BEGIN, ADD_USER_FAILURE, ADD_MOVIE_BEGIN, ADD_MOVIE_SUCCESS, ADD_SERIE_SUCCESS, ADD_MOVIE_FAILURE, SET_ISLOADING, REMOVE_MOVIE_SUCCESS, REMOVE_SERIE_SUCCESS } from '../constants';
 const initialState = {
     userName: null,
     language: null,
@@ -82,6 +82,30 @@ const generalReducer = (state = initialState, action) => {
         case ADD_MOVIE_FAILURE:
             return {
                 ...state,
+                isLoading: false,
+            };
+        case REMOVE_MOVIE_SUCCESS:
+            const { movieIndexToRemove } = action.payload
+            let moviesForRemove = state.movies
+            let movieStarsForRemove = state.movieStars
+            moviesForRemove.splice(movieIndexToRemove, 1)
+            movieStarsForRemove.splice(movieIndexToRemove, 1)
+            return {
+                ...state,
+                movies: moviesForRemove,
+                movieStars: movieStarsForRemove,
+                isLoading: false,
+            };
+        case REMOVE_SERIE_SUCCESS:
+            const { serieIndexToRemove } = action.payload
+            let seriesForRemove = state.series
+            let serieStarsForRemove = state.serieStars
+            seriesForRemove.splice(serieIndexToRemove, 1)
+            serieStarsForRemove.splice(serieIndexToRemove, 1)
+            return {
+                ...state,
+                series: seriesForRemove,
+                serieStars: serieStarsForRemove,
                 isLoading: false,
             };
 

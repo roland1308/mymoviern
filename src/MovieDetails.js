@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import { setOtherBar, setHomeBar, setDetailBar, setAddMovieStar, setAlreadyStarred, toggleMustRefresh } from '../store/actions/generalActions';
 import Separator from './components/Separator';
 import FormatDate from './components/FormatDate';
-import { addMovieToUser } from '../store/actions/userActions';
+import { addMovieToUser, removeMovieToUser } from '../store/actions/userActions';
 import removeTrailinZeros from 'remove-trailing-zeros'
 import TextScroll from './components/TextScroll';
 import YoutubePlayer from "react-native-youtube-iframe";
@@ -37,7 +37,8 @@ class MovieDetails extends Component {
             whoStarredVisible: false,
             whoHasStarred: [],
             playing: false,
-            trailersArray: null
+            trailersArray: null,
+            removeVoteVisible: false,
         }
     }
 
@@ -46,6 +47,7 @@ class MovieDetails extends Component {
         const { movies, movieStars } = this.props.user
         const movieIndex = movies.indexOf(detailsId)
         let uri = "https://api.themoviedb.org/3/movie/" + detailsId + "?api_key=" + API_KEY + "&language=" + this.props.general.language + "&append_to_response=credits,videos"
+        if (source === "remove") { this.setState({ removeVoteVisible: true }) }
         if (movieIndex !== -1) {
             this.props.dispatch(setAlreadyStarred(true))
             this.setState({ oldStarVote: movieStars[movieIndex], newStarVote: movieStars[movieIndex], position: movieIndex })
@@ -72,7 +74,9 @@ class MovieDetails extends Component {
         } else {
             this.props.dispatch(setOtherBar())
         }
-        if (this.state.needRefresh) { this.props.dispatch(toggleMustRefresh()) }
+        if (this.state.needRefresh) {
+            this.props.dispatch(toggleMustRefresh())
+        }
     }
 
     async getDetails(uri) {
@@ -132,7 +136,7 @@ class MovieDetails extends Component {
         }
         let views = (this.state.views || 0) + (1 && !data.alreadyStarred),
             totStars = (this.state.totStars || 0) + data.starsToAdd,
-            medStars = removeTrailinZeros(totStars / views).toFixed(2)
+            medStars = removeTrailinZeros((totStars / views).toFixed(2))
         this.setState({
             oldStarVote: this.state.newStarVote,
             views,
@@ -165,6 +169,24 @@ class MovieDetails extends Component {
         this.setState({ whoStarredVisible: !this.state.whoStarredVisible })
     }
 
+    cancelRemove = () => {
+        this.setState({ removeVoteVisible: false })
+        this.props.navigation.navigate("User Lists")
+    }
+
+    confirmRemove = () => {
+        const { arrayPos } = this.props.route.params
+        const { userName, movies, movieStars } = this.props.user
+        const data = {
+            userName,
+            movieIndexToRemove: arrayPos,
+            movieId: movies[arrayPos],
+            starsToRemove: movieStars[arrayPos]
+        }
+        this.props.dispatch(removeMovieToUser(data))
+        this.cancelRemove()
+    }
+
     render() {
         if (this.state.details === null) {
             return (
@@ -174,7 +196,7 @@ class MovieDetails extends Component {
             )
         }
         const { title, overview, release_date, tagline, homepage, credits, backdrop_path } = this.state.details
-        const { newStarVote, views, medStars, whoStarredVisible, whoHasStarred, isLoading, playing, trailersArray } = this.state
+        const { newStarVote, views, medStars, whoStarredVisible, whoHasStarred, isLoading, playing, trailersArray, removeVoteVisible } = this.state
         const date = FormatDate(release_date)
         const { addMovieStar } = this.props.general
         const starItems = []
@@ -198,10 +220,25 @@ class MovieDetails extends Component {
                     </Card>
                 </Modal>
                 <Modal
+                    visible={removeVoteVisible}
+                    backdropStyle={styles.backdrop}
+                    onBackdropPress={() => this.cancelRemove()}>
+                    <Card disabled={true}>
+                        <Text>Are you sure to remove this movie?</Text>
+                        <Layout style={styles.iconsContainer}>
+                            <Button style={{ marginTop: 20 }} status='success' onPress={() => this.confirmRemove()}>
+                                Remove
+                            </Button>
+                            <Button style={{ marginTop: 20 }} status='danger' onPress={() => this.cancelRemove()}>
+                                Cancel
+                            </Button>
+                        </Layout>
+                    </Card>
+                </Modal>
+                <Modal
                     visible={addMovieStar}
                     backdropStyle={styles.backdrop}
-                    onBackdropPress={() => this.cancelAddStar()}
-                >
+                    onBackdropPress={() => this.cancelAddStar()}>
                     <Card disabled={true}>
                         <Text>As you saw this movie, please value it</Text>
                         <Layout style={styles.iconsContainer} >

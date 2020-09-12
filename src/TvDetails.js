@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import { setOtherBar, setHomeBar, setDetailBar, setAddMovieStar, setAlreadyStarred, toggleMustRefresh } from '../store/actions/generalActions';
 import Separator from './components/Separator';
 import FormatDate from './components/FormatDate';
-import { addSerieToUser } from '../store/actions/userActions';
+import { addSerieToUser, removeSerieToUser } from '../store/actions/userActions';
 import removeTrailinZeros from 'remove-trailing-zeros'
 import TextScroll from './components/TextScroll';
 import YoutubePlayer from "react-native-youtube-iframe";
@@ -37,7 +37,8 @@ class TvDetails extends Component {
             whoStarredVisible: false,
             whoHasStarred: [],
             playing: false,
-            trailersArray: null
+            trailersArray: null,
+            removeVoteVisible: false,
         }
     }
 
@@ -46,6 +47,7 @@ class TvDetails extends Component {
         const { series, serieStars } = this.props.user
         const serieIndex = series.indexOf(detailsId)
         let uri = "https://api.themoviedb.org/3/tv/" + detailsId + "?api_key=" + API_KEY + "&language=" + this.props.general.language + "&append_to_response=videos"
+        if (source === "remove") { this.setState({ removeVoteVisible: true }) }
         if (serieIndex !== -1) {
             this.props.dispatch(setAlreadyStarred(true))
             this.setState({ oldStarVote: serieStars[serieIndex], newStarVote: serieStars[serieIndex], position: serieIndex })
@@ -165,6 +167,24 @@ class TvDetails extends Component {
         this.setState({ whoStarredVisible: !this.state.whoStarredVisible })
     }
 
+    cancelRemove = () => {
+        this.setState({ removeVoteVisible: false })
+        this.props.navigation.navigate("User Lists")
+    }
+
+    confirmRemove = () => {
+        const { arrayPos } = this.props.route.params
+        const { userName, series, serieStars } = this.props.user
+        const data = {
+            userName,
+            serieIndexToRemove: arrayPos,
+            serieId: series[arrayPos],
+            starsToRemove: serieStars[arrayPos]
+        }
+        this.props.dispatch(removeSerieToUser(data))
+        this.cancelRemove()
+    }
+
     render() {
         if (this.state.details === null) {
             return (
@@ -174,7 +194,7 @@ class TvDetails extends Component {
             )
         }
         const { name, backdrop_path, overview, first_air_date, last_air_date, homepage } = this.state.details
-        const { newStarVote, medStars, views, whoStarredVisible, whoHasStarred, isLoading, playing, trailersArray } = this.state
+        const { newStarVote, medStars, views, whoStarredVisible, whoHasStarred, isLoading, playing, trailersArray, removeVoteVisible } = this.state
         const first_date = FormatDate(first_air_date)
         const last_date = FormatDate(last_air_date)
         const { addMovieStar } = this.props.general
@@ -196,6 +216,22 @@ class TvDetails extends Component {
                     backdropStyle={styles.backdrop}>
                     <Card disabled={true} style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)', borderRadius: 50 }}>
                         <Spinner size='giant' />
+                    </Card>
+                </Modal>
+                <Modal
+                    visible={removeVoteVisible}
+                    backdropStyle={styles.backdrop}
+                    onBackdropPress={() => this.cancelRemove()}>
+                    <Card disabled={true}>
+                        <Text>Are you sure to remove this serie?</Text>
+                        <Layout style={styles.iconsContainer}>
+                            <Button style={{ marginTop: 20 }} status='success' onPress={() => this.confirmRemove()}>
+                                Remove
+                            </Button>
+                            <Button style={{ marginTop: 20 }} status='danger' onPress={() => this.cancelRemove()}>
+                                Cancel
+                            </Button>
+                        </Layout>
                     </Card>
                 </Modal>
                 <Modal

@@ -22,7 +22,8 @@ class UserLists extends Component {
 
     componentDidMount() {
         this.getList().then(response => {
-            this.setState({ results: response });
+            let responseOk = response.reverse()
+            this.setState({ results: responseOk });
         })
         this.props.dispatch(setOtherBar())
     }
@@ -32,10 +33,11 @@ class UserLists extends Component {
             this.props.dispatch(setHomeBar())
             this.props.navigation.navigate("Home")
         }
-        if (prevProps.route.params != this.props.route.params) {
+        if (prevProps.general.mustRefresh != this.props.general.mustRefresh) {
             this.setState({ results: null })
             this.getList().then(response => {
-                this.setState({ results: response });
+                let responseOk = response.reverse()
+                this.setState({ results: responseOk });
             })
         }
     }
@@ -68,7 +70,7 @@ class UserLists extends Component {
             )
         }
         const { type, route } = this.props.route.params
-        const resultsOk = this.state.results.reverse()
+        const reverseCounter = this.state.results.length - 1
         return (
             <Layout style={styles.container} >
                 <Layout>
@@ -81,10 +83,12 @@ class UserLists extends Component {
                                 title={type === "movie" ? item.title : item.name}
                                 navigation={this.props.navigation}
                                 type={type}
-                                stars={(type === 'movie' && route === 'myList') ? this.props.user.movieStars[index] : this.props.user.serieStars[index]}
+                                stars={(type === 'movie' && route === 'myList') ? this.props.user.movieStars[reverseCounter - index] : this.props.user.serieStars[reverseCounter - index]}
+                                arrayPos={reverseCounter - index}
+                                source="UserList"
                             />
                         )}
-                        data={resultsOk}
+                        data={this.state.results}
                         keyExtractor={item => item.id.toString()}
                         ItemSeparatorComponent={() => <Layout style={{ height: 5 }} />}
                     />
