@@ -40,9 +40,9 @@ function SearchResult({ id, poster_path, title, type, navigation, stars, arrayPo
                 <View style={{ backgroundColor: "#555", borderRadius: 15, justifyContent: "center" }}>
                     <TouchableOpacity onPress={() => {
                         if (type === 'movie') {
-                            navigation.navigate('Movie Details', { detailsId: id, source: "remove", arrayPos })
+                            navigation.navigate('Movie Details Remove', { detailsId: id, source: "remove", arrayPos })
                         } else {
-                            navigation.navigate('Tv Details', { detailsId: id, source: "remove", arrayPos })
+                            navigation.navigate('Tv Details Remove', { detailsId: id, source: "remove", arrayPos })
                         }
                     }}>
                         <Icon name="trash-2-outline" width={25} height={25} fill="#F55" />

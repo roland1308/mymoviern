@@ -7,7 +7,7 @@ import { Layout, Spinner } from '@ui-kitten/components';
 import { API_KEY } from 'react-native-dotenv'
 import SearchResult from './components/SearchResult'
 import { connect } from 'react-redux';
-import { setHomeBar, setOtherBar } from '../store/actions/generalActions';
+import { setDetailBar, setHomeBar, setOtherBar } from '../store/actions/generalActions';
 
 const axios = require("axios");
 
@@ -17,10 +17,19 @@ class UserLists extends Component {
 
         this.state = {
             results: null,
+            oldBack: null,
+            oldCheck: null,
+            oldWorld: null,
         }
     }
 
     componentDidMount() {
+        const { backIs, worldIs, checkIs } = this.props.general
+        this.setState({
+            oldBack: backIs,
+            oldWorld: worldIs,
+            oldCheck: checkIs
+        })
         this.getList().then(response => {
             let responseOk = response.reverse()
             this.setState({ results: responseOk });
@@ -28,22 +37,33 @@ class UserLists extends Component {
         this.props.dispatch(setOtherBar())
     }
 
+    componentWillUnmount() {
+        const { oldCheck, oldBack } = this.state
+        if (oldCheck) {
+            this.props.dispatch(setDetailBar())
+        } else if (oldBack) {
+            this.props.dispatch(setOtherBar())
+        } else {
+            this.props.dispatch(setHomeBar())
+        }
+    }
     componentDidUpdate(prevProps, prevState) {
         if (prevProps.general.isBackButton != this.props.general.isBackButton) {
             this.props.dispatch(setHomeBar())
+            this.setState({
+                oldWorld: true,
+                oldBack: false,
+                oldCheck: false
+            })
             this.props.navigation.navigate("Home")
         }
-        if (prevProps.general.mustRefresh != this.props.general.mustRefresh) {
+        if (prevProps.general.mustRefresh != this.props.general.mustRefresh || prevProps.route.params.type != this.props.route.params.type) {
             this.setState({ results: null })
             this.getList().then(response => {
                 let responseOk = response.reverse()
                 this.setState({ results: responseOk });
             })
         }
-    }
-
-    componentWillUnmount() {
-        this.props.dispatch(setHomeBar())
     }
 
     asyncReadDetails = async id => {
