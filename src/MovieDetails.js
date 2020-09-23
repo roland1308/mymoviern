@@ -72,6 +72,9 @@ class MovieDetails extends Component {
         } else {
             this.props.dispatch(setOtherBar())
         }
+        if (this.state.needRefresh) {
+            this.props.dispatch(toggleMustRefresh())
+        }
     }
 
     async getDetails(uri) {

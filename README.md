@@ -13,6 +13,8 @@ YouTube trailers iFrame
 
 # Version History:
 
+2.8.0 Added networks images for series details and resolved minor bugs.
+
 2.7.0 Now you can remove rated movies or series from your list.
 
 2.6.1 Cosmetic changes and minor bugs fixed.

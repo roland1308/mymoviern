@@ -33,6 +33,10 @@ const SerieIcon = (props) => (
     <Icon {...props} name='tv-outline' />
 );
 
+const TheOthersIcon = (props) => (
+    <Icon {...props} name='people-outline' />
+);
+
 const FlagIcon = (props) => (
     <Icon {...props} name='flag' />
 );
@@ -67,7 +71,7 @@ class TopBar extends Component {
             thanksVisible: false,
             versionings: "",
             lastModifications: "",
-            actualVersion: "2.7.0"
+            actualVersion: "2.8.0"
         }
     }
 
@@ -206,6 +210,7 @@ class TopBar extends Component {
             {
                 this.props.general.worldIs &&
                 <OverflowMenu
+                    style={{ height: null }}
                     anchor={this.renderLanguageAction}
                     visible={this.state.languageVisible}
                     onBackdropPress={this.props.general.worldIs && this.toggleLanguage}
@@ -216,15 +221,17 @@ class TopBar extends Component {
                 </OverflowMenu>
             }
             <OverflowMenu
+                style={{ maxHeight: null, maxWidth: null }}
                 anchor={this.renderMenuAction}
                 visible={this.state.menuVisible}
                 onBackdropPress={this.toggleMenu}
                 backdropStyle={styles.backdrop}>
                 {this.props.general.isLogged && <>
-                    <MenuItem accessoryLeft={MovieIcon} title={'My Movies (' + this.props.user.movies.length + ')'}
+                    <MenuItem accessoryLeft={MovieIcon} title={`My Movies (${this.props.user.movies.length})`}
                         onPress={() => { this.props.user.movies.length != 0 && this.goTo('movie') }} />
-                    <MenuItem accessoryLeft={SerieIcon} title={'My Series (' + this.props.user.series.length + ')'}
+                    <MenuItem accessoryLeft={SerieIcon} title={`My Series (${this.props.user.series.length})`}
                         onPress={() => { this.props.user.series.length != 0 && this.goTo('tv') }} />
+                    {/* <MenuItem accessoryLeft={TheOthersIcon} title={'The Others'} /> */}
                     <Separator /></>
                 }
                 <MenuItem accessoryLeft={InfoIcon} title='About' onPress={() => this.toggleModal()} />

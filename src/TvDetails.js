@@ -72,6 +72,9 @@ class TvDetails extends Component {
         } else {
             this.props.dispatch(setOtherBar())
         }
+        if (this.state.needRefresh) {
+            this.props.dispatch(toggleMustRefresh())
+        }
     }
 
     async getDetails(uri) {
@@ -172,7 +175,7 @@ class TvDetails extends Component {
                 </Layout>
             )
         }
-        const { name, backdrop_path, overview, first_air_date, last_air_date, homepage } = this.state.details
+        const { name, backdrop_path, overview, first_air_date, last_air_date, homepage, networks } = this.state.details
         const { newStarVote, medStars, views, whoStarredVisible, whoHasStarred, isLoading, playing, trailersArray } = this.state
         const first_date = FormatDate(first_air_date)
         const last_date = FormatDate(last_air_date)
@@ -283,6 +286,22 @@ class TvDetails extends Component {
                 <ScrollView style={{ flex: 1 }}>
                     <Text style={styles.overview}>{overview ? overview : "No Description"}</Text>
                 </ScrollView>
+                <Separator />
+                <Layout style={{ padding: 5, flexDirection: "row", justifyContent: "center" }}>
+                    {
+                        networks.slice(0, 5).map((item, i) => {
+                            return (
+                                // <Text key={i}>{item.name}</Text>
+                                <Image
+                                    key={i}
+                                    style={{ width: 100, height: 25, margin: 5 }}
+                                    resizeMode="contain"
+                                    source={item.logo_path == null ? require("../assets/noBackdrop.png") : { uri: "https://image.tmdb.org/t/p/w500" + item.logo_path }}
+                                />
+                            )
+                        })
+                    }
+                </Layout>
             </Layout>
         )
     }
