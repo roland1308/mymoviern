@@ -201,6 +201,11 @@ class TopBar extends Component {
         RootNavigation.navigate("User Lists", { type, route: 'myList' })
     }
 
+    goToOthers = () => {
+        this.toggleMenu()
+        RootNavigation.navigate("The Other Lists", { route: 'TheOtherList' })
+    }
+
     renderRightActions = () => (
         < React.Fragment >
             {
@@ -231,7 +236,8 @@ class TopBar extends Component {
                         onPress={() => { this.props.user.movies.length != 0 && this.goTo('movie') }} />
                     <MenuItem accessoryLeft={SerieIcon} title={`My Series (${this.props.user.series.length})`}
                         onPress={() => { this.props.user.series.length != 0 && this.goTo('tv') }} />
-                    {/* <MenuItem accessoryLeft={TheOthersIcon} title={'The Others'} /> */}
+                    <MenuItem accessoryLeft={TheOthersIcon} title={'The Others'}
+                        onPress={() => { this.goToOthers() }} />
                     <Separator /></>
                 }
                 <MenuItem accessoryLeft={InfoIcon} title='About' onPress={() => this.toggleModal()} />
