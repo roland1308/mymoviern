@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import {
     StyleSheet,
-    FlatList,
 } from 'react-native'
 import { Button, Divider, Icon, Layout, List, ListItem } from '@ui-kitten/components';
 import { connect } from 'react-redux';
@@ -9,25 +8,7 @@ import { setHomeBar, setOtherBar, setMessage } from '../store/actions/generalAct
 
 const axios = require("axios");
 
-const renderItemAccessory = (props) => (
-    <Layout style={{ flexDirection: "row", backgroundColor: "#333" }}>
-        <Button size='tiny' style={{ margin: 5 }}>SERIES</Button>
-        <Button size='tiny' style={{ margin: 5 }}>MOVIES</Button>
-    </Layout>
-);
 
-const renderItemIcon = (props) => (
-    <Icon {...props} name='person' />
-);
-
-const renderItem = ({ item, index }) => (
-    <ListItem
-        style={{ backgroundColor: "#333", borderRadius: 10 }}
-        title={item.userName}
-        accessoryLeft={renderItemIcon}
-        accessoryRight={renderItemAccessory}
-    />
-)
 
 class TheOthersList extends Component {
     constructor(props) {
@@ -75,12 +56,41 @@ class TheOthersList extends Component {
         return;
     }
 
+    renderItemIcon = (props) => (
+        <Icon {...props} name='person' />
+    );
+
+    renderItem = ({ item, index }) => (
+        <ListItem
+            style={{ backgroundColor: "#333", borderRadius: 10 }}
+            title={item.userName}
+            accessoryLeft={this.renderItemIcon}
+            accessoryRight={() => {
+                const totMovies = item.movies.length
+                const totSeries = item.series.length
+                return (
+                    <Layout style={{ flexDirection: "row", backgroundColor: "#333" }}>
+                        <Button
+                            disabled={totMovies === 0}
+                            size='small'
+                            style={{ margin: 5 }}
+                            onPress={() => this.props.navigation.navigate("User Lists", { type: 'movie', idList: item.movies, route: 'otherList' })}>
+                            {`Movies (${totMovies})`}
+                        </Button>
+                        <Button disabled={totSeries === 0} size='small' style={{ margin: 5 }}>{`Series (${totSeries})`}</Button>
+                    </Layout>
+                )
+            }
+            }
+        />
+    )
+
     render() {
         return (
             <Layout style={styles.container}>
                 <List
                     data={this.state.results}
-                    renderItem={renderItem}
+                    renderItem={this.renderItem}
                     ItemSeparatorComponent={Divider}
                 />
             </Layout>

@@ -198,7 +198,11 @@ class TopBar extends Component {
 
     goTo = (type) => {
         this.toggleMenu()
-        RootNavigation.navigate("User Lists", { type, route: 'myList' })
+        if (type === "movie") {
+            RootNavigation.navigate("User Lists", { type, idList: this.props.user.movies, route: 'myList' })
+        } else {
+            RootNavigation.navigate("User Lists", { type, idList: this.props.user.series, route: 'myList' })
+        }
     }
 
     goToOthers = () => {

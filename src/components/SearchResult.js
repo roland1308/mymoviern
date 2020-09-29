@@ -10,7 +10,7 @@ import { Icon } from 'react-native-eva-icons'
 import { View } from 'native-base';
 
 function SearchResult({ id, poster_path, title, type, navigation, stars, arrayPos, source }) {
-    const touchWidth = source === "UserList" ? "91%" : "95%"
+    const touchWidth = source === "myList" ? "91%" : "95%"
     return (
         <View style={styles.item}>
             <TouchableHighlight
@@ -30,13 +30,13 @@ function SearchResult({ id, poster_path, title, type, navigation, stars, arrayPo
                         />
                         <Text style={styles.subTitle}>
                             <Text style={styles.title}>{title}</Text>
-                            {source === "UserList" && "\n" + "⭐️".repeat(stars)}
+                            {(source === "myList" || source === "otherList") && "\n" + "⭐️".repeat(stars)}
                         </Text>
                     </View>
                 </Layout>
             </TouchableHighlight>
             {
-                source === "UserList" &&
+                source === "myList" &&
                 <View style={{ backgroundColor: "#555", borderRadius: 15, justifyContent: "center" }}>
                     <TouchableOpacity onPress={() => {
                         if (type === 'movie') {

@@ -73,12 +73,10 @@ class UserLists extends Component {
     }
 
     getList = async () => {
-        const { type } = this.props.route.params
-        const idList = type === "movie" ? this.props.user.movies : this.props.user.series
+        const { idList } = this.props.route.params
         return Promise.all(idList.map(id =>
             this.asyncReadDetails(id)
         ))
-
     }
 
     render() {
@@ -105,7 +103,7 @@ class UserLists extends Component {
                                 type={type}
                                 stars={(type === 'movie' && route === 'myList') ? this.props.user.movieStars[reverseCounter - index] : this.props.user.serieStars[reverseCounter - index]}
                                 arrayPos={reverseCounter - index}
-                                source="UserList"
+                                source={route}
                             />
                         )}
                         data={this.state.results}
