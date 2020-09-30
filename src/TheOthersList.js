@@ -40,7 +40,7 @@ class TheOthersList extends Component {
 
     async getList() {
         try {
-            const url = "https://mymoviesback.herokuapp.com/users/userlist"
+            const url = `https://mymoviesback.herokuapp.com/users/userlist/${this.props.user.userName}?`
             let response = await axios.get(url)
             if (response.length === 0) {
                 this.props.navigation.navigate("Home")
@@ -77,7 +77,13 @@ class TheOthersList extends Component {
                             onPress={() => this.props.navigation.navigate("User Lists", { type: 'movie', idList: item.movies, route: 'otherList' })}>
                             {`Movies (${totMovies})`}
                         </Button>
-                        <Button disabled={totSeries === 0} size='small' style={{ margin: 5 }}>{`Series (${totSeries})`}</Button>
+                        <Button
+                            disabled={totSeries === 0}
+                            size='small'
+                            style={{ margin: 5 }}
+                            onPress={() => this.props.navigation.navigate("User Lists", { type: 'tv', idList: item.series, route: 'otherList' })}>
+                            {`Series (${totSeries})`}
+                        </Button>
                     </Layout>
                 )
             }
@@ -107,5 +113,6 @@ const styles = StyleSheet.create({
 })
 const mapStateToProps = state => ({
     general: state.general,
+    user: state.user
 });
 export default connect(mapStateToProps)(TheOthersList)

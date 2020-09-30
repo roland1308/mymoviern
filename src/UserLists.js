@@ -57,7 +57,7 @@ class UserLists extends Component {
             })
             this.props.navigation.navigate("Home")
         }
-        if (prevProps.general.mustRefresh != this.props.general.mustRefresh || prevProps.route.params.type != this.props.route.params.type) {
+        if (prevProps.general.mustRefresh != this.props.general.mustRefresh || prevProps.route.params.idList != this.props.route.params.idList) {
             this.setState({ results: null })
             this.getList().then(response => {
                 let responseOk = response.reverse()

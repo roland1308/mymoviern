@@ -1,5 +1,3 @@
-import React from 'react'
-
 export default function FormatDate(input) {
     const datePart = input.match(/\d+/g),
         year = datePart[0].substring(0),

@@ -13,6 +13,8 @@ YouTube trailers iFrame
 
 # Version History:
 
+2.9.0 You can now see which movies and series 'The Others' starred.
+
 2.8.0 Added networks images for series details and resolved minor bugs.
 
 2.7.0 Now you can remove rated movies or series from your list.

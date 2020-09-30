@@ -346,6 +346,10 @@ class List extends Component {
             this.props.dispatch(setMessage("Please confirm the password"))
             return
         }
+        if (userName.length > 10) {
+            this.props.dispatch(setMessage("Username too long"))
+            return
+        }
         this.props.dispatch(addUser({ userName, password, language }))
     }
 
@@ -467,13 +471,14 @@ class List extends Component {
                             <Input
                                 value={userName}
                                 label='Username'
-                                placeholder='Place your Text'
+                                placeholder='Type your name'
+                                caption='Max 10 characters'
                                 onChangeText={nextUsername => this.setUsername(nextUsername)}
                             />
                             <Input
                                 value={password}
                                 label='Password'
-                                placeholder='Place your Text'
+                                placeholder='Choose your password'
                                 caption='Should contain at least 8 symbols'
                                 accessoryRight={this.renderIcon}
                                 captionIcon={AlertIcon}
@@ -482,8 +487,7 @@ class List extends Component {
                             />
                             <Input
                                 value={chkPassword}
-                                label='Repeat Password'
-                                placeholder='Place your Text'
+                                placeholder='Repeat your password'
                                 accessoryRight={this.renderIcon}
                                 secureTextEntry={secureTextEntry}
                                 onChangeText={nextPassword => this.setChkPassword(nextPassword)}
