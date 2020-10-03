@@ -1,13 +1,15 @@
-# React Native 1st project - WIP
+# React Native 1st project
 
-TMDB API access
-Kitten UI
-Redux
-AsyncStorage
-Password encrypt
-Rating system
-Update version advising
-YouTube trailers iFrame
+## Features:
+
+- TMDB API access
+- Kitten UI
+- Redux
+- AsyncStorage
+- Password encrypt
+- Rating system
+- Update version advising
+- YouTube trailers iFrame
 
 -------------------
 
