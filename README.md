@@ -13,7 +13,7 @@
 
 -------------------
 
-# Version History:
+## Version History:
 
 2.9.0 You can now see which movies and series 'The Others' starred.
 
