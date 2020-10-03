@@ -1,5 +1,7 @@
 # React Native 1st project
 
+-------------------
+
 ## Features:
 
 - TMDB API access
@@ -10,8 +12,6 @@
 - Rating system
 - Update version advising
 - YouTube trailers iFrame
-
--------------------
 
 ## Version History:
 
