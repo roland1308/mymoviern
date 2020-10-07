@@ -14,6 +14,8 @@
 
 ## Version History:
 
+2.9.1 Minor bug when showing results for a search.
+
 2.9.0 You can now see which movies and series 'The Others' starred.
 
 2.8.0 Added networks images for series details and resolved minor bugs.

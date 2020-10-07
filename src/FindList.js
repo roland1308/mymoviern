@@ -50,7 +50,7 @@ class FindList extends Component {
                 "&page=" + this.state.page +
                 "&include_adult=false"
             let response = await axios.get(url)
-            if (response.data.results.length === 0) {
+            if (response.data.results.length === 0 && this.state.page === 1) {
                 this.props.navigation.navigate("Home")
                 this.props.dispatch(setMessage("Sorry: no results"))
             } else {
