@@ -2,7 +2,7 @@
   "expo": {
     "name": "My Movies DB",
     "slug": "mymoviern",
-    "version": "2.9.1",
+    "version": "3.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -13,9 +13,7 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "bundleIdentifier": "com.example.myMovies",
       "supportsTablet": true

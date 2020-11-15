@@ -207,6 +207,13 @@ class MovieDetails extends Component {
     });
     this.props.dispatch(addMovieToUser(data));
     this.props.dispatch(setAlreadyStarred(true));
+    if (this.props.general.alreadyNext) {
+      const dataToRemove = {
+        index: this.state.positionNext,
+        userName: data.userName,
+      };
+      this.props.dispatch(removeNextToUser(dataToRemove));
+    }
   };
 
   async whoStarred() {

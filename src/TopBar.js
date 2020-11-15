@@ -78,7 +78,7 @@ class TopBar extends Component {
       thanksVisible: false,
       versionings: '',
       lastModifications: '',
-      actualVersion: '2.9.1',
+      actualVersion: '3.0.0',
     };
   }
 
@@ -211,20 +211,32 @@ class TopBar extends Component {
 
   goTo = (type) => {
     this.toggleMenu();
-    if (type === 'movie') {
-      RootNavigation.navigate('User Lists', {
-        type,
-        idList: this.props.user.movies,
-        starList: this.props.user.movieStars,
-        route: 'myList',
-      });
-    } else {
-      RootNavigation.navigate('User Lists', {
-        type,
-        idList: this.props.user.series,
-        starList: this.props.user.serieStars,
-        route: 'myList',
-      });
+    switch (type) {
+      case 'movie':
+        RootNavigation.navigate('User Lists', {
+          type,
+          idList: this.props.user.movies,
+          starList: this.props.user.movieStars,
+          route: 'myList',
+        });
+        break;
+      case 'tv':
+        RootNavigation.navigate('User Lists', {
+          type,
+          idList: this.props.user.series,
+          starList: this.props.user.serieStars,
+          route: 'myList',
+        });
+        break;
+      case 'next':
+        RootNavigation.navigate('User Lists', {
+          type,
+          idList: this.props.user.next,
+          route: 'nextList',
+        });
+        break;
+      default:
+        break;
     }
   };
 
@@ -235,12 +247,14 @@ class TopBar extends Component {
 
   renderRightActions = () => (
     <React.Fragment>
-      {this.props.general.nextIs && this.props.general.isLogged && (
-        <TopNavigationAction
-          icon={this.props.general.alreadyNext ? NextYellowIcon : NextRedIcon}
-          onPress={this.toggleNext}
-        />
-      )}
+      {this.props.general.nextIs &&
+        this.props.general.isLogged &&
+        !this.props.general.alreadyStarred && (
+          <TopNavigationAction
+            icon={this.props.general.alreadyNext ? NextYellowIcon : NextRedIcon}
+            onPress={this.toggleNext}
+          />
+        )}
       {this.props.general.checkIs && this.props.general.isLogged && (
         <TopNavigationAction
           icon={
@@ -302,9 +316,9 @@ class TopBar extends Component {
             />
             <MenuItem
               accessoryLeft={NextIcon}
-              title={`My Next (${this.props.user.series.length})`}
+              title={`My Next (${this.props.user.next.length})`}
               onPress={() => {
-                this.props.user.series.length != 0 && this.goTo('tv');
+                this.props.user.next.length != 0 && this.goTo('next');
               }}
             />
             <MenuItem

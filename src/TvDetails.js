@@ -207,6 +207,13 @@ class TvDetails extends Component {
     });
     this.props.dispatch(addSerieToUser(data));
     this.props.dispatch(setAlreadyStarred(true));
+    if (this.props.general.alreadyNext) {
+      const dataToRemove = {
+        index: this.state.positionNext,
+        userName: data.userName,
+      };
+      this.props.dispatch(removeNextToUser(dataToRemove));
+    }
   };
 
   async whoStarred() {
@@ -270,7 +277,7 @@ class TvDetails extends Component {
     } = this.state;
     const first_date = FormatDate(first_air_date);
     const last_date = FormatDate(last_air_date);
-    const {addMovieStar, toggleNext} = this.props.general;
+    const {addMovieStar} = this.props.general;
     const starItems = [];
     for (let i = 1; i < 6; i++) {
       starItems.push(

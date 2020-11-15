@@ -1,5 +1,6 @@
 # React Native 1st project
---------------
+
+---
 
 ## Features:
 
@@ -13,6 +14,10 @@
 - YouTube trailers iFrame
 
 ## Version History:
+
+3.0.1 Aesthetic changes.(TO BE DEVELOPED)
+
+3.0.0 Now you can create your "Next to see" list. Minor bug when showing stars for The Others.
 
 2.9.1 Minor bug when showing results for a search.
 

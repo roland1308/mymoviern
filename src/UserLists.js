@@ -9,6 +9,7 @@ import {
   setHomeBar,
   setOtherBar,
 } from '../store/actions/generalActions';
+import FormatDate from './components/FormatDate';
 
 const axios = require('axios');
 
@@ -72,11 +73,17 @@ class UserLists extends Component {
 
   asyncReadDetails = async (id) => {
     const {type} = this.props.route.params;
+    let realId = id;
+    let realType = type;
+    if (type === 'next') {
+      realId = id.slice(1, id.length);
+      realType = id.substr(0, 1) === 'm' ? 'movie' : 'tv';
+    }
     const response = await axios.get(
       'https://api.themoviedb.org/3/' +
-        type +
+        realType +
         '/' +
-        id +
+        realId +
         '?api_key=' +
         API_KEY +
         '&language=' +
@@ -109,10 +116,15 @@ class UserLists extends Component {
                 poster_path={item.poster_path}
                 title={item.title}
                 id={item.id}
-                title={type === 'movie' ? item.title : item.name}
+                title={item.title !== undefined ? item.title : item.name}
                 navigation={this.props.navigation}
-                type={type}
-                stars={starList[reverseCounter - index]}
+                type={item.title !== undefined ? 'movie' : 'tv'}
+                date={
+                  item.title !== undefined
+                    ? FormatDate(item.release_date)
+                    : FormatDate(item.first_air_date)
+                }
+                stars={type === 'next' ? 0 : starList[reverseCounter - index]}
                 arrayPos={reverseCounter - index}
                 source={route}
               />
