@@ -15,7 +15,7 @@
 
 ## Version History:
 
-3.0.1 Aesthetic changes.(TO BE DEVELOPED)
+3.1.0 Aesthetic changes and minor bugs for No_Last_Date series.(TO BE DEVELOPED)
 
 3.0.0 Now you can create your "Next to see" list. Minor bug when showing stars for The Others.
 

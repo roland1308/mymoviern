@@ -275,8 +275,9 @@ class TvDetails extends Component {
       playing,
       trailersArray,
     } = this.state;
-    const first_date = FormatDate(first_air_date);
-    const last_date = FormatDate(last_air_date);
+    const first_date =
+      first_air_date !== null ? FormatDate(first_air_date) : null;
+    const last_date = last_air_date !== null ? FormatDate(last_air_date) : null;
     const {addMovieStar} = this.props.general;
     const starItems = [];
     for (let i = 1; i < 6; i++) {

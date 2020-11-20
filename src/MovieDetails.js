@@ -275,7 +275,7 @@ class MovieDetails extends Component {
       playing,
       trailersArray,
     } = this.state;
-    const date = FormatDate(release_date);
+    const date = release_date !== null ? FormatDate(release_date) : null;
     const {addMovieStar} = this.props.general;
     const starItems = [];
     for (let i = 1; i < 6; i++) {

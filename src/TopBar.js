@@ -25,6 +25,7 @@ import Axios from 'axios';
 import TextScroll from './components/TextScroll';
 import Separator from './components/Separator';
 import * as RootNavigation from './RootNavigation';
+import {setIsLoading} from '../store/actions/userActions';
 
 const HomeIcon = (props) => <Icon {...props} name='home' />;
 
@@ -78,11 +79,12 @@ class TopBar extends Component {
       thanksVisible: false,
       versionings: '',
       lastModifications: '',
-      actualVersion: '3.0.0',
+      actualVersion: '3.1.0',
     };
   }
 
   async componentDidMount() {
+    this.props.dispatch(setIsLoading(true));
     const response = await Axios.get(
       'https://mymoviesback.herokuapp.com/versionings/getversions'
     );
@@ -103,6 +105,7 @@ class TopBar extends Component {
       versionings: versionsArray,
       lastModifications,
     });
+    this.props.dispatch(setIsLoading(false));
   }
 
   rememberVersion = async () => {
