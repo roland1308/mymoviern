@@ -778,6 +778,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
 });
+
 const mapStateToProps = (state) => ({
   general: state.general,
   user: state.user,

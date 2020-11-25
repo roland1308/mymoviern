@@ -20,7 +20,7 @@ const initialState = {
   series: [],
   serieStars: [],
   next: [],
-  isLoading: false,
+  isLoading: true,
 };
 
 const generalReducer = (state = initialState, action) => {
