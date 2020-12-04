@@ -87,30 +87,28 @@ class FindList extends Component {
     const {type} = this.props.route.params;
     return (
       <Layout style={styles.container}>
-        <Layout>
-          <FlatList
-            renderItem={({item}) => (
-              <SearchResult
-                poster_path={item.poster_path}
-                title={item.title}
-                id={item.id}
-                title={type === 'movie' ? item.title : item.name}
-                date={
-                  type === 'movie'
-                    ? FormatDate(item.release_date)
-                    : FormatDate(item.first_air_date)
-                }
-                navigation={this.props.navigation}
-                type={type}
-              />
-            )}
-            data={this.state.results}
-            keyExtractor={(item) => item.id.toString()}
-            ItemSeparatorComponent={() => <Layout style={{height: 5}} />}
-            onEndReachedThreshold='0.5'
-            onEndReached={this.loadMoreData}
-          />
-        </Layout>
+        <FlatList
+          renderItem={({item}) => (
+            <SearchResult
+              poster_path={item.poster_path}
+              title={item.title}
+              id={item.id}
+              title={type === 'movie' ? item.title : item.name}
+              date={
+                type === 'movie'
+                  ? FormatDate(item.release_date)
+                  : FormatDate(item.first_air_date)
+              }
+              navigation={this.props.navigation}
+              type={type}
+            />
+          )}
+          data={this.state.results}
+          keyExtractor={(item) => item.id.toString()}
+          ItemSeparatorComponent={() => <Layout style={{height: 5}} />}
+          onEndReachedThreshold='0.5'
+          onEndReached={this.loadMoreData}
+        />
       </Layout>
     );
   }

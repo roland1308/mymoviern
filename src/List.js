@@ -99,7 +99,12 @@ class List extends Component {
         userName,
         rememberMe: true,
       });
-      this.props.dispatch(logUser({userName, password: GEN_PW}));
+      this.props.dispatch(
+        logUser({userName, password: GEN_PW, remembered: true})
+      );
+      this.setisLoginVisible(false);
+      this.props.dispatch(setIsLogged(true));
+      this.props.dispatch(setLanguage(this.props.user.language));
     } else {
       this.props.dispatch(setLanguage('en.US'));
       this.setState({
@@ -395,7 +400,7 @@ class List extends Component {
       this.props.dispatch(setMessage('Please fill in all fields'));
       return;
     }
-    this.props.dispatch(logUser({userName, password}));
+    this.props.dispatch(logUser({userName, password, remembered: false}));
     if (rememberMe === true) {
       this.rememberUser();
     } else {

@@ -11,7 +11,11 @@ import {
   REMOVE_SERIE_SUCCESS,
   ADD_NEXT_SUCCESS,
   REMOVE_NEXT_SUCCESS,
+  ADD_TIP_SUCCESS,
+  REMOVE_TIP_SUCCESS,
+  REMOVE_TIP_VIEWED_SUCCESS,
 } from '../constants';
+
 const initialState = {
   userName: null,
   language: null,
@@ -20,10 +24,13 @@ const initialState = {
   series: [],
   serieStars: [],
   next: [],
+  suggestions: [],
   isLoading: true,
 };
 
-const generalReducer = (state = initialState, action) => {
+let suggestionIndex = null;
+
+const userReducer = (state = initialState, action) => {
   switch (action.type) {
     case ADD_USER_BEGIN:
       return {
@@ -34,6 +41,8 @@ const generalReducer = (state = initialState, action) => {
         movieStars: [],
         series: [],
         serieStars: [],
+        next: [],
+        suggestions: [],
         isLoading: true,
       };
     case ADD_USER_SUCCESS:
@@ -45,6 +54,7 @@ const generalReducer = (state = initialState, action) => {
         series,
         serieStars,
         next,
+        suggestions,
       } = action.payload;
       return {
         ...state,
@@ -55,6 +65,7 @@ const generalReducer = (state = initialState, action) => {
         series,
         serieStars,
         next,
+        suggestions,
         isLoading: false,
       };
     case ADD_USER_FAILURE:
@@ -67,6 +78,7 @@ const generalReducer = (state = initialState, action) => {
         series: [],
         serieStars: [],
         next: [],
+        suggestions: [],
         isLoading: false,
       };
     case SET_ISLOADING:
@@ -112,18 +124,45 @@ const generalReducer = (state = initialState, action) => {
         next: newNext,
         isLoading: false,
       };
-    case REMOVE_NEXT_SUCCESS:
-      const {indexToRemove} = action.payload;
-      let nextForRemove = state.next;
-      nextForRemove.splice(indexToRemove, 1);
+    case ADD_TIP_SUCCESS:
+      suggestionIndex = state.suggestions.findIndex(
+        (element) => element.prompter === action.payload.prompter
+      );
+      let newSuggestions = state.suggestions;
+      newSuggestions[suggestionIndex] = action.payload.tips;
       return {
         ...state,
-        next: nextForRemove,
+        suggestions: newSuggestions,
         isLoading: false,
       };
-    case ADD_MOVIE_FAILURE:
+    case REMOVE_TIP_SUCCESS:
+      suggestionIndex = state.suggestions.findIndex(
+        (element) => element.prompter === action.payload.prompter
+      );
+      let removeSuggestions = state.suggestions;
+      removeSuggestions[suggestionIndex].tips.splice(
+        action.payload.tipIndex * 2,
+        2
+      );
+      if (removeSuggestions[suggestionIndex].tips.length === 0) {
+        removeSuggestions.splice(suggestionIndex, 1);
+      }
       return {
         ...state,
+        suggestions: removeSuggestions,
+        isLoading: false,
+      };
+    case REMOVE_TIP_VIEWED_SUCCESS:
+      suggestionIndex = state.suggestions.findIndex(
+        (element) => element.prompter === action.payload.prompter
+      );
+      let removeViewedSuggestions = state.suggestions;
+      removeViewedSuggestions[suggestionIndex].tips[
+        action.payload.tipIndex * 2
+      ] = false;
+      return {
+        ...state,
+        suggestions: removeViewedSuggestions,
         isLoading: false,
       };
     case REMOVE_MOVIE_SUCCESS:
@@ -150,9 +189,23 @@ const generalReducer = (state = initialState, action) => {
         serieStars: serieStarsForRemove,
         isLoading: false,
       };
+    case REMOVE_NEXT_SUCCESS:
+      const {indexToRemove} = action.payload;
+      let nextForRemove = state.next;
+      nextForRemove.splice(indexToRemove, 1);
+      return {
+        ...state,
+        next: nextForRemove,
+        isLoading: false,
+      };
+    case ADD_MOVIE_FAILURE:
+      return {
+        ...state,
+        isLoading: false,
+      };
 
     default:
       return state;
   }
 };
-export default generalReducer;
+export default userReducer;

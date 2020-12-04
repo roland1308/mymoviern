@@ -1,4 +1,5 @@
 import React from 'react';
+import {useDispatch} from 'react-redux';
 import {
   StyleSheet,
   TouchableHighlight,
@@ -8,6 +9,12 @@ import {
 import {Layout, Text} from '@ui-kitten/components';
 import {Icon} from 'react-native-eva-icons';
 import {View} from 'native-base';
+import {
+  removeTipToUser,
+  removeViewedTip,
+} from '../../store/actions/userActions';
+
+const removeSuggestion = (suggestion) => {};
 
 function SearchResult({
   id,
@@ -18,14 +25,25 @@ function SearchResult({
   navigation,
   stars,
   arrayPos,
+  isSuggestionNew,
   source,
+  userName,
+  prompter,
+  tipIndex,
 }) {
-  const touchWidth = source === 'myList' ? '86%' : '95%';
+  const dispatch = useDispatch();
+  const touchWidth =
+    source === 'myList' || source === 'SuggestionList' ? '86%' : '95%';
   return (
-    <View style={styles.item}>
+    <View
+      style={isSuggestionNew ? styles.itemYellowBorder : styles.itemBlackBorder}
+    >
       <TouchableHighlight
         underlayColor='#DDDDDD'
         onPress={() => {
+          if (source === 'SuggestionList') {
+            dispatch(removeViewedTip(userName, {prompter, tipIndex}));
+          }
           if (type === 'movie') {
             navigation.navigate('Movie Details', {
               detailsId: id,
@@ -87,10 +105,26 @@ function SearchResult({
           </TouchableOpacity>
         </View>
       )}
+      {source === 'SuggestionList' && (
+        <View
+          style={{
+            backgroundColor: '#555',
+            borderRadius: 15,
+            justifyContent: 'center',
+          }}
+        >
+          <TouchableOpacity
+            onPress={() => {
+              dispatch(removeTipToUser(userName, {prompter, tipIndex}));
+            }}
+          >
+            <Icon name='bell-off-outline' width={25} height={25} fill='#F55' />
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   title: {
     fontSize: 20,
@@ -108,13 +142,22 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: '#333',
   },
-  item: {
+  itemBlackBorder: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     backgroundColor: '#333',
     padding: 5,
     borderRadius: 10,
     borderColor: 'black',
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  itemYellowBorder: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: '#333',
+    padding: 5,
+    borderRadius: 10,
+    borderColor: 'yellow',
     borderWidth: StyleSheet.hairlineWidth,
   },
 });

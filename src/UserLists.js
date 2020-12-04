@@ -109,31 +109,29 @@ class UserLists extends Component {
     const reverseCounter = this.state.results.length - 1;
     return (
       <Layout style={styles.container}>
-        <Layout>
-          <FlatList
-            renderItem={({item, index}) => (
-              <SearchResult
-                poster_path={item.poster_path}
-                title={item.title}
-                id={item.id}
-                title={item.title !== undefined ? item.title : item.name}
-                navigation={this.props.navigation}
-                type={item.title !== undefined ? 'movie' : 'tv'}
-                date={
-                  item.title !== undefined
-                    ? FormatDate(item.release_date)
-                    : FormatDate(item.first_air_date)
-                }
-                stars={type === 'next' ? 0 : starList[reverseCounter - index]}
-                arrayPos={reverseCounter - index}
-                source={route}
-              />
-            )}
-            data={this.state.results}
-            keyExtractor={(item) => item.id.toString()}
-            ItemSeparatorComponent={() => <Layout style={{height: 5}} />}
-          />
-        </Layout>
+        <FlatList
+          renderItem={({item, index}) => (
+            <SearchResult
+              poster_path={item.poster_path}
+              title={item.title}
+              id={item.id}
+              title={item.title !== undefined ? item.title : item.name}
+              navigation={this.props.navigation}
+              type={item.title !== undefined ? 'movie' : 'tv'}
+              date={
+                item.title !== undefined
+                  ? FormatDate(item.release_date)
+                  : FormatDate(item.first_air_date)
+              }
+              stars={type === 'next' ? 0 : starList[reverseCounter - index]}
+              arrayPos={reverseCounter - index}
+              source={route}
+            />
+          )}
+          data={this.state.results}
+          keyExtractor={(item) => item.id.toString()}
+          ItemSeparatorComponent={() => <Layout style={{height: 5}} />}
+        />
       </Layout>
     );
   }

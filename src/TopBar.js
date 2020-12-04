@@ -28,42 +28,29 @@ import * as RootNavigation from './RootNavigation';
 import {setIsLoading} from '../store/actions/userActions';
 
 const HomeIcon = (props) => <Icon {...props} name='home' />;
-
 const CheckYellowIcon = (props) => (
   <Icon {...props} name='checkmark-square-outline' fill='#FFFF00' />
 );
-
 const CheckRedIcon = (props) => (
   <Icon {...props} name='checkmark-square-outline' fill='#FF0000' />
 );
-
 const GlobeIcon = (props) => <Icon {...props} name='globe' />;
-
 const MovieIcon = (props) => <Icon {...props} name='film-outline' />;
-
 const SerieIcon = (props) => <Icon {...props} name='tv-outline' />;
-
 const NextIcon = (props) => <Icon {...props} name='clock-outline' />;
-
 const NextRedIcon = (props) => (
   <Icon {...props} name='clock-outline' fill='#FF0000' />
 );
-
 const NextYellowIcon = (props) => (
   <Icon {...props} name='clock-outline' fill='#FFFF00' />
 );
-
 const TheOthersIcon = (props) => <Icon {...props} name='people-outline' />;
-
 const FlagIcon = (props) => <Icon {...props} name='flag' />;
-
 const MenuIcon = (props) => <Icon {...props} name='more-vertical' />;
-
 const InfoIcon = (props) => <Icon {...props} name='info' />;
-
 const LogoutIcon = (props) => <Icon {...props} name='log-out-outline' />;
-
 const VersionIcon = (props) => <Icon {...props} name='trending-up-outline' />;
+const SuggestIcon = (props) => <Icon {...props} name='bell-outline' />;
 
 class TopBar extends Component {
   constructor(props) {
@@ -245,7 +232,12 @@ class TopBar extends Component {
 
   goToOthers = () => {
     this.toggleMenu();
-    RootNavigation.navigate('The Other Lists', {route: 'TheOtherList'});
+    RootNavigation.navigate('The Other List', {route: 'TheOtherList'});
+  };
+
+  goToSuggestions = () => {
+    this.toggleMenu();
+    RootNavigation.navigate('Suggestions List', {route: 'SuggestionList'});
   };
 
   renderRightActions = () => (
@@ -329,6 +321,14 @@ class TopBar extends Component {
               title={'The Others'}
               onPress={() => {
                 this.goToOthers();
+              }}
+            />
+            <MenuItem
+              accessoryLeft={SuggestIcon}
+              title={`Suggested (${this.props.user.suggestions.length})`}
+              onPress={() => {
+                this.props.user.suggestions.length != 0 &&
+                  this.goToSuggestions();
               }}
             />
             <Separator />

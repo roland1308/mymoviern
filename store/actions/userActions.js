@@ -11,8 +11,16 @@ import {
   REMOVE_SERIE_SUCCESS,
   ADD_NEXT_SUCCESS,
   REMOVE_NEXT_SUCCESS,
+  ADD_TIP_SUCCESS,
+  REMOVE_TIP_SUCCESS,
+  REMOVE_TIP_VIEWED_SUCCESS,
 } from '../constants';
-import {setMessage, setIsLogged, setAlreadyNext} from './generalActions';
+import {
+  setMessage,
+  setIsLogged,
+  setAlreadyNext,
+  toggleMustRefresh,
+} from './generalActions';
 
 const axios = require('axios');
 
@@ -55,7 +63,9 @@ export const logUser = (user) => {
         dispatch(addUserFailure());
         dispatch(setMessage(response));
       } else {
-        dispatch(setMessage('User logged in'));
+        if (!user.remembered) {
+          dispatch(setMessage('User logged in'));
+        }
         dispatch(setIsLogged(true));
         dispatch(addUserSuccess(response.data));
       }
@@ -263,6 +273,91 @@ export const removeNextToUser = (data) => {
   };
 };
 
+export const addTipToUser = (suggestion) => {
+  return async (dispatch) => {
+    dispatch(addMovieBegin());
+    try {
+      const response = await axios.put(
+        'localhost:5000/users/addsuggestion',
+        // 'https://mymoviesback.herokuapp.com/users/addsuggestion',
+        suggestion
+      );
+      if (response.status !== 200) {
+        dispatch(addMovieFailure());
+        dispatch(setMessage(response));
+      } else {
+        dispatch(addTipSuccess(suggestion));
+        dispatch(setMessage('Suggestion sent!'));
+      }
+    } catch (error) {
+      dispatch(addMovieFailure());
+      if (error.response.data) {
+        dispatch(setMessage('An error has occurred'));
+      } else {
+        dispatch(setMessage(error.message));
+      }
+    }
+    return 'done';
+  };
+};
+
+export const removeTipToUser = (userName, suggestion) => {
+  const data = {userName, suggestion};
+  return async (dispatch) => {
+    dispatch(addMovieBegin());
+    try {
+      const response = await axios.put(
+        'https://mymoviesback.herokuapp.com/users/removesuggestion',
+        data
+      );
+      if (response.status !== 200) {
+        dispatch(addMovieFailure());
+        dispatch(setMessage(response));
+      } else {
+        dispatch(removeTipSuccess(suggestion));
+        dispatch(toggleMustRefresh());
+        dispatch(setMessage('Suggestion removed!'));
+      }
+    } catch (error) {
+      dispatch(addMovieFailure());
+      if (error.response.data) {
+        dispatch(setMessage('An error has occurred'));
+      } else {
+        dispatch(setMessage(error.message));
+      }
+    }
+    return 'done';
+  };
+};
+
+export const removeViewedTip = (userName, suggestion) => {
+  const data = {userName, suggestion};
+  return async (dispatch) => {
+    dispatch(addMovieBegin());
+    try {
+      const response = await axios.put(
+        'https://mymoviesback.herokuapp.com/users/removeviewed',
+        data
+      );
+      if (response.status !== 200) {
+        dispatch(addMovieFailure());
+        dispatch(setMessage(response));
+      } else {
+        dispatch(removeViewedTipSuccess(suggestion));
+        dispatch(toggleMustRefresh());
+      }
+    } catch (error) {
+      dispatch(addMovieFailure());
+      if (error.response.data) {
+        dispatch(setMessage('An error has occurred'));
+      } else {
+        dispatch(setMessage(error.message));
+      }
+    }
+    return 'done';
+  };
+};
+
 export const addUserBegin = () => ({
   type: ADD_USER_BEGIN,
 });
@@ -296,7 +391,18 @@ export const removeNextSuccess = (data) => ({
   type: REMOVE_NEXT_SUCCESS,
   payload: data,
 });
-
+export const addTipSuccess = (data) => ({
+  type: ADD_TIP_SUCCESS,
+  payload: data,
+});
+export const removeTipSuccess = (data) => ({
+  type: REMOVE_TIP_SUCCESS,
+  payload: data,
+});
+export const removeViewedTipSuccess = (data) => ({
+  type: REMOVE_TIP_VIEWED_SUCCESS,
+  payload: data,
+});
 export const removeMovieSuccess = (data) => ({
   type: REMOVE_MOVIE_SUCCESS,
   payload: data,

@@ -12,6 +12,7 @@ import TvDetailsRemove from './TvDetailsRemove';
 import FindList from './FindList';
 import UserLists from './UserLists';
 import TheOthersList from './TheOthersList';
+import SuggestionsList from './SuggestionsList';
 
 const Stack = createStackNavigator();
 
@@ -39,7 +40,8 @@ export default function HomeScreen() {
         <Stack.Screen name='Tv Details Remove' component={TvDetailsRemove} />
         <Stack.Screen name='Find List' component={FindList} />
         <Stack.Screen name='User Lists' component={UserLists} />
-        <Stack.Screen name='The Other Lists' component={TheOthersList} />
+        <Stack.Screen name='The Other List' component={TheOthersList} />
+        <Stack.Screen name='Suggestions List' component={SuggestionsList} />
       </Stack.Navigator>
     </NavigationContainer>
   );
