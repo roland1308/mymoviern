@@ -41,7 +41,7 @@ function SearchResult({
       <TouchableHighlight
         underlayColor='#DDDDDD'
         onPress={() => {
-          if (source === 'SuggestionList') {
+          if (source === 'SuggestionList' || isSuggestionNew) {
             dispatch(removeViewedTip(userName, {prompter, tipIndex}));
           }
           if (type === 'movie') {

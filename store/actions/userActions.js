@@ -316,7 +316,6 @@ export const removeTipToUser = (userName, suggestion) => {
       } else {
         dispatch(removeTipSuccess(suggestion));
         dispatch(toggleMustRefresh());
-        dispatch(setMessage('Suggestion removed!'));
       }
     } catch (error) {
       dispatch(addMovieFailure());

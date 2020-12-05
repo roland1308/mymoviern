@@ -81,7 +81,7 @@ class SuggestionsList extends Component {
     }
     if (prevProps.general.mustRefresh != this.props.general.mustRefresh) {
       this.setState({
-        completeList: null,
+        completeList: [],
       });
       let newCompleteList = [];
       this.props.user.suggestions.map((suggestion, resultsIndex) => {
