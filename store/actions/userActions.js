@@ -20,6 +20,7 @@ import {
   setIsLogged,
   setAlreadyNext,
   toggleMustRefresh,
+  setLanguage,
 } from './generalActions';
 
 const axios = require('axios');
@@ -68,6 +69,7 @@ export const logUser = (user) => {
         }
         dispatch(setIsLogged(true));
         dispatch(addUserSuccess(response.data));
+        dispatch(setLanguage(response.data.language));
       }
     } catch (error) {
       dispatch(addUserFailure());

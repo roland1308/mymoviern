@@ -104,7 +104,6 @@ class List extends Component {
       );
       this.setisLoginVisible(false);
       this.props.dispatch(setIsLogged(true));
-      this.props.dispatch(setLanguage(this.props.user.language));
     } else {
       this.props.dispatch(setLanguage('en.US'));
       this.setState({
@@ -374,7 +373,6 @@ class List extends Component {
     try {
       const userName = await AsyncStorage.getItem('USER');
       if (userName !== null) {
-        // We have userName!!
         return userName;
       }
     } catch (error) {

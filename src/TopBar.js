@@ -379,8 +379,8 @@ class TopBar extends Component {
     return (
       <Layout style={styles.container} level='1'>
         <TopNavigation
-          alignment='center'
-          title='My Movies DB'
+          // alignment='center'
+          title=' -- My Movies DB --'
           accessoryLeft={backIs && this.renderHomeAction}
           accessoryRight={this.renderRightActions}
         />
