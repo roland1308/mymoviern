@@ -13,6 +13,7 @@ import configureStore from './store/configureStore';
 import HomeScreen from './src/HomeScreen';
 import TopBar from './src/TopBar';
 import Separator from './src/components/Separator';
+import {loadAsync} from 'expo-font';
 
 const store = configureStore();
 
@@ -28,7 +29,9 @@ export default class App extends React.Component {
     await Font.loadAsync({
       Roboto: require('native-base/Fonts/Roboto.ttf'),
       Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
-      ...Ionicons.font,
+      // Ionicons: require('react-native-vector-icons/Fonts/Ionicons.ttf'),
+      // Ionicons: require('native-base/Fonts/Ionicons.ttf'),
+      // ...Ionicons,
     });
     this.setState({isReady: true});
   }

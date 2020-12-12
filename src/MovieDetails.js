@@ -20,7 +20,9 @@ import {
   setAddMovieStar,
   setAlreadyStarred,
   toggleMustRefresh,
+  toggleSuggest,
   setAlreadyNext,
+  setPageName,
 } from '../store/actions/generalActions';
 import Separator from './components/Separator';
 import FormatDate from './components/FormatDate';
@@ -32,6 +34,7 @@ import {
 import removeTrailinZeros from 'remove-trailing-zeros';
 import TextScroll from './components/TextScroll';
 import YoutubePlayer from 'react-native-youtube-iframe';
+import {CheckBox} from '@ui-kitten/components';
 
 const axios = require('axios');
 
@@ -71,6 +74,7 @@ class MovieDetails extends Component {
       '&language=' +
       this.props.general.language +
       '&append_to_response=credits,videos';
+    this.props.dispatch(setPageName('-- Movie Details'));
     if (movieIndex !== -1) {
       this.props.dispatch(setAlreadyStarred(true));
       this.setState({
@@ -117,10 +121,32 @@ class MovieDetails extends Component {
   }
 
   componentWillUnmount() {
-    if (this.state.source === 'list') {
-      this.props.dispatch(setHomeBar());
-    } else {
-      this.props.dispatch(setOtherBar());
+    switch (this.state.source) {
+      case 'list':
+        this.props.dispatch(setHomeBar());
+        this.props.dispatch(setPageName('         My Movies DB'));
+        break;
+      case 'search':
+        this.props.dispatch(setOtherBar());
+        this.props.dispatch(setPageName('-- Search Results'));
+        break;
+      case 'myList':
+        this.props.dispatch(setOtherBar());
+        this.props.dispatch(setPageName('-- My Starred List'));
+        break;
+      case 'nextList':
+        this.props.dispatch(setOtherBar());
+        this.props.dispatch(setPageName('-- Next to See'));
+        break;
+      case 'otherList':
+        this.props.dispatch(setOtherBar());
+        this.props.dispatch(setPageName(`-- 'The Others' List`));
+        break;
+      case 'suggestionList':
+        this.props.dispatch(setOtherBar());
+        this.props.dispatch(setPageName('-- Suggestions'));
+        break;
+      default:
     }
     if (this.state.needRefresh) {
       this.props.dispatch(toggleMustRefresh());
@@ -276,7 +302,7 @@ class MovieDetails extends Component {
       trailersArray,
     } = this.state;
     const date = FormatDate(release_date);
-    const {addMovieStar} = this.props.general;
+    const {addMovieStar, suggest} = this.props.general;
     const starItems = [];
     for (let i = 1; i < 6; i++) {
       starItems.push(
@@ -311,7 +337,11 @@ class MovieDetails extends Component {
               <Button
                 style={{marginTop: 20}}
                 status='success'
-                onPress={() => this.confirmAddStar()}
+                onPress={() =>
+                  this.state.oldStarVote !== this.state.newStarVote
+                    ? this.confirmAddStar()
+                    : this.cancelAddStar()
+                }
               >
                 Vote
               </Button>
@@ -323,6 +353,20 @@ class MovieDetails extends Component {
                 Cancel
               </Button>
             </Layout>
+          </Card>
+        </Modal>
+        <Modal
+          visible={suggest}
+          backdropStyle={styles.backdrop}
+          onBackdropPress={() => this.props.dispatch(toggleSuggest())}
+        >
+          <Card disabled={true}>
+            <CheckBox
+              checked={false}
+              // onChange={nextChecked => setChecked(nextChecked)}
+            >
+              Renato
+            </CheckBox>
           </Card>
         </Modal>
         <Modal

@@ -21,6 +21,7 @@ import {
   setAlreadyStarred,
   toggleMustRefresh,
   setAlreadyNext,
+  setPageName,
 } from '../store/actions/generalActions';
 import Separator from './components/Separator';
 import FormatDate from './components/FormatDate';
@@ -71,6 +72,7 @@ class TvDetails extends Component {
       '&language=' +
       this.props.general.language +
       '&append_to_response=videos';
+    this.props.dispatch(setPageName('-- Serie Details'));
     if (serieIndex !== -1) {
       this.props.dispatch(setAlreadyStarred(true));
       this.setState({
@@ -117,10 +119,32 @@ class TvDetails extends Component {
   }
 
   componentWillUnmount() {
-    if (this.state.source === 'list') {
-      this.props.dispatch(setHomeBar());
-    } else {
-      this.props.dispatch(setOtherBar());
+    switch (this.state.source) {
+      case 'list':
+        this.props.dispatch(setHomeBar());
+        this.props.dispatch(setPageName('         My Movies DB'));
+        break;
+      case 'search':
+        this.props.dispatch(setOtherBar());
+        this.props.dispatch(setPageName('-- Search Results'));
+        break;
+      case 'myList':
+        this.props.dispatch(setOtherBar());
+        this.props.dispatch(setPageName('-- My Starred List'));
+        break;
+      case 'nextList':
+        this.props.dispatch(setOtherBar());
+        this.props.dispatch(setPageName('-- Next to See'));
+        break;
+      case 'otherList':
+        this.props.dispatch(setOtherBar());
+        this.props.dispatch(setPageName(`-- 'The Others' List`));
+        break;
+      case 'suggestionList':
+        this.props.dispatch(setOtherBar());
+        this.props.dispatch(setPageName('-- Suggestions'));
+        break;
+      default:
     }
     if (this.state.needRefresh) {
       this.props.dispatch(toggleMustRefresh());

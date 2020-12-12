@@ -13,9 +13,12 @@ import {
   REFRESH,
   TOGGLE_NEXT,
   SET_ALREADYNEXT,
+  SET_PAGENAME,
+  TOGGLE_SUGGEST,
 } from '../constants';
 
 const initialState = {
+  pageName: '         My Movies DB',
   language: '',
   isBackButton: 'true',
   backIs: false,
@@ -28,11 +31,17 @@ const initialState = {
   alreadyStarred: true,
   alreadyNext: true,
   toggleNext: true,
+  suggest: false,
   mustRefresh: false,
 };
 
 const generalReducer = (state = initialState, action) => {
   switch (action.type) {
+    case SET_PAGENAME:
+      return {
+        ...state,
+        pageName: action.payload,
+      };
     case SET_LANGUAGE:
       return {
         ...state,
@@ -106,6 +115,11 @@ const generalReducer = (state = initialState, action) => {
       return {
         ...state,
         toggleNext: !state.toggleNext,
+      };
+    case TOGGLE_SUGGEST:
+      return {
+        ...state,
+        suggest: !state.suggest,
       };
     case SET_ALREADYNEXT:
       return {

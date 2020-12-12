@@ -105,7 +105,6 @@ class TvDetailsRemove extends Component {
       starsToRemove: serieStars[arrayPos],
     };
     this.props.dispatch(removeSerieToUser(data));
-    this.props.dispatch(toggleMustRefresh());
     this.cancelRemove();
   };
 

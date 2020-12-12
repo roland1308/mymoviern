@@ -13,6 +13,7 @@ import {
   setHomeBar,
   setOtherBar,
   setMessage,
+  setPageName,
 } from '../store/actions/generalActions';
 
 const axios = require('axios');
@@ -32,16 +33,19 @@ class TheOthersList extends Component {
   componentDidMount() {
     this.getList();
     this.props.dispatch(setOtherBar());
+    this.props.dispatch(setPageName(`-- 'The Others' List`));
   }
 
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.general.isBackButton != this.props.general.isBackButton) {
       this.props.dispatch(setHomeBar());
+      this.props.dispatch(setPageName('         My Movies DB'));
       this.props.navigation.navigate('Home');
     }
   }
 
   componentWillUnmount() {
+    this.props.dispatch(setPageName('         My Movies DB'));
     this.props.dispatch(setHomeBar());
   }
 

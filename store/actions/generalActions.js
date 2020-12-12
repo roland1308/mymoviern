@@ -13,12 +13,21 @@ import {
   REFRESH,
   TOGGLE_NEXT,
   SET_ALREADYNEXT,
+  SET_PAGENAME,
+  TOGGLE_SUGGEST,
 } from '../constants';
 
 export function setLanguage(lang) {
   return {
     type: SET_LANGUAGE,
     payload: lang,
+  };
+}
+
+export function setPageName(page) {
+  return {
+    type: SET_PAGENAME,
+    payload: page,
   };
 }
 
@@ -87,6 +96,12 @@ export const toggleMustRefresh = () => ({
 export function toggleNext() {
   return {
     type: TOGGLE_NEXT,
+  };
+}
+
+export function toggleSuggest() {
+  return {
+    type: TOGGLE_SUGGEST,
   };
 }
 

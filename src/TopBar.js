@@ -18,6 +18,8 @@ import {
   setIsLogged,
   setAddMovieStar,
   toggleNext,
+  toggleSuggest,
+  setPageName,
 } from '../store/actions/generalActions';
 import {connect} from 'react-redux';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -31,15 +33,18 @@ const HomeIcon = (props) => <Icon {...props} name='home' />;
 const CheckYellowIcon = (props) => (
   <Icon {...props} name='checkmark-square-outline' fill='#FFFF00' />
 );
-const CheckRedIcon = (props) => (
-  <Icon {...props} name='checkmark-square-outline' fill='#FF0000' />
+const CheckGreyIcon = (props) => (
+  <Icon {...props} name='checkmark-square-outline' fill='#808080' />
 );
 const GlobeIcon = (props) => <Icon {...props} name='globe' />;
 const MovieIcon = (props) => <Icon {...props} name='film-outline' />;
 const SerieIcon = (props) => <Icon {...props} name='tv-outline' />;
 const NextIcon = (props) => <Icon {...props} name='clock-outline' />;
-const NextRedIcon = (props) => (
-  <Icon {...props} name='clock-outline' fill='#FF0000' />
+const NextDisabledIcon = (props) => (
+  <Icon {...props} name='clock-outline' fill='#303030' />
+);
+const NextGreyIcon = (props) => (
+  <Icon {...props} name='clock-outline' fill='#808080' />
 );
 const NextYellowIcon = (props) => (
   <Icon {...props} name='clock-outline' fill='#FFFF00' />
@@ -51,6 +56,12 @@ const InfoIcon = (props) => <Icon {...props} name='info' />;
 const LogoutIcon = (props) => <Icon {...props} name='log-out-outline' />;
 const VersionIcon = (props) => <Icon {...props} name='trending-up-outline' />;
 const SuggestIcon = (props) => <Icon {...props} name='bell-outline' />;
+const SuggestGreyIcon = (props) => (
+  <Icon {...props} name='bell-outline' fill='#808080' />
+);
+const SuggestDisabledIcon = (props) => (
+  <Icon {...props} name='bell-outline' fill='#303030' />
+);
 
 class TopBar extends Component {
   constructor(props) {
@@ -182,6 +193,10 @@ class TopBar extends Component {
     this.props.dispatch(setAddMovieStar(!this.props.general.addMovieStar));
   };
 
+  toggleSuggest = () => {
+    this.props.dispatch(toggleSuggest());
+  };
+
   toggleNext = () => {
     this.props.dispatch(toggleNext());
   };
@@ -237,7 +252,7 @@ class TopBar extends Component {
 
   goToSuggestions = () => {
     this.toggleMenu();
-    RootNavigation.navigate('Suggestions List', {route: 'SuggestionList'});
+    RootNavigation.navigate('Suggestions List', {route: 'suggestionList'});
   };
 
   renderRightActions = () => (
@@ -246,16 +261,35 @@ class TopBar extends Component {
         this.props.general.isLogged &&
         !this.props.general.alreadyStarred && (
           <TopNavigationAction
-            icon={this.props.general.alreadyNext ? NextYellowIcon : NextRedIcon}
+            icon={
+              this.props.general.alreadyNext ? NextYellowIcon : NextGreyIcon
+            }
             onPress={this.toggleNext}
           />
+        )}
+      {this.props.general.nextIs &&
+        this.props.general.isLogged &&
+        this.props.general.alreadyStarred && (
+          <TopNavigationAction icon={NextDisabledIcon} />
         )}
       {this.props.general.checkIs && this.props.general.isLogged && (
         <TopNavigationAction
           icon={
-            this.props.general.alreadyStarred ? CheckYellowIcon : CheckRedIcon
+            this.props.general.alreadyStarred ? CheckYellowIcon : CheckGreyIcon
           }
           onPress={this.toggleStar}
+        />
+      )}
+      {this.props.general.checkIs && this.props.general.isLogged && (
+        <TopNavigationAction
+          icon={
+            this.props.general.alreadyStarred
+              ? SuggestGreyIcon
+              : SuggestDisabledIcon
+          }
+          onPress={
+            this.props.general.alreadyStarred ? this.toggleSuggest : null
+          }
         />
       )}
       {this.props.general.worldIs && (
@@ -359,6 +393,7 @@ class TopBar extends Component {
   );
 
   toggleBack() {
+    this.props.dispatch(setPageName('         My Movies DB'));
     this.props.dispatch(toggleBack());
   }
 
@@ -380,7 +415,7 @@ class TopBar extends Component {
       <Layout style={styles.container} level='1'>
         <TopNavigation
           // alignment='center'
-          title=' -- My Movies DB --'
+          title={this.props.general.pageName}
           accessoryLeft={backIs && this.renderHomeAction}
           accessoryRight={this.renderRightActions}
         />

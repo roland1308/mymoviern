@@ -14,8 +14,6 @@ import {
   removeViewedTip,
 } from '../../store/actions/userActions';
 
-const removeSuggestion = (suggestion) => {};
-
 function SearchResult({
   id,
   poster_path,
@@ -33,7 +31,7 @@ function SearchResult({
 }) {
   const dispatch = useDispatch();
   const touchWidth =
-    source === 'myList' || source === 'SuggestionList' ? '86%' : '95%';
+    source === 'myList' || source === 'suggestionList' ? '86%' : '92%';
   return (
     <View
       style={isSuggestionNew ? styles.itemYellowBorder : styles.itemBlackBorder}
@@ -41,18 +39,18 @@ function SearchResult({
       <TouchableHighlight
         underlayColor='#DDDDDD'
         onPress={() => {
-          if (source === 'SuggestionList' || isSuggestionNew) {
+          if (source === 'suggestionList' || isSuggestionNew) {
             dispatch(removeViewedTip(userName, {prompter, tipIndex}));
           }
           if (type === 'movie') {
-            navigation.navigate('Movie Details', {
+            navigation.push('Movie Details', {
               detailsId: id,
-              source: 'search',
+              source: source,
             });
           } else {
-            navigation.navigate('Tv Details', {
+            navigation.push('Tv Details', {
               detailsId: id,
-              source: 'search',
+              source: source,
             });
           }
         }}
@@ -105,7 +103,7 @@ function SearchResult({
           </TouchableOpacity>
         </View>
       )}
-      {source === 'SuggestionList' && (
+      {source === 'suggestionList' && (
         <View
           style={{
             backgroundColor: '#555',

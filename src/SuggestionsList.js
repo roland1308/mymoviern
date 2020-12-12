@@ -8,6 +8,7 @@ import {
   setDetailBar,
   setHomeBar,
   setOtherBar,
+  setPageName,
 } from '../store/actions/generalActions';
 import FormatDate from './components/FormatDate';
 import {Text} from 'native-base';
@@ -34,6 +35,7 @@ class SuggestionsList extends Component {
       oldCheck: checkIs,
     });
     let newCompleteList = [];
+    this.props.dispatch(setPageName('-- Suggestions'));
     this.props.user.suggestions.map((suggestion, resultsIndex) => {
       let onlyIds = suggestion.tips.filter(function (value, position) {
         return position % 2 !== 0;
@@ -66,9 +68,11 @@ class SuggestionsList extends Component {
     } else if (oldBack) {
       this.props.dispatch(setOtherBar());
     } else {
+      this.props.dispatch(setPageName('         My Movies DB'));
       this.props.dispatch(setHomeBar());
     }
   }
+
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.general.isBackButton != this.props.general.isBackButton) {
       this.props.dispatch(setHomeBar());
@@ -157,6 +161,7 @@ class SuggestionsList extends Component {
         <SectionList
           sections={this.state.completeList}
           keyExtractor={(item, index) => item + index}
+          ItemSeparatorComponent={() => <Layout style={{height: 5}} />}
           renderItem={({item}) => (
             <SearchResult
               poster_path={item.poster_path}

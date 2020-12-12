@@ -100,7 +100,7 @@ export const addMovieToUser = (data) => {
           data
         );
         dispatch(addMovieSuccess(data));
-        dispatch(setMessage('Thank you!'));
+        // dispatch(setMessage('Thank you!'));
       }
     } catch (error) {
       dispatch(addMovieFailure());
@@ -168,7 +168,7 @@ export const addSerieToUser = (data) => {
           data
         );
         dispatch(addSerieSuccess(data));
-        dispatch(setMessage('Thank you!'));
+        // dispatch(setMessage('Thank you!'));
       }
     } catch (error) {
       dispatch(addMovieFailure());
@@ -233,7 +233,7 @@ export const addNextToUser = (data) => {
       } else {
         dispatch(setAlreadyNext(true));
         dispatch(addNextSuccess(data));
-        dispatch(setMessage('Added to your Next List!'));
+        // dispatch(setMessage('Added to your Next List!'));
       }
     } catch (error) {
       dispatch(addMovieFailure());
@@ -261,7 +261,7 @@ export const removeNextToUser = (data) => {
       } else {
         dispatch(setAlreadyNext(false));
         dispatch(removeNextSuccess({indexToRemove: data.index}));
-        dispatch(setMessage('Removed from your Next List!'));
+        // dispatch(setMessage('Removed from your Next List!'));
       }
     } catch (error) {
       dispatch(addMovieFailure());

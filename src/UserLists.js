@@ -8,6 +8,7 @@ import {
   setDetailBar,
   setHomeBar,
   setOtherBar,
+  setPageName,
 } from '../store/actions/generalActions';
 import FormatDate from './components/FormatDate';
 
@@ -27,6 +28,21 @@ class UserLists extends Component {
 
   componentDidMount() {
     const {backIs, worldIs, checkIs} = this.props.general;
+    switch (this.props.route.params.route) {
+      case 'myList':
+        this.props.dispatch(setOtherBar());
+        this.props.dispatch(setPageName('-- My Starred List'));
+        break;
+      case 'nextList':
+        this.props.dispatch(setOtherBar());
+        this.props.dispatch(setPageName('-- Next to See'));
+        break;
+      case 'otherList':
+        this.props.dispatch(setHomeBar());
+        this.props.dispatch(setPageName(`-- 'The Others' List`));
+        break;
+      default:
+    }
     this.setState({
       oldBack: backIs,
       oldWorld: worldIs,
@@ -47,6 +63,7 @@ class UserLists extends Component {
       this.props.dispatch(setOtherBar());
     } else {
       this.props.dispatch(setHomeBar());
+      this.props.dispatch(setPageName('         My Movies DB'));
     }
   }
   componentDidUpdate(prevProps, prevState) {

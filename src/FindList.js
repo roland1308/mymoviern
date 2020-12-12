@@ -8,6 +8,7 @@ import {
   setHomeBar,
   setOtherBar,
   setMessage,
+  setPageName,
 } from '../store/actions/generalActions';
 import FormatDate from './components/FormatDate';
 
@@ -28,11 +29,13 @@ class FindList extends Component {
   componentDidMount() {
     this.getList();
     this.props.dispatch(setOtherBar());
+    this.props.dispatch(setPageName('-- Search Results'));
   }
 
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.general.isBackButton != this.props.general.isBackButton) {
       this.props.dispatch(setHomeBar());
+      this.props.dispatch(setPageName('         My Movies DB'));
       this.props.navigation.navigate('Home');
     }
   }
@@ -101,6 +104,7 @@ class FindList extends Component {
               }
               navigation={this.props.navigation}
               type={type}
+              source='search'
             />
           )}
           data={this.state.results}
