@@ -183,7 +183,12 @@ class SuggestionsList extends Component {
           )}
           renderSectionHeader={({section: {title}}) => (
             <Text
-              style={{color: 'white'}}
+              style={{
+                color: 'white',
+                textAlign: 'center',
+                fontSize: 20,
+                paddingBottom: 5,
+              }}
             >{`Suggested to you by ${title}`}</Text>
           )}
         />

@@ -1,7 +1,6 @@
 import React from 'react';
-import {AppLoading} from 'expo';
+import AppLoading from 'expo-app-loading';
 import * as Font from 'expo-font';
-import {Ionicons} from '@expo/vector-icons';
 import * as eva from '@eva-design/eva';
 import {ApplicationProvider, IconRegistry} from '@ui-kitten/components';
 import {default as theme} from './custom-theme.json';
@@ -13,7 +12,6 @@ import configureStore from './store/configureStore';
 import HomeScreen from './src/HomeScreen';
 import TopBar from './src/TopBar';
 import Separator from './src/components/Separator';
-import {loadAsync} from 'expo-font';
 
 const store = configureStore();
 

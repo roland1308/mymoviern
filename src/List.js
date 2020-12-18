@@ -54,7 +54,7 @@ function Item({id, poster_path, type, navigation}) {
         if (type === 'movie') {
           navigation.navigate('Movie Details', {detailsId: id, source: 'list'});
         } else {
-          navigation.navigate('Tv Details', {detailsId: id, source: 'list'});
+          navigation.push('Tv Details', {detailsId: id, source: 'list'});
         }
       }}
     >
@@ -630,7 +630,7 @@ class List extends Component {
                 <Button
                   onPress={() =>
                     search !== '' &&
-                    navigation.navigate('Find List', {search, type: 'movie'})
+                    navigation.push('Find List', {search, type: 'movie'})
                   }
                 >
                   Movies
@@ -638,7 +638,7 @@ class List extends Component {
                 <Button
                   onPress={() =>
                     search !== '' &&
-                    navigation.navigate('Find List', {search, type: 'tv'})
+                    navigation.push('Find List', {search, type: 'tv'})
                   }
                 >
                   Series

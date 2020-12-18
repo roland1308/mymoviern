@@ -5,6 +5,7 @@ import {
   TouchableHighlight,
   Image,
   TouchableOpacity,
+  BackHandler,
 } from 'react-native';
 import {Layout, Text} from '@ui-kitten/components';
 import {Icon} from 'react-native-eva-icons';
@@ -85,13 +86,13 @@ function SearchResult({
           <TouchableOpacity
             onPress={() => {
               if (type === 'movie') {
-                navigation.navigate('Movie Details Remove', {
+                navigation.push('Movie Details Remove', {
                   detailsId: id,
                   source: 'remove',
                   arrayPos,
                 });
               } else {
-                navigation.navigate('Tv Details Remove', {
+                navigation.push('Tv Details Remove', {
                   detailsId: id,
                   source: 'remove',
                   arrayPos,

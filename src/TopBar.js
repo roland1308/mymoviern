@@ -11,15 +11,15 @@ import {
   Modal,
   Text,
 } from '@ui-kitten/components';
-import {StyleSheet} from 'react-native';
+import {BackHandler, StyleSheet} from 'react-native';
 import {
   toggleBack,
   setLanguage,
   setIsLogged,
   setAddMovieStar,
   toggleNext,
-  toggleSuggest,
   setPageName,
+  setHomeBar,
 } from '../store/actions/generalActions';
 import {connect} from 'react-redux';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -82,6 +82,7 @@ class TopBar extends Component {
   }
 
   async componentDidMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.onBackPress);
     this.props.dispatch(setIsLoading(true));
     const response = await Axios.get(
       'https://mymoviesback.herokuapp.com/versionings/getversions'
@@ -133,6 +134,10 @@ class TopBar extends Component {
     }
   };
 
+  onBackPress = () => {
+    return true;
+  };
+
   toggleMenu = () => {
     this.setState({
       menuVisible: !this.state.menuVisible,
@@ -145,6 +150,7 @@ class TopBar extends Component {
       menuVisible: false,
     });
     this.props.dispatch(setIsLogged(false));
+    RootNavigation.navigate('Home');
   };
 
   forgetUser = async () => {
@@ -191,10 +197,6 @@ class TopBar extends Component {
 
   toggleStar = () => {
     this.props.dispatch(setAddMovieStar(!this.props.general.addMovieStar));
-  };
-
-  toggleSuggest = () => {
-    this.props.dispatch(toggleSuggest());
   };
 
   toggleNext = () => {
@@ -255,6 +257,10 @@ class TopBar extends Component {
     RootNavigation.navigate('Suggestions List', {route: 'suggestionList'});
   };
 
+  goToSendSuggestion = () => {
+    RootNavigation.navigate('Send Suggestion', {route: 'sendsuggestion'});
+  };
+
   renderRightActions = () => (
     <React.Fragment>
       {this.props.general.nextIs &&
@@ -288,7 +294,9 @@ class TopBar extends Component {
               : SuggestDisabledIcon
           }
           onPress={
-            this.props.general.alreadyStarred ? this.toggleSuggest : null
+            this.props.general.alreadyStarred
+              ? () => this.goToSendSuggestion()
+              : null
           }
         />
       )}
@@ -400,6 +408,7 @@ class TopBar extends Component {
   renderHomeAction = () => (
     <TopNavigationAction icon={HomeIcon} onPress={this.toggleBack} />
   );
+
   render() {
     const {backIs} = this.props.general;
     const {
@@ -414,7 +423,6 @@ class TopBar extends Component {
     return (
       <Layout style={styles.container} level='1'>
         <TopNavigation
-          // alignment='center'
           title={this.props.general.pageName}
           accessoryLeft={backIs && this.renderHomeAction}
           accessoryRight={this.renderRightActions}

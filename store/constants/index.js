@@ -12,10 +12,10 @@ export const SET_ADDMOVIESTAR = 'SET_ADDMOVIESTAR';
 export const SET_ALREADYSTARRED = 'SET_ALREADYSTARRED';
 export const REFRESH = 'REFRESH';
 export const TOGGLE_NEXT = 'TOGGLE_NEXT';
-export const TOGGLE_SUGGEST = 'TOGGLE_SUGGEST';
 export const SET_ALREADYNEXT = 'SET_ALREADYNEXT';
 export const SET_PAGENAME = 'SET_PAGENAME';
 export const SET_MESSAGE = 'SET_MESSAGE';
+export const SET_DETAIL_ID = 'SET_DETAIL_ID';
 
 // User
 export const ADD_USER_BEGIN = 'ADD_USER_BEGIN';

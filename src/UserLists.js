@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, FlatList} from 'react-native';
+import {StyleSheet, FlatList, BackHandler} from 'react-native';
 import {Layout, Spinner} from '@ui-kitten/components';
 import {API_KEY} from 'react-native-dotenv';
 import SearchResult from './components/SearchResult';
@@ -27,6 +27,10 @@ class UserLists extends Component {
   }
 
   componentDidMount() {
+    this.startup();
+  }
+
+  startup = () => {
     const {backIs, worldIs, checkIs} = this.props.general;
     switch (this.props.route.params.route) {
       case 'myList':
@@ -53,7 +57,7 @@ class UserLists extends Component {
       this.setState({results: responseOk});
     });
     this.props.dispatch(setOtherBar());
-  }
+  };
 
   componentWillUnmount() {
     const {oldCheck, oldBack} = this.state;
@@ -66,6 +70,7 @@ class UserLists extends Component {
       this.props.dispatch(setPageName('         My Movies DB'));
     }
   }
+
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.general.isBackButton != this.props.general.isBackButton) {
       this.props.dispatch(setHomeBar());
@@ -81,10 +86,7 @@ class UserLists extends Component {
       prevProps.route.params.idList != this.props.route.params.idList
     ) {
       this.setState({results: null});
-      this.getList().then((response) => {
-        let responseOk = response.reverse();
-        this.setState({results: responseOk});
-      });
+      this.startup();
     }
   }
 

@@ -92,7 +92,7 @@ class TvDetailsRemove extends Component {
 
   cancelRemove = () => {
     this.setState({removeVoteVisible: false});
-    this.props.navigation.navigate('User Lists');
+    this.props.navigation.push('User Lists');
   };
 
   confirmRemove = () => {

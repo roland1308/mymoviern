@@ -7,6 +7,7 @@ import {
   Layout,
   List,
   ListItem,
+  CheckBox,
 } from '@ui-kitten/components';
 import {connect} from 'react-redux';
 import {
@@ -19,11 +20,12 @@ import {
 
 const axios = require('axios');
 
-class TheOthersList extends Component {
+class SendSuggestion extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      checkList: [],
       oldBack: null,
       oldCheck: null,
       oldWorld: null,
@@ -43,7 +45,7 @@ class TheOthersList extends Component {
     });
     this.getList();
     this.props.dispatch(setOtherBar());
-    this.props.dispatch(setPageName(`-- 'The Others' List`));
+    this.props.dispatch(setPageName(`-- Send your suggestion`));
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -61,13 +63,14 @@ class TheOthersList extends Component {
 
   componentWillUnmount() {
     const {oldCheck, oldBack} = this.state;
+    this.props.dispatch(setPageName('-- Movie Details'));
     if (oldCheck) {
       this.props.dispatch(setDetailBar());
     } else if (oldBack) {
       this.props.dispatch(setOtherBar());
     } else {
-      this.props.dispatch(setHomeBar());
       this.props.dispatch(setPageName('         My Movies DB'));
+      this.props.dispatch(setHomeBar());
     }
   }
 
@@ -89,49 +92,54 @@ class TheOthersList extends Component {
     return;
   }
 
+  setChecked = (index) => {
+    let newCheckList = this.state.checkList;
+    newCheckList[index] = !newCheckList[index];
+    this.setState({checkList: newCheckList});
+  };
+
+  async confirmedSuggestionSend() {
+    let userNameList = [];
+    this.state.results.map((user, i) => {
+      this.state.checkList[i] && userNameList.push(user.userName);
+    });
+    const data = {
+      userNameList,
+      suggestion: {
+        prompter: this.props.user.userName,
+        tips: [true, this.props.general.detailId],
+      },
+    };
+    try {
+      await axios.put(
+        'https://mymoviesback.herokuapp.com/users/addsuggestion',
+        data
+      );
+    } catch (error) {
+      if (error.response.data) {
+        console.log('An error has occurred');
+      } else {
+        console.log(error.message);
+      }
+    }
+    this.props.dispatch(setMessage('Suggestion sent!'));
+    this.props.navigation.goBack();
+  }
+
   renderItemIcon = (props) => <Icon {...props} name='person' />;
 
   renderItem = ({item, index}) => (
     <ListItem
+      onPress={() => this.setChecked(index)}
       style={{backgroundColor: '#333', borderRadius: 10}}
       title={item.userName}
       accessoryLeft={this.renderItemIcon}
       accessoryRight={() => {
-        const totMovies = item.movies.length;
-        const totSeries = item.series.length;
         return (
-          <Layout style={{flexDirection: 'row', backgroundColor: '#333'}}>
-            <Button
-              disabled={totMovies === 0}
-              size='small'
-              style={{margin: 5}}
-              onPress={() =>
-                this.props.navigation.push('User Lists', {
-                  type: 'movie',
-                  idList: item.movies,
-                  starList: item.movieStars,
-                  route: 'otherList',
-                })
-              }
-            >
-              {`Movies (${totMovies})`}
-            </Button>
-            <Button
-              disabled={totSeries === 0}
-              size='small'
-              style={{margin: 5}}
-              onPress={() =>
-                this.props.navigation.push('User Lists', {
-                  type: 'tv',
-                  idList: item.series,
-                  starList: item.serieStars,
-                  route: 'otherList',
-                })
-              }
-            >
-              {`Series (${totSeries})`}
-            </Button>
-          </Layout>
+          <CheckBox
+            checked={this.state.checkList[index]}
+            onChange={() => this.setChecked(index)}
+          />
         );
       }}
     />
@@ -139,13 +147,31 @@ class TheOthersList extends Component {
 
   render() {
     return (
-      <Layout style={styles.container}>
-        <List
-          data={this.state.results}
-          renderItem={this.renderItem}
-          ItemSeparatorComponent={Divider}
-        />
-      </Layout>
+      <>
+        <Layout style={styles.iconsContainer}>
+          <Button
+            style={{marginTop: 20}}
+            status='success'
+            onPress={() => this.confirmedSuggestionSend()}
+          >
+            Send
+          </Button>
+          <Button
+            style={{marginTop: 20}}
+            status='danger'
+            onPress={() => this.props.navigation.goBack()}
+          >
+            Cancel
+          </Button>
+        </Layout>
+        <Layout style={styles.container}>
+          <List
+            data={this.state.results}
+            renderItem={this.renderItem}
+            ItemSeparatorComponent={Divider}
+          />
+        </Layout>
+      </>
     );
   }
 }
@@ -156,9 +182,13 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
   },
+  iconsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+  },
 });
 const mapStateToProps = (state) => ({
   general: state.general,
   user: state.user,
 });
-export default connect(mapStateToProps)(TheOthersList);
+export default connect(mapStateToProps)(SendSuggestion);

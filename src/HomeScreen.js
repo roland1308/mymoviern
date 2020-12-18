@@ -13,6 +13,7 @@ import FindList from './FindList';
 import UserLists from './UserLists';
 import TheOthersList from './TheOthersList';
 import SuggestionsList from './SuggestionsList';
+import SendSuggestion from './SendSuggestion';
 
 const Stack = createStackNavigator();
 
@@ -42,6 +43,7 @@ export default function HomeScreen() {
         <Stack.Screen name='User Lists' component={UserLists} />
         <Stack.Screen name='The Other List' component={TheOthersList} />
         <Stack.Screen name='Suggestions List' component={SuggestionsList} />
+        <Stack.Screen name='Send Suggestion' component={SendSuggestion} />
       </Stack.Navigator>
     </NavigationContainer>
   );

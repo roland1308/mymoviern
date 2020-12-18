@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, Linking, Image} from 'react-native';
+import {StyleSheet, Linking, Image, BackHandler} from 'react-native';
 import {
   Layout,
   Text,
@@ -20,9 +20,9 @@ import {
   setAddMovieStar,
   setAlreadyStarred,
   toggleMustRefresh,
-  toggleSuggest,
   setAlreadyNext,
   setPageName,
+  setDetailId,
 } from '../store/actions/generalActions';
 import Separator from './components/Separator';
 import FormatDate from './components/FormatDate';
@@ -34,7 +34,6 @@ import {
 import removeTrailinZeros from 'remove-trailing-zeros';
 import TextScroll from './components/TextScroll';
 import YoutubePlayer from 'react-native-youtube-iframe';
-import {CheckBox} from '@ui-kitten/components';
 
 const axios = require('axios');
 
@@ -66,6 +65,7 @@ class MovieDetails extends Component {
     const {movies, movieStars, next} = this.props.user;
     const movieIndex = movies.indexOf(detailsId);
     const nextIndex = next.indexOf(`m${detailsId}`);
+    this.props.dispatch(setDetailId(`m${detailsId}`));
     let uri =
       'https://api.themoviedb.org/3/movie/' +
       detailsId +
@@ -191,7 +191,6 @@ class MovieDetails extends Component {
               isLoading: false,
             });
           } else {
-            console.log(response1.data.status_message);
             return;
           }
         })
@@ -302,7 +301,7 @@ class MovieDetails extends Component {
       trailersArray,
     } = this.state;
     const date = FormatDate(release_date);
-    const {addMovieStar, suggest} = this.props.general;
+    const {addMovieStar} = this.props.general;
     const starItems = [];
     for (let i = 1; i < 6; i++) {
       starItems.push(
@@ -356,20 +355,6 @@ class MovieDetails extends Component {
           </Card>
         </Modal>
         <Modal
-          visible={suggest}
-          backdropStyle={styles.backdrop}
-          onBackdropPress={() => this.props.dispatch(toggleSuggest())}
-        >
-          <Card disabled={true}>
-            <CheckBox
-              checked={false}
-              // onChange={nextChecked => setChecked(nextChecked)}
-            >
-              Renato
-            </CheckBox>
-          </Card>
-        </Modal>
-        <Modal
           visible={whoStarredVisible}
           backdropStyle={styles.backdrop}
           onBackdropPress={() => this.toggleWhoStarred()}
@@ -392,7 +377,11 @@ class MovieDetails extends Component {
             style={{aspectRatio: 1}}
             play={playing}
             playList={trailersArray}
+            videoId={trailersArray[0]}
             onChangeState={() => this.onStateChange}
+            onError={(error) => {
+              console.log(error);
+            }}
           />
         ) : (
           <Image

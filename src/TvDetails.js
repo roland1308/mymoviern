@@ -22,6 +22,7 @@ import {
   toggleMustRefresh,
   setAlreadyNext,
   setPageName,
+  setDetailId,
 } from '../store/actions/generalActions';
 import Separator from './components/Separator';
 import FormatDate from './components/FormatDate';
@@ -64,6 +65,7 @@ class TvDetails extends Component {
     const {series, serieStars, next} = this.props.user;
     const serieIndex = series.indexOf(detailsId);
     const nextIndex = next.indexOf(`s${detailsId}`);
+    this.props.dispatch(setDetailId(`s${detailsId}`));
     let uri =
       'https://api.themoviedb.org/3/tv/' +
       detailsId +

@@ -14,7 +14,7 @@ import {
   TOGGLE_NEXT,
   SET_ALREADYNEXT,
   SET_PAGENAME,
-  TOGGLE_SUGGEST,
+  SET_DETAIL_ID,
 } from '../constants';
 
 const initialState = {
@@ -31,8 +31,8 @@ const initialState = {
   alreadyStarred: true,
   alreadyNext: true,
   toggleNext: true,
-  suggest: false,
   mustRefresh: false,
+  detailId: null,
 };
 
 const generalReducer = (state = initialState, action) => {
@@ -41,6 +41,11 @@ const generalReducer = (state = initialState, action) => {
       return {
         ...state,
         pageName: action.payload,
+      };
+    case SET_DETAIL_ID:
+      return {
+        ...state,
+        detailId: action.payload,
       };
     case SET_LANGUAGE:
       return {
@@ -115,11 +120,6 @@ const generalReducer = (state = initialState, action) => {
       return {
         ...state,
         toggleNext: !state.toggleNext,
-      };
-    case TOGGLE_SUGGEST:
-      return {
-        ...state,
-        suggest: !state.suggest,
       };
     case SET_ALREADYNEXT:
       return {
