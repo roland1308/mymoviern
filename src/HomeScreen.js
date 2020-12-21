@@ -14,10 +14,15 @@ import UserLists from './UserLists';
 import TheOthersList from './TheOthersList';
 import SuggestionsList from './SuggestionsList';
 import SendSuggestion from './SendSuggestion';
+import * as RootNavigation from './RootNavigation';
 
 const Stack = createStackNavigator();
 
 export default function HomeScreen() {
+  if (RootNavigation.navigationRef.current) {
+    let index = RootNavigation.navigationRef.current.getCurrentRoute().name;
+    // console.log(index);
+  }
   return (
     <NavigationContainer
       ref={navigationRef}

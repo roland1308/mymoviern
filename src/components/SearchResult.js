@@ -5,7 +5,6 @@ import {
   TouchableHighlight,
   Image,
   TouchableOpacity,
-  BackHandler,
 } from 'react-native';
 import {Layout, Text} from '@ui-kitten/components';
 import {Icon} from 'react-native-eva-icons';
@@ -40,18 +39,18 @@ function SearchResult({
       <TouchableHighlight
         underlayColor='#DDDDDD'
         onPress={() => {
-          if (source === 'suggestionList' || isSuggestionNew) {
+          if (source === 'suggestionList' && isSuggestionNew) {
             dispatch(removeViewedTip(userName, {prompter, tipIndex}));
           }
           if (type === 'movie') {
             navigation.push('Movie Details', {
               detailsId: id,
-              source: source,
+              source,
             });
           } else {
             navigation.push('Tv Details', {
               detailsId: id,
-              source: source,
+              source,
             });
           }
         }}

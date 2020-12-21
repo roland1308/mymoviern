@@ -151,7 +151,8 @@ class SendSuggestion extends Component {
         <Layout style={styles.iconsContainer}>
           <Button
             style={{marginTop: 20}}
-            status='success'
+            status={this.state.checkList.includes(true) && 'success'}
+            disabled={!this.state.checkList.includes(true)}
             onPress={() => this.confirmedSuggestionSend()}
           >
             Send

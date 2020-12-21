@@ -16,6 +16,7 @@ export const SET_ALREADYNEXT = 'SET_ALREADYNEXT';
 export const SET_PAGENAME = 'SET_PAGENAME';
 export const SET_MESSAGE = 'SET_MESSAGE';
 export const SET_DETAIL_ID = 'SET_DETAIL_ID';
+export const IS_NEW_SUGGEST = 'IS_NEW_SUGGEST';
 
 // User
 export const ADD_USER_BEGIN = 'ADD_USER_BEGIN';

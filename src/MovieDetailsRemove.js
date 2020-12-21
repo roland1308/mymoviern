@@ -12,7 +12,11 @@ import {
 import {API_KEY} from 'react-native-dotenv';
 import {ScrollView} from 'react-native-gesture-handler';
 import {connect} from 'react-redux';
-import {setHomeBar} from '../store/actions/generalActions';
+import {
+  setHomeBar,
+  setOtherBar,
+  setPageName,
+} from '../store/actions/generalActions';
 import Separator from './components/Separator';
 import {removeMovieToUser} from '../store/actions/userActions';
 
@@ -59,10 +63,13 @@ class MovieDetailsRemove extends Component {
   }
 
   componentWillUnmount() {
+    this.props.dispatch(setOtherBar());
+    this.props.dispatch(setPageName('-- My Starred List'));
     if (this.state.needRefresh) {
       this.props.dispatch(toggleMustRefresh());
     }
   }
+
   async getDetails(uri) {
     const request = await axios.get(uri);
     axios
@@ -104,6 +111,8 @@ class MovieDetailsRemove extends Component {
       starsToRemove: movieStars[arrayPos],
     };
     this.props.dispatch(removeMovieToUser(data));
+    this.props.dispatch(setOtherBar());
+    this.props.dispatch(setPageName('-- My Starred List'));
     this.cancelRemove();
   };
 

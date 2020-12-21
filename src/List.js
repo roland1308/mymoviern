@@ -32,6 +32,7 @@ import {
   setHomeBar,
   setIsLogged,
   toggleMustRefresh,
+  setIsNewSuggest,
 } from '../store/actions/generalActions';
 import {addUser, logUser, setIsLoading} from '../store/actions/userActions';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -296,6 +297,15 @@ class List extends Component {
         });
         return;
       });
+    this.props.user.suggestions.map((singleSuggestion) => {
+      if (
+        !this.props.general.isNewSuggest &&
+        singleSuggestion.tips.includes(true)
+      ) {
+        this.props.dispatch(setMessage('You have new suggestions!'));
+        this.props.dispatch(setIsNewSuggest(true));
+      }
+    });
     this.setState({isListLoading: false});
     return;
   }

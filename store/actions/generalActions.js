@@ -15,7 +15,15 @@ import {
   SET_ALREADYNEXT,
   SET_PAGENAME,
   SET_DETAIL_ID,
+  IS_NEW_SUGGEST,
 } from '../constants';
+
+export function setIsNewSuggest(status) {
+  return {
+    type: IS_NEW_SUGGEST,
+    payload: status,
+  };
+}
 
 export function setLanguage(lang) {
   return {

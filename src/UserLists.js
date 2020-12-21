@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, FlatList, BackHandler} from 'react-native';
+import {StyleSheet, FlatList} from 'react-native';
 import {Layout, Spinner} from '@ui-kitten/components';
 import {API_KEY} from 'react-native-dotenv';
 import SearchResult from './components/SearchResult';
@@ -11,6 +11,8 @@ import {
   setPageName,
 } from '../store/actions/generalActions';
 import FormatDate from './components/FormatDate';
+import {navigationRef} from './RootNavigation';
+import * as RootNavigation from './RootNavigation';
 
 const axios = require('axios');
 
@@ -32,26 +34,32 @@ class UserLists extends Component {
 
   startup = () => {
     const {backIs, worldIs, checkIs} = this.props.general;
-    switch (this.props.route.params.route) {
-      case 'myList':
-        this.props.dispatch(setOtherBar());
-        this.props.dispatch(setPageName('-- My Starred List'));
-        break;
-      case 'nextList':
-        this.props.dispatch(setOtherBar());
-        this.props.dispatch(setPageName('-- Next to See'));
-        break;
-      case 'otherList':
-        this.props.dispatch(setHomeBar());
-        this.props.dispatch(setPageName(`-- 'The Others' List`));
-        break;
-      default:
-    }
     this.setState({
       oldBack: backIs,
       oldWorld: worldIs,
       oldCheck: checkIs,
     });
+    if (RootNavigation.navigationRef.current) {
+      let index = RootNavigation.navigationRef.current.getCurrentRoute().params
+        .route;
+      console.log(index);
+      switch (index) {
+        case 'myList':
+          this.props.dispatch(setOtherBar());
+          this.props.dispatch(setPageName('-- My Starred List'));
+          break;
+        case 'nextList':
+          this.props.dispatch(setOtherBar());
+          this.props.dispatch(setPageName('-- Next to See'));
+          break;
+        case 'otherList':
+          this.props.dispatch(setHomeBar());
+          this.props.dispatch(setPageName(`-- 'The Others' List`));
+          break;
+        default:
+      }
+    }
+
     this.getList().then((response) => {
       let responseOk = response.reverse();
       this.setState({results: responseOk});
@@ -60,15 +68,42 @@ class UserLists extends Component {
   };
 
   componentWillUnmount() {
-    const {oldCheck, oldBack} = this.state;
-    if (oldCheck) {
-      this.props.dispatch(setDetailBar());
-    } else if (oldBack) {
-      this.props.dispatch(setOtherBar());
-    } else {
-      this.props.dispatch(setHomeBar());
-      this.props.dispatch(setPageName('         My Movies DB'));
+    switch (this.props.route.params.route) {
+      // case 'list':
+      //   this.props.dispatch(setHomeBar());
+      //   this.props.dispatch(setPageName('         My Movies DB'));
+      //   break;
+      // case 'search':
+      //   this.props.dispatch(setOtherBar());
+      //   this.props.dispatch(setPageName('-- Search Results'));
+      //   break;
+      case 'myList':
+        this.props.dispatch(setHomeBar());
+        this.props.dispatch(setPageName('         My Movies DB'));
+        break;
+      case 'nextList':
+        this.props.dispatch(setHomeBar());
+        this.props.dispatch(setPageName('         My Movies DB'));
+        break;
+      // case 'otherList':
+      //   this.props.dispatch(setOtherBar());
+      //   this.props.dispatch(setPageName(`-- 'The Others' List`));
+      //   break;
+      // case 'suggestionList':
+      //   this.props.dispatch(setOtherBar());
+      //   this.props.dispatch(setPageName('-- Suggestions'));
+      //   break;
+      default:
     }
+    // const {oldCheck, oldBack} = this.state;
+    // if (oldCheck) {
+    //   this.props.dispatch(setDetailBar());
+    // } else if (oldBack) {
+    //   this.props.dispatch(setOtherBar());
+    // } else {
+    //   this.props.dispatch(setHomeBar());
+    //   this.props.dispatch(setPageName('         My Movies DB'));
+    // }
   }
 
   componentDidUpdate(prevProps, prevState) {

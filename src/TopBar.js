@@ -11,7 +11,7 @@ import {
   Modal,
   Text,
 } from '@ui-kitten/components';
-import {BackHandler, StyleSheet} from 'react-native';
+import {StyleSheet} from 'react-native';
 import {
   toggleBack,
   setLanguage,
@@ -19,7 +19,6 @@ import {
   setAddMovieStar,
   toggleNext,
   setPageName,
-  setHomeBar,
 } from '../store/actions/generalActions';
 import {connect} from 'react-redux';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -82,7 +81,6 @@ class TopBar extends Component {
   }
 
   async componentDidMount() {
-    BackHandler.addEventListener('hardwareBackPress', this.onBackPress);
     this.props.dispatch(setIsLoading(true));
     const response = await Axios.get(
       'https://mymoviesback.herokuapp.com/versionings/getversions'
@@ -424,6 +422,7 @@ class TopBar extends Component {
       <Layout style={styles.container} level='1'>
         <TopNavigation
           title={this.props.general.pageName}
+          // title={'         My Movies DB'}
           accessoryLeft={backIs && this.renderHomeAction}
           accessoryRight={this.renderRightActions}
         />

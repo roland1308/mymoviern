@@ -15,6 +15,7 @@ import {
   SET_ALREADYNEXT,
   SET_PAGENAME,
   SET_DETAIL_ID,
+  IS_NEW_SUGGEST,
 } from '../constants';
 
 const initialState = {
@@ -33,10 +34,16 @@ const initialState = {
   toggleNext: true,
   mustRefresh: false,
   detailId: null,
+  isNewSuggest: false,
 };
 
 const generalReducer = (state = initialState, action) => {
   switch (action.type) {
+    case IS_NEW_SUGGEST:
+      return {
+        ...state,
+        isNewSuggest: action.payload,
+      };
     case SET_PAGENAME:
       return {
         ...state,

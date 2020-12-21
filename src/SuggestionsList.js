@@ -189,46 +189,9 @@ class SuggestionsList extends Component {
                 fontSize: 20,
                 paddingBottom: 5,
               }}
-            >{`Suggested to you by ${title}`}</Text>
+            >{`${title} suggested:`}</Text>
           )}
         />
-
-        {/* <Layout>
-          {this.state.prompterList.map((prompter, prompterIndex) => (
-            <Fragment key={prompterIndex}>
-              <Text
-                style={{color: 'white'}}
-              >{`Suggested to you by ${prompter}`}</Text>
-              <FlatList
-                renderItem={({item, index}) => (
-                  <SearchResult
-                    poster_path={item.poster_path}
-                    title={item.title}
-                    id={item.id}
-                    title={item.title !== undefined ? item.title : item.name}
-                    navigation={this.props.navigation}
-                    type={item.title !== undefined ? 'movie' : 'tv'}
-                    date={
-                      item.title !== undefined
-                        ? FormatDate(item.release_date)
-                        : FormatDate(item.first_air_date)
-                    }
-                    isSuggestionNew={
-                      this.state.isSuggestionNew[prompterIndex][index]
-                    }
-                    userName={this.props.user.userName}
-                    prompter={prompter}
-                    tipIndex={index}
-                    source={route}
-                  />
-                )}
-                data={this.state.results[prompterIndex]}
-                keyExtractor={(item) => item.id.toString()}
-                ItemSeparatorComponent={() => <Layout style={{height: 5}} />}
-              />
-            </Fragment>
-          ))}
-        </Layout> */}
       </Layout>
     );
   }

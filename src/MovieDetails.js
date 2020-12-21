@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, Linking, Image, BackHandler} from 'react-native';
+import {StyleSheet, Linking, Image} from 'react-native';
 import {
   Layout,
   Text,
@@ -43,7 +43,6 @@ class MovieDetails extends Component {
 
     this.state = {
       details: null,
-      source: null,
       isLoading: true,
       oldStarVote: 0,
       newStarVote: 0,
@@ -61,7 +60,7 @@ class MovieDetails extends Component {
   }
 
   componentDidMount() {
-    const {detailsId, source} = this.props.route.params;
+    const {detailsId} = this.props.route.params;
     const {movies, movieStars, next} = this.props.user;
     const movieIndex = movies.indexOf(detailsId);
     const nextIndex = next.indexOf(`m${detailsId}`);
@@ -90,7 +89,6 @@ class MovieDetails extends Component {
     this.setState({
       positionNext: nextIndex === -1 ? next.length : nextIndex,
     });
-    this.setState({source});
     this.getDetails(uri).done();
     this.props.dispatch(setDetailBar());
   }
@@ -98,7 +96,6 @@ class MovieDetails extends Component {
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.general.isBackButton != this.props.general.isBackButton) {
       this.props.dispatch(setHomeBar());
-      this.setState({source: 'list'});
       this.props.navigation.navigate('Home');
     }
     if (prevProps.general.toggleNext != this.props.general.toggleNext) {
@@ -121,7 +118,7 @@ class MovieDetails extends Component {
   }
 
   componentWillUnmount() {
-    switch (this.state.source) {
+    switch (this.props.route.params.source) {
       case 'list':
         this.props.dispatch(setHomeBar());
         this.props.dispatch(setPageName('         My Movies DB'));
